@@ -57,7 +57,7 @@ services:
     networks:
       - default
 
-  mailpit:
+  mailpit-Lannify:
     image: axllent/mailpit
     container_name: mailpit
     restart: unless-stopped
