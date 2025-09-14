@@ -1,0 +1,77 @@
+<div{{ attributes }}>
+	<table class="w-full border border-neonBlue rounded-xl overflow-hidden text-left text-white shadow-lg">
+		<thead class="bg-darkGrey/70">
+			<tr>
+				<th class="px-4 py-2">Nom</th>
+				<th class="px-4 py-2">Source</th>
+				<th class="px-4 py-2">Gratuit ?</th>
+				<th class="px-4 py-2">Je possède</th>
+				<th class="px-4 py-2">Je veux jouer</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for pg in participantGames %}
+				{% set game = pg.game %}
+				<tr class="border-b border-neonBlue hover:bg-neonBlue/10 transition-colors duration-200">
+					
+					<!-- Nom + stats -->
+					<td class="px-4 py-2 font-semibold text-neonBlue flex items-center gap-2">
+                        {% set ready = readyCounts[game.id] ?? 0 %}
+
+                        {% if ready > 0 %}
+                            <span class="flex items-center text-xs bg-green-600 text-white px-2 py-1 rounded-full" aria-label="{{ ready }} jeux prêts">
+                                <span class="font-medium mr-1">{{ ready }}</span>
+                                <span aria-hidden="true">👍</span>
+                            </span>
+                        {% endif %}
+
+                        {{ game.label }}
+                    </td>
+
+					<td class="px-4 py-2">{{ game.source ?: '-' }}</td>
+
+					<td class="px-4 py-2">
+						<span class="px-2 py-1 rounded-full
+							{% if game.free %} bg-neonBlue text-darkGrey
+							{% elseif game.free is same as(false) %} bg-red-600 text-white
+							{% else %} bg-gray-500 text-white {% endif %}">
+							{{ game.free ? 'Oui' : (game.free is same as(false) ? 'Non' : '—') }}
+						</span>
+					</td>
+
+					<td class="px-4 py-2">
+						<label class="inline-flex items-center cursor-pointer">
+							<input type="checkbox"
+								   class="sr-only peer"
+								   {{ pg.owns ? 'checked' : '' }}
+								   data-action="live#action"
+								   data-live-action-param="toggleOwned"
+								   data-live-id-param="{{ game.id }}">
+							<div class="relative w-11 h-6 rounded-full bg-gray-700 peer-checked:bg-green-500
+								after:content-[''] after:absolute after:top-[2px] after:left-[2px]
+								after:bg-white after:border after:border-gray-300 after:rounded-full
+								after:h-5 after:w-5 after:transition-all
+								peer-checked:after:translate-x-full"></div>
+						</label>
+					</td>
+
+					<td class="px-4 py-2">
+						<label class="inline-flex items-center cursor-pointer">
+							<input type="checkbox"
+								   class="sr-only peer"
+								   {{ pg.interested ? 'checked' : '' }}
+								   data-action="live#action"
+								   data-live-action-param="toggleInterested"
+								   data-live-id-param="{{ game.id }}">
+							<div class="relative w-11 h-6 rounded-full bg-gray-700 peer-checked:bg-neonBlue
+								after:content-[''] after:absolute after:top-[2px] after:left-[2px]
+								after:bg-white after:border after:border-gray-300 after:rounded-full
+								after:h-5 after:w-5 after:transition-all
+								peer-checked:after:translate-x-full"></div>
+						</label>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>

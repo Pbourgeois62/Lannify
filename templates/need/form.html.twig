@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ isEdit ? 'Modifier un besoin' : 'Ajouter un besoin' }}
+{% endblock %}
+
+{% block body %}
+
+<div class="max-w-3xl mx-auto mt-12 p-6 bg-darkGrey rounded-xl shadow-2xl border-2 border-neonBlue">
+    <h1 class="text-3xl font-extrabold text-neonBlue mb-6 text-center drop-shadow-lg">
+        {{ isEdit ? 'Modifier le besoin pour' : 'Ajouter un besoin pour' }}
+        {{ event.name }}
+    </h1>
+
+    {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+
+    {# Intitulé du besoin #}
+    <div>
+        {{ form_label(form.label, 'Intitulé du besoin', {
+            'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
+        }) }}
+        {{ form_widget(form.label, {
+            'attr': {
+                'class': 'input w-full text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'
+            }
+        }) }}
+        {{ form_errors(form.label) }}
+    </div>
+
+    {# Quantité #}
+    <div>
+        {{ form_label(form.quantity, 'Quantité', {
+            'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
+        }) }}
+        {{ form_widget(form.quantity, {
+            'attr': {
+                'class': 'input w-full text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'
+            }
+        }) }}
+        {{ form_errors(form.quantity) }}
+    </div>
+
+    <div class="flex justify-center gap-4">
+        <button type="submit" class="btn-primary">
+            {{ isEdit ? 'Mettre à jour le besoin' : 'Ajouter le besoin' }}
+        </button>
+        <a href="{{ path('event_needs', { id: event.id }) }}" class="btn-return">
+            Retour
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+</div>
+
+{% endblock %}

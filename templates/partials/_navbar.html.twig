@@ -1,0 +1,47 @@
+<nav class="bg-darkGrey border-b-2 border-neonBlue">
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+		<div
+			class="flex justify-between h-16 items-center">
+
+			<!-- Logo -->
+			<div class="flex items-center">
+				<a href="{{ path('app_login') }}" class="flex items-center space-x-2 group">
+					<img src="{{ asset('images/logo.webp') }}" alt="Lannify" class="h-20 w-auto transition group-hover:brightness-110"/>
+					<span class="text-neonBlue font-extrabold text-2xl tracking-wide transition group-hover:text-cyanShadow">
+						Lannify
+					</span>
+				</a>
+			</div>
+
+			<!-- Menu Desktop -->
+			<div class="hidden md:flex space-x-6 items-center">
+				<a href="{{ path('user_profile') }}" class="text-neonBlue hover:brightness-125 transition">
+					Profile
+				</a>
+				{% if app.user.profile.avatar is defined %}
+					<img class="w-10 h-10 object-cover rounded-full" src="{{ asset('uploads/events/' ~ app.user.profile.avatar.imageName) }}">
+				{% else %}
+					<img class="w-10 h-10 object-cover rounded-full" src="{{ asset('images/default-avatar.webp') }}">
+				{% endif %}
+				<span class="text-white font-medium">{{ app.user.email }}</span>
+				<a href="{{ path('app_logout') }}" class="text-neonRed hover:brightness-125 transition">
+					Déconnexion
+					<span>
+						<i class="bi bi-box-arrow-left"></i>
+					</span>
+				</a>
+			</div>
+
+			<!-- Burger Mobile -->
+			<div class="md:hidden flex items-center">
+				<button
+					type="button" class="text-neonBlue focus:outline-none focus:ring-2 focus:ring-neonBlue" aria-label="Menu">
+					<!-- Icône burger -->
+					<svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+					</svg>
+				</button>
+			</div>
+		</div>
+	</div>
+</nav>

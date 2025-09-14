@@ -1,0 +1,100 @@
+<?php
+
+namespace App\Twig\Components;
+
+use App\Entity\Event;
+use App\Repository\GameRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\ParticipantGameRepository;
+use Symfony\UX\LiveComponent\Attribute\LiveArg;
+use Symfony\UX\LiveComponent\Attribute\LiveProp;
+use Symfony\UX\LiveComponent\DefaultActionTrait;
+use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+#[AsLiveComponent]
+class GamePreferencesComponent extends AbstractController
+{
+    use DefaultActionTrait;
+
+    #[LiveProp(writable: true)]
+    public Event $event;
+
+    public array $participantGames = [];
+
+    public array $owningCounts = [];
+    public array $interestedCounts = [];
+    public array $readyCounts = [];
+
+    public function __construct(
+        private EntityManagerInterface $em,
+        private ParticipantGameRepository $pgRepo,
+        private GameRepository $gameRepository
+    ) {}
+
+    public function mount(Event $event): void
+    {
+        $this->event = $event;
+
+        foreach ($event->getGames() as $game) {
+            $pg = $this->pgRepo->findOneBy([
+                'participant' => $this->getUser(),
+                'game' => $game,
+            ]);
+
+            $this->participantGames[$game->getId()] = $pg;
+
+            $this->readyCounts[$game->getId()] = $this->gameRepository->countReadyGames($game->getId());
+        }
+    }
+
+    #[LiveAction]
+    public function toggleOwned(#[LiveArg] int $id, ParticipantGameRepository $pgRepo): void
+    {
+        $pg = $pgRepo->findOneBy([
+            'game' => $id,
+            'participant' => $this->getUser(),
+        ]);
+
+        $pg->setOwns(!$pg->getOwns());
+        $this->em->flush();
+
+        $this->refreshData();
+    }
+
+    #[LiveAction]
+    public function toggleInterested(#[LiveArg] int $id, ParticipantGameRepository $pgRepo): void
+    {
+        $pg = $pgRepo->findOneBy([
+            'game' => $id,
+            'participant' => $this->getUser(),
+        ]);
+
+        $pg->setInterested(!$pg->getInterested());
+        $this->em->flush();
+
+        $this->refreshData();
+    }
+
+    /**
+     * Recharge participantGames et les stats depuis la BDD
+     */
+    private function refreshData(): void
+{
+    $this->participantGames = [];
+    $this->readyCounts = [];
+
+    foreach ($this->event->getGames() as $game) {
+        $pg = $this->pgRepo->findOneBy([
+            'participant' => $this->getUser(),
+            'game' => $game,
+        ]);
+
+        $this->participantGames[$game->getId()] = $pg;
+
+        $this->readyCounts[$game->getId()] = $this->gameRepository->countReadyGames($game->getId());
+    }
+}
+
+}

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<title>
+			{% block title %}Bienvenue !
+			{% endblock %}
+		</title>
+
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.0/font/bootstrap-icons.css">
+
+		{% block stylesheets %}
+			{{ importmap('app') }}			
+			<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+		{% endblock %}
+
+		{% block javascripts %}
+			{% block importmap %}
+				{{ importmap('app') }}
+			{% endblock %}
+		{% endblock %}
+
+		<style>
+			/* Transition principale douce */
+			main {
+				opacity: 0;
+				transform: translateY(10px); /* très léger déplacement */
+				transition: opacity 0.5s ease, transform 0.5s ease;
+			}
+
+			main.fade-in {
+				opacity: 1;
+				transform: translateY(0);
+			}
+
+			main.fade-out {
+				opacity: 0;
+				transform: translateY(5px); /* léger vers le haut */
+			}
+		</style>
+	</head>
+
+	<body class="relative min-h-screen h-full overflow-x-hidden">
+		<audio id="click-sound">
+			<source src="{{ asset('audio/prout.mp3') }}" type="audio/mpeg">
+			Votre navigateur ne supporte pas l'audio.
+		</audio>
+
+		<div class="bg-aurora fixed inset-0 z-0"></div>
+
+		<div class="relative z-10 min-h-screen flex flex-col">
+
+			{% if app.user %}
+				<header class="sticky top-0 z-20 bg-darkGrey/90 backdrop-blur-sm py-4 px-6">
+					{% include 'partials/_navbar.html.twig' %}
+				</header>
+			{% endif %}
+
+			<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6" id="main-content">
+				{% include 'partials/_flashes.html.twig' %}
+				{% block body %}{% endblock %}
+			</main>
+
+			{% if app.user %}
+				{% include 'partials/_footer.html.twig' %}
+			{% endif %}
+		</div>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', () => {
+const main = document.getElementById('main-content');
+
+// Fade in au chargement
+main.classList.add('fade-in');
+
+// Interception des liens internes pour fade-out
+document.querySelectorAll('a[href]').forEach(link => {
+const href = link.getAttribute('href');
+
+if (! href.startsWith('/') && ! href.startsWith(window.location.origin)) 
+return;
+
+if (href.startsWith('#')) 
+return;
+ // laisse les ancres scroll smooth
+
+link.addEventListener('click', (e) => {
+e.preventDefault();
+main.classList.remove('fade-in');
+main.classList.add('fade-out');
+
+setTimeout(() => {
+window.location.href = href;
+}, 400); // correspond à la durée CSS
+});
+});
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+const clickSound = document.getElementById('click-sound');
+
+document.querySelectorAll('a, button').forEach(el => {
+el.addEventListener('click', () => { // Rejouer le son depuis le début
+clickSound.currentTime = 0;
+clickSound.play().catch(() => {
+console.log('Autoplay bloqué jusqu’à une interaction utilisateur');
+});
+});
+});
+});
+		</script>
+	</body>
+</html>

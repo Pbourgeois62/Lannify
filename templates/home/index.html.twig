@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil
+{% endblock %}
+
+{% block body %}
+	<div class="card mb-6 p-6 bg-darkGrey border border-neonBlue rounded-xl shadow-xl space-y-4">
+		<h1 class="text-white text-2xl font-bold">Bonjour
+			{% if app.user.profile.nickname is defined and app.user.profile.nickname %}
+				{{ app.user.profile.nickname }}
+			{% else %}
+				{{ app.user.email }}
+			{% endif %}
+		</h1>
+
+		<div class="flex flex-wrap gap-4">
+			<a href="{{ path('event_create') }}" class="btn-primary">
+				Organiser une LAN
+			</a>
+
+			<form action="{{ path('event_join') }}" method="get" class="flex items-center space-x-2 flex-1 min-w-[200px]">
+				<input type="text" name="code" placeholder="Entrez le code" class="input text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue flex-grow">
+				<button type="submit" class="btn-primary">
+					Rejoindre
+				</button>
+			</form>
+		</div>
+	</div>
+
+	<div class="">
+		<h2 class="text-neonBlue text-xl font-semibold mb-6">LANs auxquelles je suis inscrit :</h2>
+
+		{% if app.user.events is empty %}
+			<p class="text-gray-300">Aucun événement à venir pour le moment.</p>
+		{% else %}
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+				{% for event in app.user.events %}
+					<div class="bg-darkGrey border border-neonBlue rounded-xl overflow-hidden shadow-lg hover:shadow-neonBlue/50 transition-all duration-300 relative">
+						{% if event.coverImage and event.coverImage.imageName %}
+							<img src="{{ asset('uploads/events/' ~ event.coverImage.imageName) }}" alt="Cover {{ event.name }}" class="rounded-t-xl w-full h-60 object-cover shadow-inner">
+						{% else %}
+							<img src="{{ asset('images/default.webp') }}" alt="Default Cover" class="rounded-t-xl w-full h-60 object-cover shadow-inner">
+						{% endif %}
+
+						{# Boutons d’action visibles uniquement pour l’organisateur #}
+						{% if event.organizer and event.organizer.id == app.user.id %}
+							<div class="absolute top-2 right-2 flex space-x-2">
+								<a href="{{ path('event_edit', { id: event.id }) }}" class="btn-edit">
+									<i class="bi bi-pencil"></i>
+								</a>
+								<form method="post" action="{{ path('event_delete', { id: event.id }) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer cet événement ?');">
+									<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ event.id) }}">
+									<button type="submit" class="btn-delete">
+										<i class="bi bi-trash"></i>
+									</button>
+								</form>
+							</div>
+							<div class="absolute bottom-44 right-2">
+								<span class="badge-fun">Organisateur</span>
+							</div>
+						{% else %}
+							<div class="absolute bottom-44 right-2">
+								<span class="badge-fun2">Squatteur</span>
+							</div>
+						{% endif %}
+
+						<div class="p-4 space-y-2">
+							<h3 class="text-lg font-bold text-white">{{ event.name }}</h3>
+							<p class="text-sm text-gray-300">
+								Débute le
+								<span class="text-neonBlue">{{ event.startDate|date('d/m/Y H:i') }}</span><br>
+								Se termine le
+								<span class="text-neonBlue">{{ event.endDate|date('d/m/Y H:i') }}</span>
+							</p>
+							<a href="{{ path('event_countdown', {id: event.id}) }}" class="btn-primary mt-2 w-full block text-center">
+								Voir
+							</a>
+						</div>
+					</div>
+
+				{% endfor %}
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}

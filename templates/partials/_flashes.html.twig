@@ -1,0 +1,35 @@
+<div class="fixed left-1/2 transform -translate-x-1/2 z-50 w-full max-w-lg space-y-4">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="px-6 py-3 rounded-xl shadow-xl text-spaceBlack font-semibold text-lg border-2 border-neonYellow
+                        animate-flash whitespace-nowrap overflow-hidden
+                        {% if label == 'success' %}
+                            bg-vibrantGreen
+                        {% elseif label == 'warning' %}
+                            bg-sunsetOrange
+                        {% elseif label == 'error' %}
+                            bg-cyberPink
+                        {% elseif label == 'info' %}
+                            bg-cyanShadow
+                        {% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>
+
+<style>
+@keyframes flash {
+    0% { top: -50px; opacity: 0; transform: translateX(-50%); }
+    20% { top: 20vh; opacity: 1; transform: translateX(-50%); }
+    80% { top: 20vh; opacity: 1; transform: translateX(-50%); }
+    100% { top: 20vh; opacity: 0; transform: translateX(-50%); }
+}
+
+.animate-flash {
+    position: fixed;
+    left: 50%;
+    width: auto;
+    animation: flash 4s ease-in-out forwards;
+}
+</style>

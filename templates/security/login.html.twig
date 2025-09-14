@@ -1,0 +1,65 @@
+{# templates/security/login.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block body %}
+<div class="max-w-md mx-auto mt-12 p-6 bg-darkGrey rounded-lg shadow-2xl border-2 border-neonBlue">
+
+    {# Flash messages #}
+    {% if error %}
+        <div class="alert-warning border-l-4 border-sunsetOrange bg-sunsetOrange/20 text-sunsetOrange
+                    p-3 rounded mb-4 flex items-center animate-pulse">
+            <i class="bi bi-exclamation-triangle-fill mr-2"></i>
+            <span>{{ error.messageKey|trans(error.messageData, 'security') }}</span>
+        </div>
+    {% endif %}
+
+    {% if app.user %}
+        <div class="mb-3 text-white">
+            Connecté en tant que {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}" class="text-neonBlue hover:underline">Logout</a>
+        </div>
+    {% endif %}
+
+    <h1 class="text-3xl md:text-4xl font-extrabold text-neonBlue mb-8 text-center drop-shadow-lg">
+        Connexion
+    </h1>
+
+    <form method="post" class="space-y-6">
+
+        <div class="relative">
+            <label for="inputEmail" class="block text-sm font-medium text-neonBlue mb-1">Email</label>
+            <input type="email" value="{{ last_username }}" name="email" id="inputEmail" 
+                   class="input text-white w-full focus:ring-2 focus:ring-neonBlue focus:border-neonBlue" 
+                   autocomplete="email" required autofocus>
+        </div>
+
+        <div class="relative">
+            <label for="inputPassword" class="block text-sm font-medium text-neonBlue mb-1">Mot de passe</label>
+            <input type="password" name="password" id="inputPassword" 
+                   class="input text-white w-full focus:ring-2 focus:ring-neonBlue focus:border-neonBlue" 
+                   autocomplete="current-password" required>
+        </div>
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+        <div class="flex items-center space-x-2">
+            <input type="checkbox" name="_remember_me" id="remember_me" class="w-5 h-5 text-neonBlue bg-darkGrey border-2 border-electricPurple rounded cursor-pointer focus:ring-2 focus:ring-neonBlue">
+            <label for="remember_me" class="text-sm text-white cursor-pointer">Se souvenir de moi</label>
+        </div>
+
+        <button type="submit" class="btn-primary w-full text-center text-base hover:scale-105 transform shadow-xl transition-all duration-300">
+            Se connecter
+        </button>
+
+    </form>
+
+    <p class="text-xs text-gray-400 mt-4 text-center">
+        Pas encore de compte ? 
+        <a href="{{ path('app_register') }}" class="text-neonBlue hover:underline transition-colors">
+            S'inscrire
+        </a>
+    </p>
+
+</div>
+{% endblock %}

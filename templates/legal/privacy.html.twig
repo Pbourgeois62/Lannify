@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de confidentialité{% endblock %}
+
+{% block body %}
+<div class="max-w-4xl mx-auto mt-12 p-8 bg-darkGrey rounded-lg shadow-2xl border border-cyberPink leading-relaxed text-justify">
+    
+    <h1 class="text-3xl md:text-4xl font-extrabold text-cyberPink mb-6 text-center">
+        Politique de confidentialité
+    </h1>
+
+    <p class="mb-6 text-gray-300 text-sm text-center italic">
+        Dernière mise à jour : 6 septembre 2025
+    </p>
+
+    <section class="mb-8">
+        <h2 class="text-2xl font-bold text-neonBlue mb-4">1. Introduction</h2>
+        <p class="text-gray-200">
+            La présente politique de confidentialité explique comment <span class="font-semibold">Lannify</span> 
+            collecte, utilise et protège vos données personnelles lorsque vous utilisez notre service.
+        </p>
+    </section>
+
+    <section class="mb-8">
+        <h2 class="text-2xl font-bold text-neonBlue mb-4">2. Données collectées</h2>
+        <ul class="list-disc pl-6 space-y-2 text-gray-200">
+            <li>Adresse email pour l’inscription et la connexion</li>
+            <li>Nom d’utilisateur ou pseudonyme</li>
+            <li>Données techniques (adresse IP, type de navigateur, logs)</li>
+        </ul>
+    </section>
+
+    <section class="mb-8">
+        <h2 class="text-2xl font-bold text-neonBlue mb-4">3. Utilisation des données</h2>
+        <p class="text-gray-200">
+            Vos données sont utilisées pour :
+        </p>
+        <ul class="list-disc pl-6 space-y-2 text-gray-200">
+            <li>Vous permettre de créer et gérer un compte utilisateur</li>
+            <li>Assurer la sécurité et le bon fonctionnement du service</li>
+            <li>Communiquer avec vous en cas de besoin</li>
+        </ul>
+    </section>
+
+    <section class="mb-8">
+        <h2 class="text-2xl font-bold text-neonBlue mb-4">4. Partage des données</h2>
+        <p class="text-gray-200">
+            Nous ne partageons pas vos données personnelles avec des tiers, sauf en cas d’obligation légale.
+        </p>
+    </section>
+
+    <section class="mb-8">
+        <h2 class="text-2xl font-bold text-neonBlue mb-4">5. Sécurité</h2>
+        <p class="text-gray-200">
+            Nous mettons en place des mesures techniques et organisationnelles afin de protéger vos données
+            contre tout accès non autorisé, perte ou divulgation.
+        </p>
+    </section>
+
+    <section class="mb-8">
+        <h2 class="text-2xl font-bold text-neonBlue mb-4">6. Vos droits</h2>
+        <p class="text-gray-200">
+            Conformément à la législation en vigueur, vous disposez des droits suivants :
+        </p>
+        <ul class="list-disc pl-6 space-y-2 text-gray-200">
+            <li>Droit d’accès à vos données</li>
+            <li>Droit de rectification ou suppression</li>
+            <li>Droit de limiter ou d’opposer leur traitement</li>
+        </ul>
+    </section>
+
+    <section class="mb-8">
+        <h2 class="text-2xl font-bold text-neonBlue mb-4">7. Contact</h2>
+        <p class="text-gray-200">
+            Pour toute question relative à vos données, contactez-nous à :
+            <a href="mailto:support@lannify.com" class="text-cyberPink hover:underline">support@lannify.com</a>.
+        </p>
+    </section>
+    {% if app.user is not defined %}
+    <div class="text-center mt-10">
+        <a href="{{ path('app_register') }}" class="btn-primary px-6 py-3 hover:scale-105 transform transition">
+            Retour à l’enregistrement
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

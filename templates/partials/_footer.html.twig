@@ -1,0 +1,15 @@
+<footer class="bg-darkGrey border-t border-neonBlue text-white mt-12">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0">
+        <p class="text-sm text-gray-300">&copy; {{ "now"|date("Y") }} Lannify. Tous droits réservés.</p>
+        <div class="flex flex-col sm:flex-row gap-2 sm:gap-4">
+            <a href="{{ path('legal_conditions') }}" 
+               class="text-xs text-neonBlue hover:text-cyanShadow underline transition-colors">
+                Conditions d’utilisation
+            </a>
+            <a href="{{ path('legal_privacy') }}" 
+               class="text-xs text-neonBlue hover:text-cyanShadow underline transition-colors">
+                Politique de confidentialité
+            </a>
+        </div>
+    </div>
+</footer>

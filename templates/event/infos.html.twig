@@ -1,0 +1,42 @@
+{% extends 'event/partials/_section_base.html.twig' %}
+
+{% block title %}{{ event.name }}{% endblock %}
+
+{% block section_content %}
+
+
+	<h1 class="text-3xl font-extrabold text-neonBlue mb-12 text-center drop-shadow-lg">{{ event.name }}</h1>
+
+	<div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-white">
+		<div class="space-y-4 bg-darkGrey/50 p-6 rounded-xl border border-cyanShadow shadow-md">
+			<p>
+				<strong>Date de début :</strong>
+				{{ event.startDate|date('d/m/Y H:i') }}</p>
+			<p>
+				<strong>Date de fin :</strong>
+				{{ event.endDate|date('d/m/Y H:i') }}</p>
+			{% if event.organizer %}
+				<p>
+					<strong>Organisateur :</strong>
+					{{ event.organizer.profile.nickname ?? event.organizer.email }}</p>
+			{% endif %}
+			{% if event.code %}
+				<p>
+					<strong>Code LAN :</strong>
+					<span class="text-cyanShadow font-mono">{{ event.code }}</span>
+				</p>
+			{% endif %}
+		</div>
+
+		{% if event.address %}
+			<div class="bg-darkGrey/50 p-6 rounded-xl border border-electricPurple shadow-md">
+				<h2 class="text-neonBlue font-semibold mb-2">Adresse</h2>
+				<p>{{ event.address.street }}</p>
+				<p>{{ event.address.postalCode }}
+					{{ event.address.city }}</p>
+				<p>{{ event.address.country }}</p>
+			</div>
+		{% endif %}
+	</div>
+
+{% endblock %}

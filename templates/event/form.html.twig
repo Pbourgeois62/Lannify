@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Création d'une LAN{% endblock %}
+
+{% block body %}
+<div class="max-w-lg mx-auto mt-12 p-6 bg-darkGrey rounded-xl shadow-2xl border-2 border-neonBlue">
+
+    <h1 class="text-3xl font-extrabold text-neonBlue mb-6 text-center drop-shadow-lg">
+        Créer une nouvelle LAN
+    </h1>
+
+    {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+
+        {# Nom de l'événement #}
+        <div class="relative">
+            {{ form_row(form.name, {
+                'attr': {
+                    'class': 'input text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'
+                },
+                'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
+            }) }}
+        </div>
+
+        {# Date de début #}
+        <div class="relative">
+            {{ form_row(form.startDate, {
+                'attr': {
+                    'class': 'input text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'
+                },
+                'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
+            }) }}
+        </div>
+
+        {# Date de fin #}
+        <div class="relative">
+            {{ form_row(form.endDate, {
+                'attr': {
+                    'class': 'input text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'
+                },
+                'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
+            }) }}
+        </div>
+
+        {# Adresse (Street, City, Postal Code, Country) #}
+        <h2 class="text-neonBlue font-semibold mb-3">Adresse de l'événement</h2>
+        <div class="grid grid-cols-1 gap-4">
+            {{ form_row(form.address.street, {
+                'attr': {
+                    'class': 'input text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'
+                },
+                'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
+            }) }}
+
+            {{ form_row(form.address.city, {
+                'attr': {
+                    'class': 'input text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'
+                },
+                'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
+            }) }}
+
+            {{ form_row(form.address.postalCode, {
+                'attr': {
+                    'class': 'input text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'
+                },
+                'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
+            }) }}
+
+            {{ form_row(form.address.country, {
+                'attr': {
+                    'class': 'input text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'
+                },
+                'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
+            }) }}
+        </div>
+
+        {# Image représentative #}
+        <h2 class="text-neonBlue font-semibold mb-3">Image représentative</h2>
+        <div class="relative">
+            {{ form_row(form.coverImage.imageFile, {
+                'attr': {
+                    'class': 'block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4
+                              file:rounded-md file:border-0
+                              file:text-sm file:font-semibold
+                              file:bg-neonBlue file:text-black
+                              hover:file:bg-cyanShadow'
+                },
+                'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
+            }) }}
+        </div>
+
+        {# Bouton submit #}
+        <button type="submit" 
+                class="btn-primary w-full text-center text-lg hover:scale-105 transform shadow-xl transition-all duration-300">
+            Créer l'événement
+        </button>
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}

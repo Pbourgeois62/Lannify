@@ -1,0 +1,30 @@
+{% extends 'event/partials/_section_base.html.twig' %}
+
+{% block title %}
+	{{ event.name }}
+{% endblock %}
+
+{% block section_content %}
+
+	<div class="flex items-center justify-center gap-4 px-4 mb-12">
+		<h2 class="text-3xl font-bold text-neonBlue">Akoikonjoue</h2>
+		<a href="{{ path('game_add', { id: event.id }) }}" class="btn-primary px-3 py-1 text-base hover:scale-105 transform shadow-xl transition-all duration-300">
+			➕
+		</a>
+	</div>
+
+	{% if event.games is not empty %}
+	{{ component('GamePreferencesComponent', {
+        event: event,		 
+    }) }}		
+	{% else %}
+		<p class="text-gray-400 italic text-center">Aucun jeu proposé pour le moment.</p>
+	{% endif %}
+
+	<div class="flex justify-center mt-12">
+		<a href="{{ path('game_add', {id: event.id}) }}" class="btn-primary px-3 py-1 text-base hover:scale-105 transform shadow-xl transition-all duration-300">
+			➕ Ajouter un jeu
+		</a>
+	</div>
+
+{% endblock %}

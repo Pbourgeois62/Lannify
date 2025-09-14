@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un jeu - {{ event.name }}{% endblock %}
+
+{% block body %}
+<div class="max-w-3xl mx-auto mt-24 px-4">
+
+    {# Titre #}
+    <h2 class="text-3xl font-bold text-neonBlue mb-6 text-center">➕ Ajouter un jeu pour {{ event.name }}</h2>
+
+    {# Formulaire dans un card glassmorphism #}
+    <div class="bg-darkGrey/80 border border-neonBlue rounded-3xl shadow-xl p-6 md:p-8 space-y-4 backdrop-blur-md">
+        {{ form_start(form, {attr: {class: 'space-y-4'}}) }}
+
+        <div>
+            {{ form_label(form.label, 'Nom du jeu', { label_attr: { class: 'text-neonBlue font-semibold' } }) }}
+            {{ form_widget(form.label, { attr: { class: 'input w-full' } }) }}
+            {{ form_errors(form.label) }}
+        </div>
+
+        <div>
+            {{ form_label(form.source, 'Source / plateforme', { label_attr: { class: 'text-neonBlue font-semibold' } }) }}
+            {{ form_widget(form.source, { attr: { class: 'input w-full' } }) }}
+            {{ form_errors(form.source) }}
+        </div>
+
+        <div class="flex items-center gap-2">
+            {{ form_widget(form.free) }}
+            {{ form_label(form.free, 'Gratuit ?', { label_attr: { class: 'text-neonBlue font-medium' } }) }}
+            {{ form_errors(form.free) }}
+        </div>
+
+        <div class="flex justify-center mt-4">
+            <button type="submit" class="btn-primary">
+                Ajouter
+            </button>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+
+    {# Retour à la section jeux #}
+    <div class="flex justify-center mt-6">
+        <a href="{{ path('event_games', {id: event.id, _fragment: 'games'}) }}" class="btn-secondary px-4 py-2 hover:scale-105 transform transition-all duration-300">
+            ← Retour aux jeux
+        </a>
+    </div>
+
+</div>
+{% endblock %}

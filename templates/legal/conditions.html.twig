@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conditions d’utilisation{% endblock %}
+
+{% block body %}
+<div class="max-w-4xl mx-auto mt-12 p-8 bg-darkGrey rounded-lg shadow-2xl border border-neonBlue leading-relaxed text-justify">
+    
+    <h1 class="text-3xl md:text-4xl font-extrabold text-neonBlue mb-6 text-center">
+        Conditions d’utilisation
+    </h1>
+
+    <p class="mb-6 text-gray-300 text-sm text-center italic">
+        Dernière mise à jour : 6 septembre 2025
+    </p>
+
+    <section class="mb-8">
+        <h2 class="text-2xl font-bold text-electricPurple mb-4">1. Introduction</h2>
+        <p class="text-gray-200">
+            Bienvenue sur <span class="font-semibold">Lannify</span>. 
+            En utilisant ce site, vous acceptez les présentes conditions d’utilisation. 
+            Veuillez les lire attentivement avant de continuer.
+        </p>
+    </section>
+
+    <section class="mb-8">
+        <h2 class="text-2xl font-bold text-electricPurple mb-4">2. Accès au service</h2>
+        <p class="text-gray-200">
+            L’accès au site est gratuit, mais nécessite une connexion internet. 
+            Vous êtes responsable de votre matériel et de votre connexion pour accéder au service.
+        </p>
+    </section>
+
+    <section class="mb-8">
+        <h2 class="text-2xl font-bold text-electricPurple mb-4">3. Utilisation responsable</h2>
+        <ul class="list-disc pl-6 space-y-2 text-gray-200">
+            <li>Ne pas utiliser le site à des fins illégales.</li>
+            <li>Respecter les autres utilisateurs.</li>
+            <li>Ne pas tenter de compromettre la sécurité du site.</li>
+        </ul>
+    </section>
+
+    <section class="mb-8">
+        <h2 class="text-2xl font-bold text-electricPurple mb-4">4. Données personnelles</h2>
+        <p class="text-gray-200">
+            Les données collectées sont utilisées uniquement pour assurer le bon fonctionnement du service. 
+            Pour plus de détails, consultez notre <a href="{{ path('legal_privacy') }}" class="text-neonBlue hover:underline">Politique de confidentialité</a>.
+        </p>
+    </section>
+
+    <section class="mb-8">
+        <h2 class="text-2xl font-bold text-electricPurple mb-4">5. Modifications</h2>
+        <p class="text-gray-200">
+            Nous pouvons modifier ces conditions à tout moment. 
+            Vous serez informé des changements importants via le site.
+        </p>
+    </section>
+    {% if app.user is not defined %}
+    <div class="text-center mt-10">
+        <a href="{{ path('app_register') }}" class="btn-primary px-6 py-3 hover:scale-105 transform transition">
+            Retour à l’enregistrement
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

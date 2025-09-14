@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register
+{% endblock %}
+
+{% block body %}
+	<div
+		class="max-w-md mx-auto mt-12 p-6 bg-darkGrey rounded-lg shadow-2xl border-2 border-neonBlue">
+
+		{# Flash messages stylés #}
+		{% for flash_error in app.flashes('verify_email_error') %}
+			<div class="border-l-4 border-sunsetOrange bg-sunsetOrange/20 text-sunsetOrange
+										                    p-3 rounded mb-4 flex items-center animate-pulse">
+				<i class="bi bi-exclamation-triangle-fill mr-2"></i>
+				<span class="font-semibold">{{ flash_error }}</span>
+			</div>
+		{% endfor %}
+
+		<h1 class="text-3xl md:text-4xl font-extrabold text-neonBlue mb-8 text-center drop-shadow-lg">
+			Enregistrement
+		</h1>
+
+		{{ form_start(registrationForm, {'attr': {'class': 'space-y-6'}}) }}
+
+		{# Email avec badge validation #}
+		<div class="relative">
+			{{ form_row(registrationForm.email, {
+                'attr': {
+                    'class': 'input placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'
+                },
+                label_attr: {
+                    class: 'block text-sm font-medium text-neonBlue mb-1'
+                },
+            }) }}
+			<p class="text-xs mt-1 text-gray-400">Votre email ne sera pas partagé</p>
+		</div>
+
+		{# Password avec tooltip #}
+		<div class="relative">
+			{{ form_row(registrationForm.plainPassword, {
+                label: 'Mot de passe',
+                label_attr: {
+                    class: 'block text-sm font-medium text-neonBlue mb-1'
+                },
+                attr: {
+                    class: 'input text-white focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'
+                },
+                help: 'Utiliser au moins 8 caractères dont une majuscule, une minuscule et un chiffre.',
+                help_attr: {
+                    class: 'text-xs text-gray-400 mt-1'
+                }
+            }) }}
+		</div>
+		{# Terms checkbox + lien conditions #}
+		<div class="flex flex-col space-y-2">
+			<div class="flex items-center space-x-3">
+				{{ form_widget(registrationForm.agreeTerms, {
+            'attr': {
+                'class': 'w-5 h-5 text-neonBlue bg-darkGrey border-2 border-electricPurple rounded cursor-pointer focus:ring-2 focus:ring-neonBlue'
+            }
+        }) }}
+				{{ form_label(registrationForm.agreeTerms, "J'accepte les conditions d'utilisation", {
+            'label_attr': {
+                'class': 'text-sm text-white cursor-pointer'
+            }
+        }) }}
+			</div>
+			<a href="{{ path('legal_conditions') }}" class="text-xs text-gray-400 hover:text-neonBlue transition-colors underline underline-offset-2">
+				Lire les conditions d’utilisation
+			</a>
+		</div>
+
+
+		{# Submit button dynamique #}
+		<button type="submit" class="btn-primary w-full text-center text-base hover:scale-105 transform shadow-xl transition-all duration-300">
+			S'inscrire
+		</button>
+
+		<p class="text-xs text-gray-400 mt-4 text-center">
+			Déjà Enregistré ?
+			<a href="{{ path('app_login') }}" class="text-neonBlue hover:underline transition-colors">
+				Se connecter
+			</a>
+		</p>
+
+		{{ form_end(registrationForm) }}
+	</div>
+{% endblock %}

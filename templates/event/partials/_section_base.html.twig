@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div class="sticky top-0 z-50 flex justify-center gap-4 p-4 mb-12">
+		<a href="{{ path('event_countdown', { id: event.id }) }}" class="btn-secondary px-4 py-2">Décompte</a>
+		<a href="{{ path('event_infos', { id: event.id }) }}" class="btn-secondary px-4 py-2">Infos générales</a>
+		<a href="{{ path('event_participants', { id: event.id }) }}" class="btn-secondary px-4 py-2">Participants</a>
+		<a href="{{ path('event_needs', { id: event.id }) }}" class="btn-secondary px-4 py-2">Besoins</a>
+		<a href="{{ path('event_games', { id: event.id }) }}" class="btn-secondary px-4 py-2">Akoikonjoue</a>
+	</div>
+
+	{# <audio id="bg-music" loop>
+		<source src="{{ asset('audio/prout_song.mp3') }}" type="audio/mpeg">
+		Votre navigateur ne supporte pas l'audio.
+	</audio> #}
+
+	<button id="music-toggle" class="fixed top-24 right-8 bg-neonBlue text-darkGrey p-3 rounded-full shadow-lg hover:scale-110 transition-transform duration-300 z-50" title="Activer / désactiver la musique">
+		🔊
+	</button>
+
+	<script>
+		const music = document.getElementById('bg-music');
+const toggle = document.getElementById('music-toggle');
+
+music.play().catch(() => {
+console.log('Autoplay bloqué, attente d’une interaction utilisateur.');
+});
+
+toggle.addEventListener('click', () => {
+if (music.paused) {
+music.play();
+toggle.textContent = '🔊';
+} else {
+music.pause();
+toggle.textContent = '🔇';
+}
+});
+
+window.addEventListener('click', () => {
+if (music.paused) {
+music.play().catch(() => {});
+}
+}, {once: true});
+	</script>
+
+	{% block section_content %}{% endblock %}
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'event/partials/_section_base.html.twig' %}
+
+{% block title %}{{ event.name }}{% endblock %}
+
+{% block section_content %}
+
+<h2 class="text-3xl font-bold text-neonBlue mb-12 text-center">👥 Participants</h2>
+
+
+
+{% if event.users is not empty %}
+    <div class="grid grid-cols-4 gap-6">
+        {% for user in event.users %}
+            <div class="p-4 rounded-xl transition-all duration-300 flex flex-col items-center text-center hover:scale-105 hover:shadow-neonBlue">
+                {% if user.profile and user.profile.avatar %}
+                    <img src="{{ asset('uploads/events/' ~ user.profile.avatar.imageName) }}" 
+                         alt="Avatar {{ user.profile.nickname ?? user.email }}" 
+                         class="w-full aspect-square rounded-full object-cover mb-2">
+                {% else %}
+                    <img src="{{ asset('images/default-avatar.webp') }}" 
+                         alt="Avatar par défaut" 
+                         class="w-full aspect-square rounded-full object-cover mb-2">
+                {% endif %}
+                <span class="text-neonBlue font-semibold">{{ user.profile.nickname ?? 'Anonyme' }}</span>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="text-gray-400 italic text-center">Aucun participant pour le moment.</p>
+{% endif %}
+{% endblock %}
