@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use ImageType;
 use App\Entity\Profile;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
