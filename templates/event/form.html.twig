@@ -5,8 +5,8 @@
 {% block body %}
 <div class="max-w-lg mx-auto mt-12 p-6 bg-darkGrey rounded-xl shadow-2xl border-2 border-neonBlue">
 
-    <h1 class="text-3xl font-extrabold text-neonBlue mb-6 text-center drop-shadow-lg">
-        Créer une nouvelle LAN
+   <h1 class="text-3xl font-extrabold text-neonBlue mb-6 text-center drop-shadow-lg">
+        {{ isEdit ? 'Modifier la LAN' : 'Créer une nouvelle LAN' }}
     </h1>
 
     {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
@@ -91,7 +91,7 @@
         {# Bouton submit #}
         <button type="submit" 
                 class="btn-primary w-full text-center text-lg hover:scale-105 transform shadow-xl transition-all duration-300">
-            Créer l'événement
+            {{ isEdit ? 'Mettre à jour l’événement' : 'Créer l’événement' }}
         </button>
 
     {{ form_end(form) }}

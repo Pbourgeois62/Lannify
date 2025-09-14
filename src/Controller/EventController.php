@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Game;
 use App\Entity\User;
 use App\Entity\Event;
 use App\Entity\Image;
@@ -10,9 +9,7 @@ use App\Form\EventType;
 use App\Service\CodeGenerator;
 use App\Entity\ParticipantGame;
 use App\Entity\NeedContribution;
-use App\Form\ParticipantGameType;
 use App\Form\NeedContributionType;
-use App\Repository\GameRepository;
 use App\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ParticipantGameRepository;
@@ -65,6 +62,7 @@ final class EventController extends AbstractController
 
         return $this->render('event/form.html.twig', [
             'form' => $form->createView(),
+            'isEdit' => false,
         ]);
     }
 
@@ -171,27 +169,31 @@ final class EventController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'event_edit')]
-    public function edit(Request $request, Event $event, EntityManagerInterface $em): Response
+    public function edit(Event $event, Request $request, EntityManagerInterface $em): Response
     {
-        if ($event->getOrganizer() !== $this->getUser()) {
-            throw $this->createAccessDeniedException("Vous n'êtes pas l'organisateur de cet événement.");
-        }
-
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $coverImage = $event->getCoverImage();
+            if ($coverImage) {
+                $coverImage->setEvent($event);
+            }
+
+            $em->persist($event);
             $em->flush();
-            $this->addFlash('success', 'Événement modifié avec succès !');
+
+            $this->addFlash('success', 'Événement mis à jour avec succès !');
 
             return $this->redirectToRoute('event_infos', ['id' => $event->getId()]);
         }
 
         return $this->render('event/form.html.twig', [
             'form' => $form->createView(),
-            'event' => $event,
+            'isEdit' => true,
         ]);
     }
+
 
     #[Route('/{id}/delete', name: 'event_delete', methods: ['POST'])]
     public function delete(Request $request, Event $event, EntityManagerInterface $em): Response

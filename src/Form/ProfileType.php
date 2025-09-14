@@ -19,9 +19,8 @@ class ProfileType extends AbstractType
                 'required' => true,
             ])
             ->add('avatar', ImageType::class, [
-                'label' => 'Avatar',
-                'required' => false,
-                'attr' => ['accept' => 'image/*'],
+                'label' => false,
+                'required' => false,                               
             ])
         ;
     }

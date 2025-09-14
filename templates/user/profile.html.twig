@@ -1,62 +1,70 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon profil{% endblock %}
+{% block title %}Mon profil
+{% endblock %}
 
 {% block body %}
-<div class="max-w-md mx-auto mt-12 p-6 bg-darkGrey rounded-xl shadow-2xl border-2 border-neonBlue">
-    
-    <h1 class="text-3xl font-extrabold text-neonBlue mb-6 text-center drop-shadow-lg">
-        Modifier mon profil
-    </h1>
+	<div class="max-w-md mx-auto mt-12 p-6 bg-darkGrey rounded-xl shadow-2xl border-2 border-neonBlue">
 
-    {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+		<h1 class="text-3xl font-extrabold text-neonBlue mb-6 text-center drop-shadow-lg">
+			Modifier mon profil
+		</h1>
 
-        {# Pseudo #}
-        <div class="relative">
-            {{ form_row(form.nickname, {
+		{{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+
+		{# Pseudo #}
+		<div class="relative">
+			{{ form_row(form.nickname, {
                 'attr': {
                     'class': 'input text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'
                 },
                 'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
             }) }}
-        </div>
+		</div>
 
-        {# Avatar #}
-        <div class="relative">
-            {{ form_label(form.avatar, 'Avatar', {'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}}) }}
+		{# Avatar #}
+		<div class="relative">
+			{{ form_label(form.avatar, 'Avatar', {'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}}) }}
 
-            {# Si un avatar existe déjà, l'afficher #}
-            {% if form.vars.data and form.vars.data.avatar and form.vars.data.avatar.imageName %}
-                <div class="mb-3">
-                    <img src="{{ asset('uploads/events/' ~ form.vars.data.avatar.imageName) }}"
-                         alt="Avatar actuel"
-                         class="w-24 h-24 rounded-full border-2 border-neonBlue shadow-lg object-cover mx-auto">
-                </div>
-            {% endif %}
+			{# Avatar actuel #}
+			{% if form.vars.data and form.vars.data.avatar and form.vars.data.avatar.imageName %}
+				<div class="mb-3">
+					<img src="{{ asset('uploads/events/' ~ form.vars.data.avatar.imageName) }}" alt="Avatar actuel" class="w-24 h-24 rounded-full border-2 border-neonBlue shadow-lg object-cover mx-auto">
+				</div>
+			{% endif %}
 
-            {{ form_widget(form.avatar, {
-                'attr': {
-                    'class': 'input-file text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'
-                }
-            }) }}
+			{# Upload stylisé du sous-champ imageFile #}
+			<div class="relative">
+				{{ form_widget(form.avatar.imageFile, {
+            'attr': {
+                'class': 'block w-full text-sm text-white file:mr-4 file:py-2 file:px-4
+                          file:rounded-md file:border-0
+                          file:text-sm file:font-semibold
+                          file:bg-neonBlue file:text-black
+                          hover:file:bg-cyanShadow'
+            },
+            'label_attr': {'class': 'sr-only'}
+        }) }}
+			</div>
 
-            {% if form.avatar.vars.errors|length %}
-                <p class="text-cyberPink text-sm mt-1">
-                    {{ form.avatar.vars.errors[0].message }}
-                </p>
-            {% else %}
-                <p class="text-gray-400 text-xs mt-1">
-                    Taille max 2MB. Formats : jpg, png, webp, gif.
-                </p>
-            {% endif %}
-        </div>
+			{# Message d'erreur ou aide #}
+			{% if form.avatar.vars.errors|length %}
+				<p class="text-cyberPink text-sm mt-1">
+					{{ form.avatar.vars.errors[0].message }}
+				</p>
+			{% else %}
+				<p class="text-gray-400 text-xs mt-1">
+					Taille max 2MB. Formats : jpg, png, webp, gif.
+				</p>
+			{% endif %}
+		</div>
 
-        {# Bouton submit #}
-        <button type="submit" 
-                class="btn-primary w-full text-center text-lg hover:scale-105 transform shadow-xl transition-all duration-300">
-            Sauvegarder
-        </button>
 
-    {{ form_end(form) }}
-</div>
+		{# Bouton submit #}
+		<button type="submit" class="btn-primary w-full">
+			Sauvegarder
+		</button>
+
+		{{ form_end(form) }}
+	</div>
 {% endblock %}

@@ -3,7 +3,6 @@
 namespace App\Form;
 
 use ImageType;
-use AddressType;
 use App\Entity\Event;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
