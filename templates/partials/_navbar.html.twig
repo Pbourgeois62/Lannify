@@ -24,11 +24,9 @@
 					<img class="w-10 h-10 object-cover rounded-full" src="{{ asset('images/default-avatar.webp') }}">
 				{% endif %}
 				<span class="text-white font-medium">{{ app.user.email }}</span>
-				<a href="{{ path('app_logout') }}" class="text-neonRed hover:brightness-125 transition">
+				<a href="{{ path('app_logout') }}" class="text-neonRed hover:brightness-125 transition px-2 flex items-center gap-2">
 					Déconnexion
-					<span>
-						<i class="bi bi-box-arrow-left"></i>
-					</span>
+					<i class="bi bi-box-arrow-left"></i>
 				</a>
 			</div>
 
