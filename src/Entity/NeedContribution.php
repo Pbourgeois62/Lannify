@@ -20,7 +20,7 @@ class NeedContribution
     #[ORM\JoinColumn(nullable: false)]
     private ?Need $need = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'needContributions')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
