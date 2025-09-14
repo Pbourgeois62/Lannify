@@ -59,7 +59,7 @@ services:
 
   mailpit-Lannify:
     image: axllent/mailpit
-    container_name: mailpit
+    container_name: mailpit-Lannify
     restart: unless-stopped
     ports:
       - "1025:1025"  
