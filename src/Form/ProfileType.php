@@ -8,6 +8,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Validator\Constraints\Length;
 
 class ProfileType extends AbstractType
 {
@@ -16,13 +17,18 @@ class ProfileType extends AbstractType
         $builder
             ->add('nickname', TextType::class, [
                 'label' => 'Ton pseudo',
-                'required' => true,
+                'required' => false,
+                'constraints' => [
+                    new Length([
+                        'max' => 20,
+                        'maxMessage' => 'Ton pseudo ne peut pas dépasser {{ limit }} caractères.',
+                    ]),
+                ],
             ])
             ->add('avatar', ImageType::class, [
                 'label' => false,
-                'required' => false,                               
-            ])
-        ;
+                'required' => false,
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

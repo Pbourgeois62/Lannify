@@ -18,7 +18,8 @@ class Image
     #[Vich\UploadableField(mapping: 'events_covers', fileNameProperty: 'imageName', size: 'imageSize')]
     private ?File $imageFile = null;
 
-    #[ORM\OneToOne(inversedBy: 'avatar', cascade: ['persist', 'remove'])]
+     #[ORM\OneToOne(inversedBy: 'avatar', targetEntity: Profile::class)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Profile $profile = null;
 
     #[ORM\Column(nullable: true)]
@@ -41,23 +42,12 @@ class Image
     {
         $this->createdAt = new \DateTimeImmutable();
     }
-
-    /**
-     * If manually uploading a file (i.e. not using Symfony Form) ensure an instance
-     * of 'UploadedFile' is injected into this setter to trigger the update. If this
-     * bundle's configuration parameter 'inject_on_load' is set to 'true' this setter
-     * must be able to accept an instance of 'File' as the bundle will inject one here
-     * during Doctrine hydration.
-     *
-     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile|null $imageFile
-     */
+    
     public function setImageFile(?File $imageFile = null): void
     {
         $this->imageFile = $imageFile;
 
-        if (null !== $imageFile) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
+        if (null !== $imageFile) {          
             $this->updatedAt = new \DateTimeImmutable();
         }
     }
@@ -124,20 +114,9 @@ class Image
         return $this->profile;
     }
 
-    public function setProfile(?Profile $profile): static
+    public function setProfile(?Profile $profile): self
     {
-        // unset the owning side of the relation if necessary
-        if ($profile === null && $this->profile !== null) {
-            $this->profile->setAvatar(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($profile !== null && $profile->getAvatar() !== $this) {
-            $profile->setAvatar($this);
-        }
-
         $this->profile = $profile;
-
         return $this;
     }    
 }

@@ -21,8 +21,7 @@ class Profile
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $nickname = null;
 
-    #[ORM\OneToOne(targetEntity: Image::class, cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\OneToOne(targetEntity: Image::class, mappedBy: 'profile', cascade: ['persist', 'remove'])]
     private ?Image $avatar = null;
 
     public function getId(): ?int
@@ -57,9 +56,14 @@ class Profile
         return $this->avatar;
     }
 
-    public function setAvatar(?Image $avatar): static
+    public function setAvatar(?Image $avatar): self
     {
         $this->avatar = $avatar;
+
+        if ($avatar && $avatar->getProfile() !== $this) {
+            $avatar->setProfile($this);
+        }
+
         return $this;
     }
 }

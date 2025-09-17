@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\EventRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\EventRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 class Event
@@ -43,7 +43,7 @@ class Event
      * @var Collection<int, Need>
      */
     #[ORM\OneToMany(mappedBy: 'event', targetEntity: Need::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    private Collection $needs;    
+    private Collection $needs;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -63,8 +63,9 @@ class Event
     public function __construct()
     {
         $this->users = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable();
         $this->games = new ArrayCollection();
+        $this->needs = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -80,7 +81,6 @@ class Event
     public function setStartDate(\DateTimeImmutable $startDate): static
     {
         $this->startDate = $startDate;
-
         return $this;
     }
 
@@ -92,13 +92,9 @@ class Event
     public function setEndDate(\DateTimeImmutable $endDate): static
     {
         $this->endDate = $endDate;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
     public function getUsers(): Collection
     {
         return $this->users;
@@ -109,14 +105,12 @@ class Event
         if (!$this->users->contains($user)) {
             $this->users->add($user);
         }
-
         return $this;
     }
 
     public function removeUser(User $user): static
     {
         $this->users->removeElement($user);
-
         return $this;
     }
 
@@ -128,7 +122,6 @@ class Event
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
@@ -151,7 +144,6 @@ class Event
     public function setCode(string $code): static
     {
         $this->code = $code;
-
         return $this;
     }
 
@@ -163,11 +155,9 @@ class Event
     public function setAddress(?Address $address): self
     {
         $this->address = $address;
-
         if ($address && $address->getEvent() !== $this) {
             $address->setEvent($this);
         }
-
         return $this;
     }
 
@@ -179,7 +169,6 @@ class Event
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -191,13 +180,9 @@ class Event
     public function setCoverImage(?Image $coverImage): static
     {
         $this->coverImage = $coverImage;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Need>
-     */
     public function getNeeds(): Collection
     {
         return $this->needs;
@@ -209,25 +194,19 @@ class Event
             $this->needs->add($need);
             $need->setEvent($this);
         }
-
         return $this;
     }
 
     public function removeNeed(Need $need): static
     {
         if ($this->needs->removeElement($need)) {
-            // set the owning side to null (unless already changed)
             if ($need->getEvent() === $this) {
                 $need->setEvent(null);
             }
         }
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Game>
-     */
     public function getGames(): Collection
     {
         return $this->games;
@@ -239,19 +218,16 @@ class Event
             $this->games->add($game);
             $game->setEvent($this);
         }
-
         return $this;
     }
 
     public function removeGame(Game $game): static
     {
         if ($this->games->removeElement($game)) {
-            // set the owning side to null (unless already changed)
             if ($game->getEvent() === $this) {
                 $game->setEvent(null);
             }
         }
-
         return $this;
     }
 }
