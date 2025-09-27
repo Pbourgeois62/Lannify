@@ -16,10 +16,10 @@ class Event
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeImmutable $startDate = null;
 
-    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeImmutable $endDate = null;
 
     /**
@@ -60,12 +60,26 @@ class Event
     #[ORM\OneToMany(targetEntity: Game::class, mappedBy: 'event')]
     private Collection $games;
 
+    /**
+     * @var Collection<int, EventImage>
+     */
+    #[ORM\OneToMany(targetEntity: EventImage::class, mappedBy: 'event')]
+    private Collection $eventImages;
+
+    /**
+     * @var Collection<int, Message>
+     */
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'event', orphanRemoval: true)]
+    private Collection $messages;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->games = new ArrayCollection();
         $this->needs = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
+        $this->eventImages = new ArrayCollection();
+        $this->messages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -228,6 +242,65 @@ class Event
                 $game->setEvent(null);
             }
         }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EventImage>
+     */
+    public function getEventImages(): Collection
+    {
+        return $this->eventImages;
+    }
+
+    public function addEventImage(EventImage $eventImage): static
+    {
+        if (!$this->eventImages->contains($eventImage)) {
+            $this->eventImages->add($eventImage);
+            $eventImage->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventImage(EventImage $eventImage): static
+    {
+        if ($this->eventImages->removeElement($eventImage)) {
+            // set the owning side to null (unless already changed)
+            if ($eventImage->getEvent() === $this) {
+                $eventImage->setEvent(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): static
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages->add($message);
+            $message->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): static
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getEvent() === $this) {
+                $message->setEvent(null);
+            }
+        }
+
         return $this;
     }
 }

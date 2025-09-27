@@ -44,7 +44,7 @@
         <button type="submit" class="btn-primary">
             {{ isEdit ? 'Mettre à jour le besoin' : 'Ajouter le besoin' }}
         </button>
-        <a href="{{ path('event_needs', { id: event.id }) }}" class="btn-return">
+        <a href="{{ path('event_needs', { event: event.id }) }}" class="btn-return">
             Retour
         </a>
     </div>

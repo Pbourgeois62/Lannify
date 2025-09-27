@@ -8,8 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('a[href]').forEach(link => {
         const href = link.getAttribute('href');
 
+        // Exclure les liens externes
         if (!href.startsWith('/') && !href.startsWith(window.location.origin))
-            return;        
+            return;
+
+        // Exclure les liens ouvrant dans un nouvel onglet
+        if (link.target === '_blank')
+            return;
 
         link.addEventListener('click', (e) => {
             e.preventDefault();

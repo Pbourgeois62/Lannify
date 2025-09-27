@@ -2,9 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\Event;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Event>
@@ -40,4 +41,58 @@ class EventRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function getAllPassedEvents(): array
+    {
+        $now = new \DateTimeImmutable();
+
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.endDate < :now')
+            ->setParameter('now', $now)
+            ->orderBy('e.startDate', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getAllUpcomingEvents(): array
+    {
+        $now = new \DateTimeImmutable();
+
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.endDate >= :now')
+            ->setParameter('now', $now)
+            ->orderBy('e.startDate', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getPassedEventsForUser(User $user): array
+    {
+        $now = new \DateTimeImmutable();
+
+        return $this->createQueryBuilder('e')
+            ->innerJoin('e.users', 'u')
+            ->andWhere('u = :user')
+            ->andWhere('e.endDate < :now')
+            ->setParameter('user', $user)
+            ->setParameter('now', $now)
+            ->orderBy('e.startDate', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getUpcomingEventsForUser(User $user): array
+    {
+        $now = new \DateTimeImmutable();
+
+        return $this->createQueryBuilder('e')
+            ->innerJoin('e.users', 'u')
+            ->andWhere('u = :user')
+            ->andWhere('e.endDate >= :now')
+            ->setParameter('user', $user)
+            ->setParameter('now', $now)
+            ->orderBy('e.startDate', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

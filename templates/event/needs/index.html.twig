@@ -8,7 +8,7 @@
 
 <div class="flex items-center justify-center gap-4 px-4 mb-6 mb-12">
     <h2 class="text-3xl font-bold text-neonBlue">Besoins pour la LAN</h2>
-    <a href="{{ path('need_create', { id: event.id }) }}" 
+    <a href="{{ path('need_create', { event: event.id }) }}" 
        class="btn-primary px-3 py-1 text-base hover:scale-105 transform shadow-xl transition-all duration-300">
         ➕
     </a>
@@ -19,53 +19,59 @@
     <div id="accordion-needs" data-accordion="collapse">
         {% for need in event.needs %}
             <h2 class="mb-2" id="accordion-heading-{{ need.id }}">
+    <div class="flex justify-between items-center w-full p-4 bg-darkGrey border border-neonBlue rounded-xl shadow-lg">
+        
+        {# Bouton qui ouvre/ferme l'accordéon #}
+        <button type="button"
+            class="flex-1 text-left font-medium text-neonBlue hover:shadow-neonBlue/50 transition-all duration-300"
+            data-accordion-target="#accordion-body-{{ need.id }}"
+            aria-expanded="false"
+            aria-controls="accordion-body-{{ need.id }}">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:gap-4">
+                <span class="text-lg font-bold">{{ need.label }}</span>
+                <span class="text-sm text-gray-400 flex items-center gap-2">
+                    {% if need.createdBy.profile.avatar %}
+                        <img src="{{ asset('uploads/events/' ~ need.createdBy.profile.avatar.imageName) }}"
+                             alt="Avatar"
+                             class="w-6 h-6 rounded-full object-cover">
+                    {% else %}
+                        <img src="{{ asset('images/default-avatar.png') }}"
+                             alt="Avatar"
+                             class="w-6 h-6 rounded-full object-cover">
+                    {% endif %}
+                    Proposé par
+                    <span class="text-neonBlue">{{ need.createdBy.profile.nickname ?? need.createdBy.email }}</span>
+                </span>
+            </div>
+        </button>
+
+        {# ✅ Boutons d’action hors du toggle #}
+        <div class="flex items-center gap-3 ml-4">
+            {% set provided = need.quantity - need.getRemainingQuantity() %}
+            {% set ratio = provided / need.quantity %}
+            <span class="{%
+                if ratio == 0 %}badge-warning
+                {% elseif ratio < 1 %}badge-fun2
+                {% else %}badge-success
+            {% endif %}">
+                {{ provided }}/{{ need.quantity }}
+            </span>
+
+            {% if app.user and ((event.organizer and app.user.id == event.organizer.id) or (need.createdBy and app.user.id == need.createdBy.id)) %}
+                <a href="{{ path('need_edit', {need: need.id, event: event.id}) }}" class="btn-edit" title="Modifier">
+                    <i class="bi bi-pencil-square text-xl"></i>
+                </a>
                 <button type="button"
-                    class="flex justify-between items-center w-full p-4 font-medium text-left text-neonBlue bg-darkGrey border border-neonBlue rounded-xl shadow-lg hover:shadow-neonBlue/50 transition-all duration-300"
-                    data-accordion-target="#accordion-body-{{ need.id }}" aria-expanded="false" aria-controls="accordion-body-{{ need.id }}">
-                    
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:gap-4">
-                        <span class="text-lg font-bold">{{ need.label }}</span>
-
-                        <span class="text-sm text-gray-400 flex items-center gap-2">
-                            {% if need.createdBy.profile.avatar %}
-                                <img src="{{ asset('uploads/events/' ~ need.createdBy.profile.avatar.imageName) }}" 
-                                     alt="Avatar {{ need.createdBy.profile.nickname ?? need.createdBy.email }}" 
-                                     class="w-6 h-6 rounded-full object-cover">
-                            {% else %}
-                                <img src="{{ asset('images/default-avatar.png') }}" alt="Avatar" class="w-6 h-6 rounded-full object-cover">
-                            {% endif %}
-                            Proposé par <span class="text-neonBlue">{{ need.createdBy.profile.nickname ?? need.createdBy.email }}</span>
-                        </span>
-                    </div>
-
-                    <div class="flex items-center gap-3">
-                       {% set provided = need.quantity - need.getRemainingQuantity() %}
-                    {% set ratio = provided / need.quantity %}
-
-                    <span class="{% 
-                        if ratio == 0 %}badge-warning
-                        {% elseif ratio < 1 %}badge-fun2
-                        {% elseif ratio == 1 %}badge-success
-                    {% endif %}">
-                        {{ provided }}/{{ need.quantity }}
-                    </span>
-
-
-                        {% if app.user and ((event.organizer and app.user.id == event.organizer.id) or (need.createdBy and app.user.id == need.createdBy.id)) %}
-                            <a href="{{ path('need_edit', {id: need.id}) }}" class="btn-edit" title="Modifier">
-                                <i class="bi bi-pencil-square text-xl"></i>
-                            </a>
-                            <a href="{{ path('need_delete', {id: need.id}) }}" class="btn-delete" onclick="return confirm('Supprimer ce besoin ?')" title="Supprimer">
-                                <i class="bi bi-trash text-xl"></i>
-                            </a>
-                        {% endif %}
-
-                        <svg data-accordion-icon class="w-6 h-6 shrink-0 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    </div>
+                        data-modal-target="delete-need-{{ need.id }}"
+                        data-modal-toggle="delete-need-{{ need.id }}"
+                        class="btn-delete">
+                    <i class="bi bi-trash"></i>
                 </button>
-            </h2>
+            {% endif %}
+        </div>
+    </div>
+</h2>
+
 
             <div id="accordion-body-{{ need.id }}" class="hidden transition-all duration-300" aria-labelledby="accordion-heading-{{ need.id }}">
                 <div class="p-4 border-t border-neonBlue space-y-4 bg-darkGrey rounded-b-xl">
@@ -108,8 +114,16 @@
     <p class="text-gray-400 italic text-center">Aucun besoin ajouté pour le moment.</p>
 {% endif %}
 	<div class="flex justify-center mt-12">
-		<a href="{{ path('need_create', {id: event.id}) }}" class="btn-primary px-3 py-1 text-base hover:scale-105 transform shadow-xl transition-all duration-300">
+		<a href="{{ path('need_create', {event: event.id}) }}" class="btn-primary px-3 py-1 text-base hover:scale-105 transform shadow-xl transition-all duration-300">
 			➕ Ajouter un besoin
 		</a>
 	</div>
+{% endblock %}
+
+{% block modals %}
+	{% for need in event.needs %}
+        {% if app.user and ((event.organizer and app.user.id == event.organizer.id) or (need.createdBy and app.user.id == need.createdBy.id)) %}
+			{% include 'event/needs/partials/_delete_need_modal.html.twig' with { need: need } %}
+		{% endif %}
+	{% endfor %}
 {% endblock %}

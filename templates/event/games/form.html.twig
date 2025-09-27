@@ -41,7 +41,7 @@
 
     {# Retour à la section jeux #}
     <div class="flex justify-center mt-6">
-        <a href="{{ path('event_games', {id: event.id, _fragment: 'games'}) }}" class="btn-secondary px-4 py-2 hover:scale-105 transform transition-all duration-300">
+        <a href="{{ path('event_games', {event: event.id, _fragment: 'games'}) }}" class="btn-secondary px-4 py-2 hover:scale-105 transform transition-all duration-300">
             ← Retour aux jeux
         </a>
     </div>

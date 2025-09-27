@@ -55,11 +55,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     private ?Profile $profile = null;
 
     /**
-     * @var Collection<int, Need>
+     * @var Collection<int, NeedContribution>
      */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: NeedContribution::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $needContributions;
-
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $nickname = null;
@@ -70,11 +69,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     #[ORM\OneToMany(targetEntity: ParticipantGame::class, mappedBy: 'participant')]
     private Collection $participantGames;
 
+    /**
+     * @var Collection<int, EventImage>
+     */
+    #[ORM\OneToMany(targetEntity: EventImage::class, mappedBy: 'uploadedBy')]
+    private Collection $eventImages;
+
+    /**
+     * @var Collection<int, Message>
+     */
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'sender', orphanRemoval: true)]
+    private Collection $messages;
 
     public function __construct()
     {
         $this->events = new ArrayCollection();
+        $this->needContributions = new ArrayCollection();
         $this->participantGames = new ArrayCollection();
+        $this->eventImages = new ArrayCollection();
+        $this->messages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -90,29 +103,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
     }
 
@@ -122,13 +124,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
-
         return $this;
     }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
     public function getPassword(): ?string
     {
         return $this->password;
@@ -137,22 +135,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
-    /**
-     * Ensure the session doesn't contain actual password hashes by CRC32C-hashing them, as supported since Symfony 7.3.
-     */
-    // public function __serialize(): array
-    // {
-    //     $data = (array) $this;
-    //     $data["\0" . self::class . "\0password"] = hash('crc32c', $this->password);
-
-    //     return $data;
-    // }
-
-    public function serialize()
+    public function serialize(): string
     {
         return serialize([
             $this->id,
@@ -161,9 +147,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
         ]);
     }
 
-    public function unserialize($serialized)
+    public function unserialize($serialized): void
     {
-        [$this->id, $this->email, $this->password,] = unserialize($serialized);
+        [$this->id, $this->email, $this->password] = unserialize($serialized);
     }
 
     #[\Deprecated]
@@ -180,7 +166,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
-
         return $this;
     }
 
@@ -198,7 +183,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
             $this->events->add($event);
             $event->addUser($this);
         }
-
         return $this;
     }
 
@@ -207,7 +191,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
         if ($this->events->removeElement($event)) {
             $event->removeUser($this);
         }
-
         return $this;
     }
 
@@ -230,7 +213,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     public function setNickname(?string $nickname): static
     {
         $this->nickname = $nickname;
-
         return $this;
     }
 
@@ -262,19 +244,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
             $this->needContributions->add($needContribution);
             $needContribution->setUser($this);
         }
-
         return $this;
     }
 
     public function removeNeedContribution(NeedContribution $needContribution): static
     {
         if ($this->needContributions->removeElement($needContribution)) {
-            // set the owning side to null (unless already changed)
             if ($needContribution->getUser() === $this) {
                 $needContribution->setUser(null);
             }
         }
-
         return $this;
     }
 
@@ -292,16 +271,70 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
             $this->participantGames->add($participantGame);
             $participantGame->setParticipant($this);
         }
-
         return $this;
     }
 
     public function removeParticipantGame(ParticipantGame $participantGame): static
     {
         if ($this->participantGames->removeElement($participantGame)) {
-            // set the owning side to null (unless already changed)
             if ($participantGame->getParticipant() === $this) {
                 $participantGame->setParticipant(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EventImage>
+     */
+    public function getEventImages(): Collection
+    {
+        return $this->eventImages;
+    }
+
+    public function addEventImage(EventImage $eventImage): static
+    {
+        if (!$this->eventImages->contains($eventImage)) {
+            $this->eventImages->add($eventImage);
+            $eventImage->setUploadedBy($this);
+        }
+        return $this;
+    }
+
+    public function removeEventImage(EventImage $eventImage): static
+    {
+        if ($this->eventImages->removeElement($eventImage)) {
+            if ($eventImage->getUploadedBy() === $this) {
+                $eventImage->setUploadedBy(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): static
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages->add($message);
+            $message->setSender($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): static
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getSender() === $this) {
+                $message->setSender(null);
             }
         }
 

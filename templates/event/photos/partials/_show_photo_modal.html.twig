@@ -1,0 +1,22 @@
+{# event/_photo_modal.html.twig #}
+<div id="photo-modal-{{ photo.id }}" tabindex="-1" aria-hidden="true"
+     class="hidden fixed inset-0 z-[9999] flex justify-center items-center bg-black/50 p-4 overflow-y-auto">
+    <div class="relative w-full max-w-3xl">
+        <div class="bg-darkGrey rounded-lg shadow-lg p-4 text-center">
+            <button type="button"
+                    class="absolute top-3 right-3 text-gray-400 bg-transparent hover:bg-gray-700 hover:text-white rounded-full w-8 h-8 flex justify-center items-center"
+                    data-modal-hide="photo-modal-{{ photo.id }}">
+                <i class="bi bi-x-lg"></i>
+                <span class="sr-only">Fermer</span>
+            </button>
+
+            <img src="{{ asset('uploads/eventImages/' ~ photo.imageName) }}"
+                 alt="Photo de la LAN {{ event.name }}"
+                 class="w-full h-[60vh] object-contain rounded-lg">
+
+            {% if photo.caption %}
+                <p class="text-gray-200 mt-4">{{ photo.caption }}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>

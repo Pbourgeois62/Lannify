@@ -13,3 +13,7 @@ php-shell:
 
 tailwind-watch:
 	docker exec -it -w /app $(PHP_CONTAINER) php bin/console tailwind:build --watch
+new-migration:
+	docker exec -it -w /app $(PHP_CONTAINER) php bin/console make:migration
+migrate:
+	docker exec -it -w /app $(PHP_CONTAINER) php bin/console doctrine:migrations:migrate

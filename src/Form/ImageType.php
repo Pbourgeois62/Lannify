@@ -4,9 +4,10 @@ namespace App\Form;
 
 use App\Entity\Image;
 use Symfony\Component\Form\AbstractType;
+use Symfony\UX\Dropzone\Form\DropzoneType;
+use Vich\UploaderBundle\Form\Type\VichFileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Vich\UploaderBundle\Form\Type\VichFileType;
 use Symfony\Component\Validator\Constraints\Image as ImageConstraint;
 
 class ImageType extends AbstractType
@@ -14,15 +15,16 @@ class ImageType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('imageFile', VichFileType::class, [
+            ->add('imageFile', DropzoneType::class, [
+                 'attr' => [
+                    'placeholder' => 'Glissez-déposez un fichier ou cliquez pour parcourir',
+                ],
                 'label' => false,
-                'required' => false,
-                'allow_delete' => false,
-                'download_uri' => false,
+                'required' => false,               
                 'constraints' => [
                     new ImageConstraint([
-                        'maxSize' => '2M', // taille maximale
-                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/webp'], // types autorisés
+                        'maxSize' => '2M',
+                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/webp'],
                         'mimeTypesMessage' => 'Seules les images JPG, PNG ou WEBP sont autorisées.',
                         'maxSizeMessage' => 'L’image ne peut pas dépasser 2 Mo.',
                     ]),

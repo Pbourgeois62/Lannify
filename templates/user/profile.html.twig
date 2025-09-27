@@ -26,23 +26,18 @@
 		<div class="relative">
 			{{ form_label(form.avatar, 'Avatar', {'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}}) }}
 
-			{# Avatar actuel #}
+			{# Avatar actuel (affichage classique) #}
 			{% if form.vars.data and form.vars.data.avatar and form.vars.data.avatar.imageName %}
-				<div class="mb-3">
-					<img src="{{ asset('uploads/events/' ~ form.vars.data.avatar.imageName) }}" alt="Avatar actuel" class="w-24 h-24 rounded-full border-2 border-neonBlue shadow-lg object-cover mx-auto">
+				<div class="flex items-center justify-center h-64">
+					<img src="{{ asset('uploads/events/' ~ form.vars.data.avatar.imageName) }}" alt="Avatar actuel" class="w-auto max-h-64 mb-8">
 				</div>
+
 			{% endif %}
+
 
 			{# Upload stylisé du sous-champ imageFile #}
 			<div class="relative">
-				{{ form_widget(form.avatar.imageFile, {
-            'attr': {
-                'class': 'block w-full text-sm text-white file:mr-4 file:py-2 file:px-4
-                          file:rounded-md file:border-0
-                          file:text-sm file:font-semibold
-                          file:bg-neonBlue file:text-black
-                          hover:file:bg-cyanShadow'
-            },
+				{{ form_widget(form.avatar.imageFile, {            
             'label_attr': {'class': 'sr-only'}
         }) }}
 			</div>
