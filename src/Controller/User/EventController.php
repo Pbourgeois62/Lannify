@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\User;
 
 use App\Entity\Event;
 use App\Entity\Image;
@@ -116,6 +116,16 @@ final class EventController extends AbstractController
         $em->remove($event);
         $em->flush();
         $this->addFlash('success', 'Événement supprimé avec succès !');
+
+        return $this->redirectToRoute('home');
+    }
+
+    #[Route('/{event}/close', name: 'event_close')]
+    public function close(Event $event, EntityManagerInterface $em): Response
+    {
+        $event->setClosed(true);
+        $em->flush();
+        $this->addFlash('success', 'Événement cloturé avec succès !');
 
         return $this->redirectToRoute('home');
     }

@@ -1,0 +1,32 @@
+{% extends 'user/partials/_account_layout.html.twig' %}
+
+{% block title %}Envoyer un feedback{% endblock %}
+
+{% block account_layout %}
+<div class="max-w-md mx-auto mt-12 p-6 bg-darkGrey rounded-xl shadow-2xl border-2 border-neonBlue">
+
+    <h1 class="text-3xl font-extrabold text-neonBlue mb-6 text-center drop-shadow-lg">
+        Envoyer un feedback
+    </h1>
+
+    {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+
+        <div class="relative">
+            {{ form_row(form.title) }}
+        </div>
+
+        <div class="relative">
+            {{ form_row(form.content) }}
+        </div>
+
+        <div class="relative">
+            {{ form_row(form.category) }}
+        </div>
+
+        <button type="submit" class="btn-primary w-full">
+            Envoyer
+        </button>
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}

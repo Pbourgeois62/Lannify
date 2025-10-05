@@ -81,6 +81,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'sender', orphanRemoval: true)]
     private Collection $messages;
 
+    /**
+     * @var Collection<int, Feedback>
+     */
+    #[ORM\OneToMany(targetEntity: Feedback::class, mappedBy: 'author', orphanRemoval: true)]
+    private Collection $feedback;
+
+    /**
+     * @var Collection<int, FeedbackMessages>
+     */
+    #[ORM\OneToMany(mappedBy: 'sender', targetEntity: FeedbackMessage::class, orphanRemoval: true)]
+    private Collection $feedbackMessages;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -88,6 +100,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
         $this->participantGames = new ArrayCollection();
         $this->eventImages = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->feedback = new ArrayCollection();
+        $this->feedbackMessages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -338,6 +352,55 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
             }
         }
 
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Feedback>
+     */
+    public function getFeedback(): Collection
+    {
+        return $this->feedback;
+    }
+
+    public function addFeedback(Feedback $feedback): static
+    {
+        if (!$this->feedback->contains($feedback)) {
+            $this->feedback->add($feedback);
+            $feedback->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFeedback(Feedback $feedback): static
+    {
+        if ($this->feedback->removeElement($feedback)) {
+            // set the owning side to null (unless already changed)
+            if ($feedback->getAuthor() === $this) {
+                $feedback->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }   
+
+    public function addFeedbackMessage(FeedbackMessage $message): static
+    {
+        if (!$this->feedbackMessages->contains($message)) {
+            $this->feedbackMessages->add($message);
+            $message->setSender($this);
+        }
+        return $this;
+    }
+
+    public function removeFeedbackMessage(FeedbackMessage $message): static
+    {
+        if ($this->feedbackMessages->removeElement($message)) {
+            if ($message->getSender() === $this) {
+                $message->setSender(null);
+            }
+        }
         return $this;
     }
 }

@@ -1,38 +1,69 @@
-<div id="chat-component-{{ event.id }}" data-controller="chat" data-chat-event-id-value="{{ event.id }}" data-chat-current-user-id-value="{{ app.user ? app.user.id : 0 }}" data-chat-mercure-url-value="{{ mercure_subscribe_url() }}" class="fixed bottom-4 right-4 w-80 z-50">
-	<button data-chat-target="toggle" data-action="chat#toggle" class="btn-primary w-full mb-2">Chat</button>
+<div id="chat-component-{{ event.id }}"
+     data-controller="chat"
+     data-chat-event-id-value="{{ event.id }}"
+     data-chat-current-user-id-value="{{ app.user ? app.user.id : 0 }}"
+     data-chat-mercure-url-value="{{ mercure_subscribe_url() }}"
+     class="fixed bottom-6 right-6 w-80 z-50 text-white font-sans">
 
-	<div data-chat-target="box" class="hidden bg-darkGrey border border-neonBlue rounded-lg shadow-xl flex flex-col h-96">
-		<div data-chat-target="messages" class="flex-1 overflow-y-auto p-2 space-y-4">
-			{% for msg in event.messages %}
-				<div class="flex {{ msg.sender.id == app.user.id ? 'justify-end' : 'justify-start' }} items-end gap-2">
-					{% if msg.sender.id != app.user.id %}
-						<div class="w-8 h-8 flex-shrink-0">
-							{% if msg.sender.profile and msg.sender.profile.avatar %}
-								<img src="{{ asset('uploads/events/' ~ msg.sender.profile.avatar.imageName) }}" alt="Avatar {{ msg.sender.profile.nickname ?? msg.sender.email }}" class="w-8 h-8 object-cover rounded-full">
-							{% else %}
-								<img src="{{ asset('images/default-avatar.webp') }}" alt="Avatar par défaut" class="w-8 h-8 object-cover rounded-full">
-							{% endif %}
-						</div>
-					{% endif %}
-					<div class="flex flex-col p-2 rounded-lg
-							                {{ msg.sender.id == app.user.id ? 'bg-neonBlue text-black rounded-tl-lg rounded-tr-lg rounded-br-lg'
-							                                                 : 'bg-gray-700 text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg' }}">
-						{% if msg.sender.id != app.user.id %}
-							<span class="font-bold text-sm text-neonBlue">{{ msg.sender.profile.nickname ?? msg.sender.email }}</span>
-						{% endif %}
-						<div>{{ msg.content }}</div>
-						<span class="text-xs text-right mt-1 {{ msg.sender.id == app.user.id ? 'text-gray-800' : 'text-gray-400' }}">
-							{{ msg.createdAt|date('H:i') }}
-						</span>
-					</div>
-				</div>
+    <!-- Bouton flottant -->
+    <button data-chat-target="toggle"
+            data-action="chat#toggle"
+            class="btn-primary w-full rounded-t-lg rounded-b-none shadow-md">
+        💬 Chat
+    </button>
 
-			{% endfor %}
-		</div>
+    <!-- Fenêtre du chat -->
+    <div data-chat-target="box"
+         class="hidden mt-3 bg-darkGrey border border-neonBlue rounded-lg shadow-2xl flex flex-col h-96 overflow-hidden">
 
-		<form data-chat-target="form" data-action="submit->chat#send" class="p-2 flex gap-2">
-			<input data-chat-target="input" type="text" name="content" placeholder="Écrire un message..." class="flex-1 rounded border border-gray-600 p-1 bg-gray-900 text-white">
-			<button type="submit" class="btn-primary">Envoyer</button>
-		</form>
-	</div>
+        <!-- Messages -->
+        <div data-chat-target="messages"
+             class="flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar">
+            {% for msg in event.messages %}
+                {% set isCurrentUser = msg.sender.id == app.user.id %}
+                <div class="flex {{ isCurrentUser ? 'justify-end' : 'justify-start' }} items-end gap-2">
+                    {% if not isCurrentUser %}
+                        <img src="{{ msg.sender.profile and msg.sender.profile.avatar
+                            ? asset('uploads/events/' ~ msg.sender.profile.avatar.imageName)
+                            : asset('images/default-avatar.webp') }}"
+                             alt="Avatar {{ msg.sender.profile.nickname ?? msg.sender.email }}"
+                             class="w-8 h-8 object-cover rounded-full border border-gray-600">
+                    {% endif %}
+                    <div class="flex flex-col p-2 px-3 max-w-[75%] shadow-md
+                                {{ isCurrentUser
+                                    ? 'bg-neonBlue text-black rounded-tl-lg rounded-tr-lg rounded-br-none rounded-bl-lg'
+                                    : 'bg-gray-700 text-white rounded-tr-lg rounded-tl-lg rounded-bl-none rounded-br-lg' }}">
+                        {% if not isCurrentUser %}
+                            <span class="font-semibold text-xs text-neonBlue mb-0.5">
+                                {{ msg.sender.profile.nickname ?? msg.sender.email }}
+                            </span>
+                        {% endif %}
+                        <div>{{ msg.content }}</div>
+                        <span class="text-[0.7rem] text-right mt-1 opacity-70">
+                            {{ msg.createdAt|date('H:i') }}
+                        </span>
+                    </div>
+                    {% if isCurrentUser %}
+                        <img src="{{ msg.sender.profile and msg.sender.profile.avatar
+                            ? asset('uploads/events/' ~ msg.sender.profile.avatar.imageName)
+                            : asset('images/default-avatar.webp') }}"
+                             alt="Avatar {{ msg.sender.profile.nickname ?? msg.sender.email }}"
+                             class="w-8 h-8 object-cover rounded-full border border-gray-600">
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Formulaire -->
+        <form data-chat-target="form" data-action="submit->chat#send"
+              class="p-2 flex gap-2 border-t border-gray-700 bg-gray-800">
+            <input data-chat-target="input" type="text" name="content"
+                   placeholder="Écrire un message..."
+                   class="flex-1 rounded-lg border border-gray-600 p-1.5 bg-gray-900 text-white text-sm focus:ring-2 focus:ring-neonBlue outline-none">
+            <button type="submit"
+                    class="px-3 py-1.5 bg-neonBlue text-black font-semibold rounded-lg hover:bg-blue-400 transition">
+                Envoyer
+            </button>
+        </form>
+    </div>
 </div>

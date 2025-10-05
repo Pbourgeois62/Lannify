@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div class="sticky top-0 z-50 flex justify-center gap-4 p-4 mb-12">
+		<a href="{{ path('user_profile') }}" class="btn-secondary px-4 py-2">Profile</a>
+		<a href="{{ path('user_edit_credentials') }}" class="btn-secondary px-4 py-2">Compte</a>
+		{% if is_granted('ROLE_ADMIN')  %}
+			<a href="{{ path('admin_feedback_index') }}" class="btn-secondary px-4 py-2">Retours-Admin</a>
+		{% endif %}
+		{% if not is_granted('ROLE_ADMIN') %}
+		<a href="{{ path('feedback_index') }}" class="btn-secondary px-4 py-2">Retours</a>
+		{% endif %}
+	</div>
+
+	{% block account_layout %}{% endblock %}
+{% endblock %}

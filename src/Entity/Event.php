@@ -72,6 +72,9 @@ class Event
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'event', orphanRemoval: true)]
     private Collection $messages;
 
+    #[ORM\Column (type: 'boolean', nullable: true)]
+    private ?bool $isClosed = null;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -80,6 +83,7 @@ class Event
         $this->createdAt = new \DateTimeImmutable();
         $this->eventImages = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->isClosed = false;
     }
 
     public function getId(): ?int
@@ -300,6 +304,18 @@ class Event
                 $message->setEvent(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isClosed(): ?bool
+    {
+        return $this->isClosed;
+    }
+
+    public function setClosed(bool $isClosed): static
+    {
+        $this->isClosed = $isClosed;
 
         return $this;
     }

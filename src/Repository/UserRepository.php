@@ -57,4 +57,5 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    // src/Repository/UserRepository.php    
 }

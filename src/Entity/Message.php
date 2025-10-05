@@ -25,7 +25,7 @@ class Message
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $sender = null;
+    private ?User $sender = null;    
 
     public function __construct()
     {
@@ -83,5 +83,5 @@ class Message
         $this->sender = $sender;
 
         return $this;
-    }
+    }    
 }

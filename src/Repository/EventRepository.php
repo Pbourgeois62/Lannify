@@ -95,4 +95,32 @@ class EventRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function getOpenedEventsForUser(User $user): array
+    {
+        $now = new \DateTimeImmutable();
+
+        return $this->createQueryBuilder('e')
+            ->innerJoin('e.users', 'u')
+            ->andWhere('u = :user')            
+            ->andWhere('e.isClosed = false')
+            ->setParameter('user', $user)           
+            ->orderBy('e.startDate', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getClosedEventsForUser(User $user): array
+    {
+        $now = new \DateTimeImmutable();
+
+        return $this->createQueryBuilder('e')
+            ->innerJoin('e.users', 'u')
+            ->andWhere('u = :user')            
+            ->andWhere('e.isClosed = true')
+            ->setParameter('user', $user)           
+            ->orderBy('e.startDate', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -28,6 +28,7 @@
         "symfony/security-bundle": "7.3.*",
         "symfony/serializer": "7.3.*",
         "symfony/stimulus-bundle": "^2.30",
+        "symfony/translation": "7.3.*",
         "symfony/twig-bundle": "7.3.*",
         "symfony/ux-dropzone": "^2.30",
         "symfony/ux-live-component": "^2.30",

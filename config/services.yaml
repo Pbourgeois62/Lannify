@@ -19,6 +19,9 @@ services:
     App\Twig\MercureExtension:
         tags: ['twig.extension']
 
+twig:
+    globals:
+        mercure_public_url: '%env(MERCURE_PUBLIC_URL)%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

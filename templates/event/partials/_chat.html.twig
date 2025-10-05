@@ -1,0 +1,39 @@
+<div data-controller="chat"
+     data-chat-mercure-url-value="{{ mercureUrl }}"
+     data-chat-current-user-id-value="{{ app.user.id }}"
+     data-chat-event-id-value="{{ event.id }}">
+    
+    <button data-chat-target="toggle" data-action="chat#toggle" class="btn-primary w-full mb-2">Chat</button>
+
+    <div data-chat-target="box" class="hidden bg-darkGrey border border-neonBlue rounded-lg shadow-xl flex flex-col h-96">
+        <div data-chat-target="messages" class="flex-1 overflow-y-auto p-2 space-y-4">
+            {% for msg in messages %}
+                <div class="flex {{ msg.sender.id == app.user.id ? 'justify-end' : 'justify-start' }} items-end gap-2">
+                    {% if msg.sender.id != app.user.id %}
+                        <div class="w-8 h-8 flex-shrink-0">
+                            {% if msg.sender.profile and msg.sender.profile.avatar %}
+                                <img src="{{ asset('uploads/events/' ~ msg.sender.profile.avatar.imageName) }}" alt="Avatar" class="w-8 h-8 object-cover rounded-full">
+                            {% else %}
+                                <img src="{{ asset('images/default-avatar.webp') }}" alt="Avatar par défaut" class="w-8 h-8 object-cover rounded-full">
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    <div class="flex flex-col p-2 rounded-lg {{ msg.sender.id == app.user.id ? 'bg-neonBlue text-black' : 'bg-gray-700 text-white' }}">
+                        {% if msg.sender.id != app.user.id %}
+                            <span class="font-bold text-sm text-neonBlue">{{ msg.sender.profile.nickname ?? msg.sender.email }}</span>
+                        {% endif %}
+                        <div>{{ msg.content }}</div>
+                        <span class="text-xs text-right mt-1 {{ msg.sender.id == app.user.id ? 'text-gray-800' : 'text-gray-400' }}">
+                            {{ msg.createdAt|date('H:i') }}
+                        </span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <form data-chat-target="form" data-action="submit->chat#send" class="p-2 flex gap-2">
+            <input data-chat-target="input" type="text" name="content" placeholder="Écrire un message..." class="flex-1 rounded border border-gray-600 p-1 bg-gray-900 text-white">
+            <button type="submit" class="btn-primary">Envoyer</button>
+        </form>
+    </div>
+</div>

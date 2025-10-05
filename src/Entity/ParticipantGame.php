@@ -19,8 +19,8 @@ class ParticipantGame
     #[ORM\ManyToOne(inversedBy: 'participantGames')]
     private ?Game $game = null;
 
-    #[ORM\Column]
-    private ?bool $owns = null;
+    #[ORM\Column(type: 'boolean')]
+private bool $owns = false;
 
     #[ORM\Column]
     private ?bool $interested = null;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\User;
 
 use App\Entity\Need;
 use App\Entity\User;
@@ -27,6 +27,7 @@ final class EventNeedController extends AbstractController
         #[CurrentUser] ?User $user,
         NeedContributionRepository $needContributionRepository
     ): Response {
+        // dump($this->getUser());
         $forms = [];
 
         foreach ($event->getNeeds() as $need) {

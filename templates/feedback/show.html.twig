@@ -1,0 +1,89 @@
+{% extends 'user/partials/_account_layout.html.twig' %}
+
+{% block title %}Feedback -
+	{{ feedback.title }}
+{% endblock %}
+
+{% block account_layout %}
+	<div
+		class="max-w-3xl mx-auto mt-12 p-6 bg-darkGrey rounded-2xl shadow-2xl border-2 border-neonBlue">
+
+		{# Bouton retour #}
+
+		<h1 class="text-3xl font-extrabold text-neonBlue mb-6 text-center drop-shadow-lg">
+			{{ feedback.title }}
+		</h1>
+
+		<p class="text-gray-400 mb-6">
+			Catégorie :
+			<span class="text-neonBlue">{{ feedback.category|capitalize }}</span>
+			|
+						        Créé le :
+			<span class="text-neonBlue">{{ feedback.createdAt|date('d/m/Y H:i') }}</span>
+		</p>
+		<p class="text-gray-400 mb-6">
+			Contenu :
+			<span class="text-white">{{ feedback.content }}
+			</p>
+
+			<div class="flex flex-col space-y-4">
+				<div id="feedback-chat" class="flex flex-col space-y-3 max-h-[500px] overflow-y-auto p-4 bg-gray-900 rounded-xl border border-gray-700 custom-scrollbar">
+
+					{% for message in feedback.getMessages|sort((a, b) => a.createdAt <=> b.createdAt) %}
+						{% set isUser = message.sender.id == app.user.id %}
+						<div class="flex {{ isUser ? 'justify-end' : 'justify-start' }}">
+							<div
+								class="flex items-end space-x-2 {{ isUser ? 'flex-row-reverse' : '' }}">
+								{# Avatar #}
+								<img
+								src="{{ message.sender.profile and message.sender.profile.avatar ? asset('uploads/events/' ~ message.sender.profile.avatar.imageName) : asset('images/default-avatar.webp') }}" alt="avatar" class="w-8 h-8 rounded-full">
+
+								{# Message bubble #}
+								<div class="relative px-4 py-2 rounded-xl max-w-[70%]
+																				                            {{ isUser ? 'bg-neonBlue text-darkGrey rounded-br-none' : 'bg-gray-700 text-white rounded-bl-none' }}">
+									<p class="text-xs font-semibold mb-1">
+										{{ isUser ? 'Vous' : message.sender.nickname ?: message.sender.email }}
+										<span class="text-gray-400 text-[10px] ml-1">{{ message.createdAt|date('H:i d/m') }}</span>
+									</p>
+									<p class="text-sm break-words">{{ message.content }}</p>
+								</div>
+							</div>
+						</div>
+					{% else %}
+						<p class="text-gray-400 text-center mt-4">Aucun message pour le moment.</p>
+					{% endfor %}
+				</div>
+
+				{# Formulaire pour envoyer un message #}
+				<div class="mt-4">
+					{{ form_start(form, {'attr': {'class': 'space-y-3'}}) }}
+					{{ form_row(form.content, {
+                    'label_attr': {'class': 'text-white'},
+                    'attr': {
+                        'class': 'input text-white focus:ring-2 focus:ring-neonBlue focus:border-neonBlue w-full',
+                        'placeholder': 'Tapez votre message...',
+                        'rows': 3
+                    }
+                }) }}
+					<div class="flex justify-center gap-4 mt-8">
+						<button type="submit" class="btn-primary ">
+							Envoyer
+						</button>
+						<a href="{{ path('feedback_index') }}" class="btn-return">
+							Retour
+						</a>
+					</div>
+					{{ form_end(form) }}
+				</div>
+			</div>
+		</p>
+	</div>
+
+	<script>
+		// Scroll automatique vers le dernier message
+const chat = document.getElementById('feedback-chat');
+if (chat) {
+chat.scrollTop = chat.scrollHeight;
+}
+	</script>
+{% endblock %}

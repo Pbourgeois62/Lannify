@@ -14,14 +14,14 @@
 			</div>
 
 			<!-- Menu Desktop -->
-			<div class="hidden md:flex space-x-6 items-center">
+			<div class="hidden md:flex space-x-6 items-center">				
 				<a href="{{ path('user_profile') }}" class="text-neonBlue hover:brightness-125 transition">
-					Profile
+					Mon compte
 				</a>
 				{% if app.user and app.user.profile and app.user.profile.avatar %}
 					<img src="{{ vich_uploader_asset(app.user.profile.avatar, 'imageFile') }}" alt="avatar" class="rounded-full w-8 h-8">
 				{% else %}
-					<img src="{{ asset('images/default-avatar.png') }}" alt="default avatar" class="rounded-full w-8 h-8">
+					<img src="{{ asset('images/default-avatar.webp') }}" alt="default avatar" class="rounded-full w-8 h-8">
 				{% endif %}
 				<span class="text-white font-medium">{{ app.user.email }}</span>
 				<a href="{{ path('app_logout') }}" class="text-neonRed hover:brightness-125 transition px-2 flex items-center gap-2">

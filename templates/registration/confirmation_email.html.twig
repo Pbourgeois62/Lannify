@@ -1,11 +1,52 @@
-<h1>Hi! Please confirm your email!</h1>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmation de votre adresse e-mail</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #0f172a; font-family: 'Segoe UI', sans-serif; color: #e2e8f0;">
 
-<p>
-    Please confirm your email address by clicking the following link: <br><br>
-    <a href="{{ signedUrl|raw }}">Confirm my Email</a>.
-    This link will expire in {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
-</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: #1e293b; border-radius: 0.75rem; overflow: hidden;">
+        <tr>
+            <td style="padding: 2rem; text-align: center;">
 
-<p>
-    Cheers!
-</p>
+                <h1 style="color: #38bdf8; font-size: 1.75rem; margin: 0 0 1rem 0;">
+                    Bienvenue !
+                </h1>
+
+                <p style="margin: 0 0 1.5rem 0; line-height: 1.6; font-size: 1rem;">
+                    Pour finaliser votre inscription, veuillez confirmer votre adresse e-mail<br>
+                    en cliquant sur le bouton ci-dessous.
+                </p>
+
+                <a href="{{ signedUrl|raw }}"
+                   style="display: inline-block;
+                          background-color: #38bdf8;
+                          color: #0f172a;
+                          padding: 0.75rem 1.5rem;
+                          border-radius: 0.5rem;
+                          font-weight: 600;
+                          text-decoration: none;
+                          font-size: 1rem;
+                          margin-top: 0.5rem;
+                          transition: all 0.2s ease;">
+                    Confirmer mon adresse e-mail
+                </a>
+
+                <p style="margin-top: 1.75rem; font-size: 0.9rem; color: #94a3b8;">
+                    Ce lien expirera dans
+                    {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
+                </p>
+
+                <hr style="margin: 2rem 0; border: none; border-top: 1px solid #334155;">
+
+                <p style="font-size: 0.85rem; color: #64748b; margin: 0;">
+                    Merci et à bientôt 👋
+                </p>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

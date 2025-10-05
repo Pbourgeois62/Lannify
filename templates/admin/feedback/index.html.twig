@@ -1,0 +1,44 @@
+{% extends 'user/partials/_account_layout.html.twig' %}
+
+{% block title %}Liste des Feedbacks{% endblock %}
+
+{% block account_layout %}
+<div class="max-w-6xl mx-auto mt-8 p-6 bg-darkGrey rounded-xl shadow-xl border-2 border-neonBlue">
+
+    <h1 class="text-3xl font-extrabold text-neonBlue mb-6 text-center drop-shadow-lg">
+        Tous les Feedbacks
+    </h1>
+
+    {% if feedbacks is empty %}
+        <p class="text-white text-center">Aucun feedback pour le moment.</p>
+    {% else %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-700">
+                <thead class="bg-gray-800">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-white font-medium uppercase">Auteur</th>
+                        <th class="px-6 py-3 text-left text-white font-medium uppercase">Titre</th>
+                        <th class="px-6 py-3 text-left text-white font-medium uppercase">Catégorie</th>
+                        <th class="px-6 py-3 text-left text-white font-medium uppercase">Date</th>
+                        <th class="px-6 py-3 text-left text-white font-medium uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-gray-900 divide-y divide-gray-700">
+                    {% for feedback in feedbacks %}
+                        <tr>
+                            <td class="px-6 py-4 text-white">{{ feedback.author.email }}</td>
+                            <td class="px-6 py-4 text-white">{{ feedback.title }}</td>
+                            <td class="px-6 py-4 text-white">{{ feedback.category }}</td>
+                            <td class="px-6 py-4 text-white">{{ feedback.createdAt|date('d/m/Y H:i') }}</td>
+                            <td class="px-6 py-4">
+                                <a href="{{ path('feedback_show', {'feedback': feedback.id}) }}"
+                                   class="text-neonBlue hover:underline">Voir</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

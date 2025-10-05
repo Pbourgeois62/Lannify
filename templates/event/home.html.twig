@@ -1,8 +1,8 @@
-{% extends 'event/partials/_section_base.html.twig' %}
+{% extends 'event/partials/_event_layout.html.twig' %}
 
 {% block title %}{{ event.name }}{% endblock %}
 
-{% block section_content %}
+{% block event_layout %}
 
 {# -------- Hero Countdown -------- #}
 {% include 'partials/_chat.html.twig' with {'event': event} %}
@@ -10,29 +10,37 @@
          class="relative w-full py-24 text-center"
          data-aos="fade-up">
 
-    <div class="relative z-10 container mx-auto px-6 max-w-4xl">
-        <h1 class="text-4xl md:text-6xl font-extrabold text-neonBlue drop-shadow-lg mb-10">
-            La LAN débute dans…
-        </h1>
+    {% if date() < event.startDate %}
+        <div class="relative z-10 container mx-auto px-6 max-w-4xl">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-neonBlue drop-shadow-lg mb-10">
+                La LAN débute dans…
+            </h1>
 
-        <div id="countdown"
-             class="grid grid-cols-2 sm:grid-cols-4 gap-6 text-4xl md:text-6xl font-extrabold text-white pt-12"
-             data-aos="zoom-in">
-            {% for label in ['Jours','Heures','Minutes','Secondes'] %}
-                <div class="relative flex flex-col items-center justify-center 
-                            bg-white/10 backdrop-blur-md border border-cyanShadow/40 rounded-2xl p-4 shadow-lg overflow-hidden">
-                    
-                    {# 🌟 Halo individuel #}
-                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,255,0.15)_0%,transparent_80%)]
-                                animate-pulse pointer-events-none"></div>
+            <div id="countdown"
+                 class="grid grid-cols-2 sm:grid-cols-4 gap-6 text-4xl md:text-6xl font-extrabold text-white pt-12"
+                 data-aos="zoom-in">
+                {% for label in ['Jours','Heures','Minutes','Secondes'] %}
+                    <div class="relative flex flex-col items-center justify-center 
+                                bg-white/10 backdrop-blur-md border border-cyanShadow/40 rounded-2xl p-4 shadow-lg overflow-hidden">
 
-                    <span id="{{ label|lower }}" class="relative z-10 block">00</span>
-                    <span class="relative z-10 text-sm mt-2 font-medium text-cyanShadow">{{ label }}</span>
-                </div>
-            {% endfor %}
+                        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,255,0.15)_0%,transparent_80%)]
+                                    animate-pulse pointer-events-none"></div>
+
+                        <span id="{{ label|lower }}" class="relative z-10 block">00</span>
+                        <span class="relative z-10 text-sm mt-2 font-medium text-cyanShadow">{{ label }}</span>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
-    </div>
+    {% else %}
+        <div class="relative z-10 container mx-auto px-6 max-w-4xl">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-neonBlue drop-shadow-lg mb-10">
+                La LAN a commencé !
+            </h1>
+        </div>
+    {% endif %}
 </section>
+
 
 {# -------- Infos générales -------- #}
 <section id="infos-section"
@@ -118,13 +126,7 @@ const lanDate = new Date("{{ event.startDate|date('Y-m-d H:i:s') }}").getTime();
 
 function updateCountdown() {
     const now = new Date().getTime();
-    const d = lanDate - now;
-    if (d <= 0) {
-        document.getElementById('countdown').innerHTML =
-            "<span class='col-span-4 text-5xl md:text-6xl font-bold'>La LAN a commencé !</span>";
-        clearInterval(timer);
-        return;
-    }
+    const d = lanDate - now;   
     const values = [
         Math.floor(d / (1000 * 60 * 60 * 24)),
         Math.floor((d % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
