@@ -6,6 +6,7 @@ use App\Entity\Game;
 use App\Entity\User;
 use App\Entity\Event;
 use App\Form\GameType;
+use App\Service\ChatService;
 use App\Entity\ParticipantGame;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ParticipantGameRepository;
@@ -19,6 +20,13 @@ use Symfony\Component\Security\Http\Attribute\{IsGranted, CurrentUser};
 #[Route('/event/{event}/games')]
 final class EventGameController extends AbstractController
 {    
+    private ChatService $chatService;
+
+    public function __construct(ChatService $chatService)
+    {
+        $this->chatService = $chatService;
+    }
+
     #[Route('/', name: 'event_games', methods: ['GET'])]
     public function show(
         #[CurrentUser] User $user,
@@ -26,6 +34,8 @@ final class EventGameController extends AbstractController
         ParticipantGameRepository $pgRepo,
         EntityManagerInterface $em
     ): Response {
+        $chatData = $this->chatService->getChatData($event);
+
         foreach ($event->getGames() as $game) {
             $pg = $pgRepo->findOneBy([
                 'participant' => $user,
@@ -43,9 +53,9 @@ final class EventGameController extends AbstractController
 
         $em->flush();
 
-        return $this->render('event/games/index.html.twig', [
+        return $this->render('event/games/index.html.twig', array_merge($chatData, [
             'event' => $event,
-        ]);
+        ]));
     }
 
     #[Route('add', name: 'game_add')]

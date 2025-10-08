@@ -1,69 +1,56 @@
-<div id="chat-component-{{ event.id }}"
-     data-controller="chat"
-     data-chat-event-id-value="{{ event.id }}"
-     data-chat-current-user-id-value="{{ app.user ? app.user.id : 0 }}"
-     data-chat-mercure-url-value="{{ mercure_subscribe_url() }}"
-     class="fixed bottom-6 right-6 w-80 z-50 text-white font-sans">
+<div
+	data-controller="chat" 
+    data-chat-mercure-url-value="{{ mercureUrl }}" 
+    data-chat-user-id-value="{{ app.user.id }}" 
+    data-chat-post-url-value="{{ path('event_chat_post', { id: event.id }) }}" id="event-chat-container" 
+    class="hidden fixed top-20 right-6 z-40 flex flex-col w-96 max-h-[500px] backdrop-blur-md bg-gray-900/95 border border-electricPurple rounded-xl shadow-2xl shadow-electricPurple overflow-hidden" 
+    data-chat-target="container">
+	{# ✅ En-tête du chat (simple titre) #}
+	<div class="flex items-center justify-center px-4 py-3 border-b border-gray-700 bg-gray-800/80">
+		<h3 class="text-white font-semibold text-sm tracking-wide flex items-center gap-2">
+			<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-neonBlue" fill="none" viewbox="0 0 24 24" stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-4l-4 4z"/>
+			</svg>
+			Chat de l’événement
+		</h3>
+	</div>
 
-    <!-- Bouton flottant -->
-    <button data-chat-target="toggle"
-            data-action="chat#toggle"
-            class="btn-primary w-full rounded-t-lg rounded-b-none shadow-md">
-        💬 Chat
-    </button>
+	{# ✅ Messages déjà en BDD #}
+	<div id="event-chat" data-chat-target="messages" class="flex-1 flex flex-col space-y-3 px-4 py-3 overflow-y-auto custom-scrollbar">
+		{% for message in messages %}
+			{% set isUser = message.sender.id == app.user.id %}
+			<div class="flex {{ isUser ? 'justify-end' : 'justify-start' }}">
+				<div class="flex items-end gap-2 {{ isUser ? 'flex-row-reverse' : '' }}">
 
-    <!-- Fenêtre du chat -->
-    <div data-chat-target="box"
-         class="hidden mt-3 bg-darkGrey border border-neonBlue rounded-lg shadow-2xl flex flex-col h-96 overflow-hidden">
+					<img src="{{ message.sender.profile.avatar ? asset('uploads/events/' ~ message.sender.profile.avatar.imageName) : asset('images/default-avatar.webp') }}" alt="avatar" class="w-8 h-8 rounded-full shadow-sm shrink-0">
 
-        <!-- Messages -->
-        <div data-chat-target="messages"
-             class="flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar">
-            {% for msg in event.messages %}
-                {% set isCurrentUser = msg.sender.id == app.user.id %}
-                <div class="flex {{ isCurrentUser ? 'justify-end' : 'justify-start' }} items-end gap-2">
-                    {% if not isCurrentUser %}
-                        <img src="{{ msg.sender.profile and msg.sender.profile.avatar
-                            ? asset('uploads/events/' ~ msg.sender.profile.avatar.imageName)
-                            : asset('images/default-avatar.webp') }}"
-                             alt="Avatar {{ msg.sender.profile.nickname ?? msg.sender.email }}"
-                             class="w-8 h-8 object-cover rounded-full border border-gray-600">
-                    {% endif %}
-                    <div class="flex flex-col p-2 px-3 max-w-[75%] shadow-md
-                                {{ isCurrentUser
-                                    ? 'bg-neonBlue text-black rounded-tl-lg rounded-tr-lg rounded-br-none rounded-bl-lg'
-                                    : 'bg-gray-700 text-white rounded-tr-lg rounded-tl-lg rounded-bl-none rounded-br-lg' }}">
-                        {% if not isCurrentUser %}
-                            <span class="font-semibold text-xs text-neonBlue mb-0.5">
-                                {{ msg.sender.profile.nickname ?? msg.sender.email }}
-                            </span>
-                        {% endif %}
-                        <div>{{ msg.content }}</div>
-                        <span class="text-[0.7rem] text-right mt-1 opacity-70">
-                            {{ msg.createdAt|date('H:i') }}
-                        </span>
-                    </div>
-                    {% if isCurrentUser %}
-                        <img src="{{ msg.sender.profile and msg.sender.profile.avatar
-                            ? asset('uploads/events/' ~ msg.sender.profile.avatar.imageName)
-                            : asset('images/default-avatar.webp') }}"
-                             alt="Avatar {{ msg.sender.profile.nickname ?? msg.sender.email }}"
-                             class="w-8 h-8 object-cover rounded-full border border-gray-600">
-                    {% endif %}
-                </div>
-            {% endfor %}
-        </div>
+					<div class="flex flex-col {{ isUser ? 'items-end' : 'items-start' }}">
+						<div class="relative px-4 py-2 rounded-2xl inline-block shadow-sm
+								                        {{ isUser
+								                            ? 'bg-gradient-to-br from-neonBlue/90 to-blue-600/80 text-darkGrey rounded-br-none self-end'
+								                            : 'bg-gray-700/80 text-white rounded-bl-none self-start' }}
+								                            ">
+							<p class="text-[13px] font-medium mb-0.5">
+								{{ isUser ? 'Vous' : message.sender.profile.nickname ?: message.sender.email }}
+							</p>
+							{# MODIFICATION ICI : utilisation de 'break-all' et 'whitespace-normal' #}
+							<p class="text-sm leading-relaxed whitespace-normal break-all">{{ message.content }}</p>
+						</div>
+						<span class="text-[10px] text-gray-400 mt-1">
+							{{ message.createdAt|date('H:i') }}
+						</span>
+					</div>
+				</div>
+			</div>
+		{% else %}
+			<p class="text-gray-400 text-center mt-4">Aucun message pour le moment.</p>
+		{% endfor %}
+	</div>
 
-        <!-- Formulaire -->
-        <form data-chat-target="form" data-action="submit->chat#send"
-              class="p-2 flex gap-2 border-t border-gray-700 bg-gray-800">
-            <input data-chat-target="input" type="text" name="content"
-                   placeholder="Écrire un message..."
-                   class="flex-1 rounded-lg border border-gray-600 p-1.5 bg-gray-900 text-white text-sm focus:ring-2 focus:ring-neonBlue outline-none">
-            <button type="submit"
-                    class="px-3 py-1.5 bg-neonBlue text-black font-semibold rounded-lg hover:bg-blue-400 transition">
-                Envoyer
-            </button>
-        </form>
-    </div>
+	{# ✅ Formulaire #}
+	<form id="event-chat-form" data-chat-target="form" class="flex items-center gap-2 p-3 border-t border-gray-700 bg-gray-800/80">
+		<textarea name="content" rows="1" placeholder="Écrivez un message..." class="input text-white text-sm focus:ring-2 focus:ring-neonBlue focus:border-neonBlue w-full rounded-xl p-2 bg-gray-900/90 border border-gray-600 resize-none"></textarea>
+		<button type="submit" class="btn-primary text-sm px-4 py-2">Envoyer</button>
+	</form>
+
 </div>

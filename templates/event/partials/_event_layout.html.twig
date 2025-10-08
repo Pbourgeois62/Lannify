@@ -1,12 +1,18 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-	<div class="sticky top-0 z-50 flex justify-center gap-4 p-4 mb-12">
-		<a href="{{ path('event_home', { event: event.id }) }}" class="btn-secondary px-4 py-2">Accueil</a>
-		<a href="{{ path('event_needs', { event: event.id }) }}" class="btn-secondary px-4 py-2">Besoins</a>
-		<a href="{{ path('event_games', { event: event.id }) }}" class="btn-secondary px-4 py-2">Akoikonjoue</a>
-		<a href="{{ path('event_photo_index', { event: event.id }) }}" class="btn-secondary px-4 py-2">Photos souvenirs</a>		
-	</div>
+<div class="sticky top-32 z-50 flex justify-center gap-4 p-4 backdrop-blur-md mb-12 border-b border-gray-700/50">	
+	<a href="{{ path('event_home', { event: event.id }) }}" class="btn-secondary px-4 py-2">Accueil</a>
+	<a href="{{ path('event_needs', { event: event.id }) }}" class="btn-secondary px-4 py-2">Besoins</a>
+	<a href="{{ path('event_games', { event: event.id }) }}" class="btn-secondary px-4 py-2">Akoikonjoue</a>
+	<a href="{{ path('event_photo_index', { event: event.id }) }}" class="btn-secondary px-4 py-2">Photos souvenirs</a>
 
+	{# bouton chat #}
+	<button id="chat-toggle" class="btn-secondary px-4 py-2">Ouvrir le chat</button>
+
+	{# inclusion du chat (conteneur + JS) #}
+	{% include 'partials/_chat.html.twig' with {'event': event} %}
+</div>
+	
 	{% block event_layout %}{% endblock %}
 {% endblock %}

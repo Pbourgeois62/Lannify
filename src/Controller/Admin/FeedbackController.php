@@ -29,7 +29,7 @@ final class FeedbackController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'feedback_new')]
+    #[Route('/new', name: 'admin_feedback_new')]
     public function new(#[CurrentUser] User $user, Request $request, EntityManagerInterface $em): Response
     {
         $feedback = new Feedback();
@@ -52,7 +52,7 @@ final class FeedbackController extends AbstractController
         ]);
     }
 
-    #[Route('/{feedback}/show', name: 'feedback_show')]
+    #[Route('/{feedback}/show', name: 'admin_feedback_show')]
     public function show(#[CurrentUser] User $user, Feedback $feedback, Request $request, EntityManagerInterface $em): Response
     {
         $feedbackMessage = new FeedbackMessage();

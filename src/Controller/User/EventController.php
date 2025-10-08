@@ -5,6 +5,7 @@ namespace App\Controller\User;
 use App\Entity\Event;
 use App\Entity\Image;
 use App\Form\EventType;
+use App\Service\ChatService;
 use App\Service\CodeGenerator;
 use App\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,16 +18,24 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[IsGranted('ROLE_USER')]
 #[Route('/event')]
 final class EventController extends AbstractController
-{  
+{
+    private ChatService $chatService;
+
+    public function __construct(ChatService $chatService)
+    {
+        $this->chatService = $chatService;
+    }
+
     #[Route('/{event}/home', name: 'event_home')]
     public function home(Event $event): Response
-    {       
-        return $this->render('event/home.html.twig', [
-            'event' => $event
-        ])
-        ;
+    {
+        $chatData = $this->chatService->getChatData($event);
+
+        return $this->render('event/home.html.twig', array_merge($chatData, [
+            'event' => $event,
+        ]));
     }
-    
+
     #[Route('/create', name: 'event_create')]
     public function create(Request $request, EntityManagerInterface $em, CodeGenerator $code): Response
     {
@@ -58,7 +67,7 @@ final class EventController extends AbstractController
             'form' => $form->createView(),
             'isEdit' => false,
         ]);
-    }    
+    }
 
     #[Route('/join', name: 'event_join')]
     public function join(EventRepository $eventRepository, EntityManagerInterface $em, Request $request): Response

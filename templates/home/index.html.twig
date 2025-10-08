@@ -4,6 +4,7 @@
 {% endblock %}
 
 {% block body %}
+
 	{% if showFeedback %}
 		<div id="feedback-toast" class="fixed top-5 right-5 bg-darkGrey border border-neonBlue rounded-lg shadow-lg p-4 flex flex-col space-y-2 z-50 max-w-[90%] w-auto">
 			<div class="flex justify-between items-start">
@@ -67,7 +68,7 @@
 			<p class="text-gray-300">Aucun événement à venir pour le moment.</p>
 		{% else %}
 			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-				{% for event in openedEvents %}
+				{% for event in openedEvents %}				
 					<div
 						class="bg-darkGrey border border-neonBlue rounded-xl overflow-hidden shadow-lg hover:shadow-neonBlue/50 transition-all duration-300 relative">
 
@@ -139,18 +140,7 @@
 							<img src="{{ asset('images/default.webp') }}" alt="" class="rounded-t-xl w-full h-60 object-cover shadow-inner">
 						{% endif %}
 
-						{% if event.organizer and event.organizer.id == app.user.id %}
-							{# <div class="absolute top-2 right-2 flex space-x-2">
-																						<a href="{{ path('event_edit', { event: event.id }) }}" class="btn-edit">
-																							<i class="bi bi-pencil" aria-hidden="true"></i>
-																							<span class="sr-only">Modifier l'événement
-																								{{ event.name }}</span>
-																						</a>
-																						<button type="button" data-modal-target="delete-event-{{ event.id }}" data-modal-toggle="delete-event-{{ event.id }}" class="btn-delete">
-																							<i class="bi bi-trash"></i>
-																						</button>
-																					</div> #}
-
+						{% if event.organizer and event.organizer.id == app.user.id %}					
 							<div class="absolute bottom-44 right-2">
 								<span class="badge-fun">Organisateur</span>
 							</div>
