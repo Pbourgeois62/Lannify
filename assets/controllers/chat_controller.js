@@ -1,135 +1,73 @@
-import { Controller } from "@hotwired/stimulus";
+import { Controller } from '@hotwired/stimulus'
 
-/**
- * Contrôleur Stimulus pour le chat en temps réel (Mercure)
- */
 export default class extends Controller {
-    static targets = ["messages", "form", "input", "toggle", "box", "iconOpen", "iconClose"];
-    static values = {
-        mercureUrl: String,
-        currentUserId: Number,
-        eventId: Number
-    };
+    static targets = ['container', 'messages', 'form']
+    static values = { mercureUrl: String, userId: Number, postUrl: String }
 
     connect() {
-        if (!this.mercureUrlValue) {
-            console.error("🔴 Mercure URL non définie !");
-            return;
-        }
+        // Toggle ouverture / fermeture du chat
+        const chatToggle = document.getElementById('chat-toggle')
+        chatToggle?.addEventListener('click', () => {
+            this.containerTarget.classList.toggle('hidden')
+            const isHidden = this.containerTarget.classList.contains('hidden')
 
-        this.subscribe();
+            chatToggle.textContent = isHidden ? 'Ouvrir le chat' : 'Fermer le chat'
+            chatToggle.classList.toggle('btn-return', !isHidden)
+            chatToggle.classList.toggle('btn-secondary', isHidden)
+
+            if (!isHidden) this.scrollToBottom()
+        })
+
+        // Mercure
+        this.subscribeToMercure()
+
+        // Envoi de message
+        this.formTarget.addEventListener('submit', this.sendMessage.bind(this))
     }
 
-    // --- 🔔 Souscription Mercure ---
-    subscribe() {
-        const es = new EventSource(this.mercureUrlValue);
+    subscribeToMercure() {
+        const eventSource = new EventSource(this.mercureUrlValue)
+        eventSource.onmessage = event => {
+            const data = JSON.parse(event.data)
+            const isUser = parseInt(data.userId) === this.userIdValue
 
-        es.onopen = () => console.log("🟢 Connexion Mercure ouverte");
-        es.onerror = (err) => console.error("🔴 Erreur EventSource:", err);
-
-        es.onmessage = (e) => {
-            try {
-                const msg = JSON.parse(e.data);
-                const isCurrentUser = Number(msg.userId) === this.currentUserIdValue;
-                this.addMessage(msg, isCurrentUser);
-            } catch (err) {
-                console.error("❌ Erreur parsing Mercure:", err);
-            }
-        };
-
-        this.eventSource = es;
-    }
-
-    // --- 💬 Ajout d’un message dans le DOM ---
-    addMessage(msg, isCurrentUser) {
-        const wrapper = document.createElement("div");
-        wrapper.className = `flex items-end gap-2 ${isCurrentUser ? "justify-end" : "justify-start"}`;
-
-        // --- Avatar ---
-        const avatar = document.createElement("img");
-        avatar.src = msg.avatar || "/images/default-avatar.webp";
-        avatar.alt = `Avatar ${msg.user}`;
-        avatar.className = "w-8 h-8 object-cover rounded-full border border-gray-600";
-
-        if (!isCurrentUser) wrapper.appendChild(avatar);
-
-        // --- Bulle de message ---
-        const bubble = document.createElement("div");
-        bubble.className = `
-            flex flex-col p-2 px-3 max-w-[75%] shadow-md
-            ${isCurrentUser
-                ? "bg-neonBlue text-black rounded-tl-lg rounded-tr-lg rounded-br-lg"
-                : "bg-gray-700 text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg"}
-        `;
-
-        // Nom de l’expéditeur (si autre utilisateur)
-        if (!isCurrentUser) {
-            const user = document.createElement("span");
-            user.className = "font-semibold text-xs text-neonBlue mb-0.5";
-            user.textContent = msg.user;
-            bubble.appendChild(user);
-        }
-
-        // Contenu
-        const content = document.createElement("div");
-        content.textContent = msg.content;
-        bubble.appendChild(content);
-
-        // Heure
-        const time = document.createElement("span");
-        time.className = "text-[0.7rem] text-right mt-1 opacity-70";
-        time.textContent = msg.createdAt;
-        bubble.appendChild(time);
-
-        wrapper.appendChild(bubble);
-
-        // Avatar utilisateur courant (à droite)
-        if (isCurrentUser) wrapper.appendChild(avatar.cloneNode(true));
-
-        // --- Insertion dans le DOM ---
-        this.messagesTarget.appendChild(wrapper);
-
-        // Scroll automatique vers le bas
-        this.messagesTarget.scrollTo({
-            top: this.messagesTarget.scrollHeight,
-            behavior: "smooth"
-        });
-    }
-
-    // --- 🟢 Affichage / masquage du chat ---
-    toggle() {
-        this.boxTarget.classList.toggle("hidden");
-        this.toggleTarget.classList.toggle("rounded-b-none");
-        this.toggleTarget.classList.toggle("rounded-b-lg");
-
-        // Focus auto dans le champ texte à l’ouverture
-        if (!this.boxTarget.classList.contains("hidden")) {
-            setTimeout(() => this.inputTarget.focus(), 100);
+            const div = document.createElement('div')
+            div.className = `flex ${isUser ? 'justify-end' : 'justify-start'} mb-2`
+            div.innerHTML = `
+                <div class="flex items-end gap-2 ${isUser ? 'flex-row-reverse' : ''}">
+                    <img src="${data.avatar}" alt="avatar" class="w-8 h-8 rounded-full shadow-sm shrink-0">
+                    <div class="flex flex-col ${isUser ? 'items-end' : 'items-start'}">
+                        <div class="relative px-4 py-2 rounded-2xl inline-block shadow-sm
+                            ${isUser 
+                                ? 'bg-gradient-to-br from-neonBlue/90 to-blue-600/80 text-darkGrey rounded-br-none self-end' 
+                                : 'bg-gray-700/80 text-white rounded-bl-none self-start'}">
+                            <p class="text-[13px] font-medium mb-0.5">
+                                ${isUser ? 'Vous' : data.user}
+                            </p>
+                            <p class="text-sm leading-relaxed whitespace-normal break-all">
+                                ${data.content}
+                            </p>
+                        </div>
+                        <span class="text-[10px] text-gray-400 mt-1">${data.createdAt}</span>
+                    </div>
+                </div>
+            `
+            this.messagesTarget.appendChild(div)
+            this.scrollToBottom()
         }
     }
 
-    // --- ✉️ Envoi d’un message ---
-    async send(e) {
-        e.preventDefault();
-
-        const content = this.inputTarget.value.trim();
-        if (!content) return;
-
-        try {
-            await fetch(`/event/${this.eventIdValue}/chat`, {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: new URLSearchParams({ content })
-            });
-        } catch (err) {
-            console.error("🔴 Erreur lors de l’envoi du message:", err);
-        }
-
-        this.inputTarget.value = "";
+    async sendMessage(e) {
+        e.preventDefault()
+        const formData = new FormData(this.formTarget)
+        const response = await fetch(this.postUrlValue, {
+            method: 'POST',
+            body: formData
+        })
+        if (response.ok) this.formTarget.reset()
     }
 
-    // --- 🚪 Nettoyage ---
-    disconnect() {
-        if (this.eventSource) this.eventSource.close();
+    scrollToBottom() {
+        this.messagesTarget.scrollTop = this.messagesTarget.scrollHeight
     }
 }

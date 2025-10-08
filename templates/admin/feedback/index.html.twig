@@ -31,7 +31,7 @@
                             <td class="px-6 py-4 text-white">{{ feedback.category }}</td>
                             <td class="px-6 py-4 text-white">{{ feedback.createdAt|date('d/m/Y H:i') }}</td>
                             <td class="px-6 py-4">
-                                <a href="{{ path('feedback_show', {'feedback': feedback.id}) }}"
+                                <a href="{{ path('admin_feedback_show', {'feedback': feedback.id}) }}"
                                    class="text-neonBlue hover:underline">Voir</a>
                             </td>
                         </tr>

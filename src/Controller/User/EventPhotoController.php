@@ -6,34 +6,45 @@ use App\Entity\User;
 use App\Entity\Event;
 use App\Entity\EventImage;
 use App\Form\EventImageType;
+use App\Service\ChatService;
 use App\Repository\EventImageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[IsGranted('ROLE_USER')]
 #[Route('/event/{event}', name: 'event_photo_')]
 final class EventPhotoController extends AbstractController
 {
+    private ChatService $chatService;
+
+    public function __construct(ChatService $chatService)
+    {
+        $this->chatService = $chatService;
+    }
+    
     #[Route('/photos/index', name: 'index', methods: ['GET'])]
     public function index(
         #[CurrentUser] ?User $user,
         Event $event,
         EventImageRepository $eventImageRepository
     ): Response {
+
+        $chatData = $this->chatService->getChatData($event);
+
         $organizer = $event->getOrganizer();
         $photos = ($user && $organizer && $user->getId() === $organizer->getId())
             ? $event->getEventImages()
             : $eventImageRepository->getAllApprovedImagesByEventId($event->getId());
 
-        return $this->render('event/photos/index.html.twig', [
+        return $this->render('event/photos/index.html.twig', array_merge($chatData, [
             'photos' => $photos,
             'event' => $event,
-        ]);
+        ]));
     }
 
     #[Route('/photo/add', name: 'add', methods: ['GET', 'POST'])]

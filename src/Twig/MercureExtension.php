@@ -16,6 +16,6 @@ class MercureExtension extends AbstractExtension
 
     public function getSubscribeUrl(): string
     {
-        return $_ENV['MERCURE_PUBLIC_URL'] ?? 'http://localhost/.well-known/mercure';
+        return $_ENV['MERCURE_PUBLIC_URL'] ?? 'https://localhost/.well-known/mercure';
     }
 }

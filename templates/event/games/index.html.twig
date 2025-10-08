@@ -6,6 +6,8 @@
 
 {% block event_layout %}
 
+{% include 'partials/_chat.html.twig' with {'event': event} %}
+
 	<div class="flex items-center justify-center gap-4 px-4 mb-12">
 		<h2 class="text-3xl font-bold text-neonBlue">Akoikonjoue</h2>
 		<a href="{{ path('game_add', { event: event.id }) }}" class="btn-primary px-3 py-1 text-base hover:scale-105 transform shadow-xl transition-all duration-300">

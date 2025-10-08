@@ -77,10 +77,9 @@ final class FeedbackController extends AbstractController
     }
 
     #[Route('/seen', name: 'feedback_seen')]
-public function markFeedbackSeen(Request $request): Response
-{
-    $request->getSession()->set('feedback_seen', true);
-    // Redirige vers la homepage pour ne pas rester sur cette route
-    return $this->redirectToRoute('home');
-}
+    public function markFeedbackSeen(Request $request): Response
+    {
+        $request->getSession()->set('feedback_seen', true);
+        return $this->redirectToRoute('home');
+    }
 }

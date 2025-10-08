@@ -1,14 +1,13 @@
 {% extends 'event/partials/_event_layout.html.twig' %}
 
-{% block title %}{{ event.name }}{% endblock %}
+{% block title %}
+    {{ event.name }}
+{% endblock %}
 
 {% block event_layout %}
 
 {# -------- Hero Countdown -------- #}
-{% include 'partials/_chat.html.twig' with {'event': event} %}
-<section id="countdown-section"
-         class="relative w-full py-24 text-center"
-         data-aos="fade-up">
+<section id="countdown-section" class="relative w-full py-24 text-center" data-aos="fade-up">
 
     {% if date() < event.startDate %}
         <div class="relative z-10 container mx-auto px-6 max-w-4xl">
@@ -16,11 +15,9 @@
                 La LAN débute dans…
             </h1>
 
-            <div id="countdown"
-                 class="grid grid-cols-2 sm:grid-cols-4 gap-6 text-4xl md:text-6xl font-extrabold text-white pt-12"
-                 data-aos="zoom-in">
+            <div id="countdown" class="grid grid-cols-2 sm:grid-cols-4 gap-6 text-4xl md:text-6xl font-extrabold text-white pt-12" data-aos="zoom-in">
                 {% for label in ['Jours','Heures','Minutes','Secondes'] %}
-                    <div class="relative flex flex-col items-center justify-center 
+                    <div class="relative flex flex-col items-center justify-center
                                 bg-white/10 backdrop-blur-md border border-cyanShadow/40 rounded-2xl p-4 shadow-lg overflow-hidden">
 
                         <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,255,0.15)_0%,transparent_80%)]
@@ -41,40 +38,60 @@
     {% endif %}
 </section>
 
-
 {# -------- Infos générales -------- #}
-<section id="infos-section"
-         class="relative py-20 text-white"
-         data-aos="fade-up">
-
+<section id="infos-section" class="relative py-20 text-white" data-aos="fade-up">
     <div class="container mx-auto px-6 max-w-5xl grid md:grid-cols-2 gap-10">
 
         {# Bloc infos principales #}
         <div class="group space-y-6 bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-cyanShadow shadow-xl
-                    transition-all duration-300 hover:shadow-neonBlue/40 hover:scale-[1.02]"
-             data-aos="fade-right">
+                    transition-all duration-300 hover:shadow-neonBlue/40 hover:scale-[1.02]" data-aos="fade-right">
             <h2 class="text-neonBlue text-2xl font-bold mb-4">Informations</h2>
-            <p><strong class="text-cyanShadow">Date de début :</strong> {{ event.startDate|date('d/m/Y H:i') }}</p>
-            <p><strong class="text-cyanShadow">Date de fin :</strong> {{ event.endDate|date('d/m/Y H:i') }}</p>
+            <p>
+                <strong class="text-cyanShadow">Date de début :</strong>
+                {{ event.startDate|date('d/m/Y H:i') }}
+            </p>
+            <p>
+                <strong class="text-cyanShadow">Date de fin :</strong>
+                {{ event.endDate|date('d/m/Y H:i') }}
+            </p>
             {% if event.organizer %}
                 <p>
                     <strong class="text-cyanShadow">Organisateur :</strong>
                     {{ event.organizer.profile.nickname ?? event.organizer.email }}
                 </p>
             {% endif %}
+
             {% if event.code %}
-                <p>
+            <div x-data="{ copied: false }" class="flex items-center gap-2">
+                <p class="flex items-center gap-1">
                     <strong class="text-cyanShadow">Code LAN :</strong>
-                    <span class="text-electricPurple font-mono tracking-wide drop-shadow-[0_0_6px_#9f7aea]">{{ event.code }}</span>
+                    <span x-ref="code" class="text-electricPurple font-mono tracking-wide drop-shadow-[0_0_6px_#9f7aea]">
+                        {{ event.code }}
+                    </span>
                 </p>
+                <button @click="
+                    if ($refs.code) {
+                        navigator.clipboard.writeText($refs.code.textContent.trim());
+                        copied = true;
+                        setTimeout(() => copied = false, 2000);
+                    }
+                " class="flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-cyan-600 hover:bg-cyan-700 text-white transition cursor-pointer">
+                    <span x-show="!copied">Copier</span>
+                    <span x-show="copied" x-transition class="inline-flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Copié !
+                    </span>
+                </button>
+            </div>
             {% endif %}
         </div>
 
         {# Bloc adresse #}
         {% if event.address %}
             <div class="group bg-white/10 backdrop-blur-md space-y-6 p-8 rounded-2xl border border-electricPurple shadow-xl
-                        transition-all duration-300 hover:shadow-electricPurple/40 hover:scale-[1.02]"
-                 data-aos="fade-left">
+                        transition-all duration-300 hover:shadow-electricPurple/40 hover:scale-[1.02]" data-aos="fade-left">
                 <h2 class="text-neonBlue text-2xl font-bold mb-4">Adresse</h2>
                 <p>{{ event.address.street }}</p>
                 <p>{{ event.address.postalCode }} {{ event.address.city }}</p>
@@ -85,10 +102,7 @@
 </section>
 
 {# -------- Participants -------- #}
-<section id="participants-section"
-         class="relative py-20 text-white"
-         data-aos="fade-up">
-
+<section id="participants-section" class="relative py-20 text-white" data-aos="fade-up">
     <div class="container mx-auto px-6 max-w-6xl text-center">
         <h2 class="text-3xl md:text-4xl font-extrabold text-neonBlue mb-12">Participants</h2>
 
@@ -97,16 +111,11 @@
                 {% for user in event.users %}
                     <div class="p-4 rounded-xl bg-white/10 backdrop-blur-md border border-cyanShadow/30
                                 flex flex-col items-center shadow-md transition-all duration-300 hover:scale-105 hover:shadow-neonBlue"
-                         data-aos="flip-left"
-                         data-aos-delay="{{ loop.index * 80 }}">
+                        data-aos="flip-left" data-aos-delay="{{ loop.index * 80 }}">
                         {% if user.profile and user.profile.avatar %}
-                            <img src="{{ asset('uploads/events/' ~ user.profile.avatar.imageName) }}"
-                                 alt="Avatar {{ user.profile.nickname ?? user.email }}"
-                                 class="w-24 h-24 object-cover mb-3">
+                            <img src="{{ asset('uploads/events/' ~ user.profile.avatar.imageName) }}" alt="Avatar {{ user.profile.nickname ?? user.email }}" class="w-24 h-24 object-cover mb-3">
                         {% else %}
-                            <img src="{{ asset('images/default-avatar.webp') }}"
-                                 alt="Avatar par défaut"
-                                 class="w-24 h-24 object-cover mb-3">
+                            <img src="{{ asset('images/default-avatar.webp') }}" alt="Avatar par défaut" class="w-24 h-24 object-cover mb-3">
                         {% endif %}
                         <span class="text-neonBlue font-semibold">{{ user.profile.nickname ?? 'Anonyme' }}</span>
                     </div>
@@ -120,23 +129,25 @@
 
 {# -------- Scripts -------- #}
 <script>
-AOS.init({ duration: 800, once: true, offset: 120, easing: 'ease-out-cubic' });
+AOS.init({duration: 800, once: true, offset: 120, easing: 'ease-out-cubic'});
 
 const lanDate = new Date("{{ event.startDate|date('Y-m-d H:i:s') }}").getTime();
 
 function updateCountdown() {
     const now = new Date().getTime();
-    const d = lanDate - now;   
+    const d = lanDate - now;
     const values = [
         Math.floor(d / (1000 * 60 * 60 * 24)),
         Math.floor((d % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
         Math.floor((d % (1000 * 60 * 60)) / (1000 * 60)),
         Math.floor((d % (1000 * 60)) / 1000)
     ];
-    ['jours','heures','minutes','secondes'].forEach((id,i)=>
-        document.getElementById(id).textContent = values[i].toString().padStart(2,'0')
-    );
+    ['jours', 'heures', 'minutes', 'secondes'].forEach((id, i) => {
+        const el = document.getElementById(id);
+        if(el) el.textContent = values[i].toString().padStart(2, '0');
+    });
 }
+
 const timer = setInterval(updateCountdown, 1000);
 updateCountdown();
 </script>

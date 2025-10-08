@@ -6,6 +6,7 @@ use App\Entity\Need;
 use App\Entity\User;
 use App\Entity\Event;
 use App\Form\NeedType;
+use App\Service\ChatService;
 use App\Entity\NeedContribution;
 use App\Form\NeedContributionType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,13 +22,22 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[Route('event/{event}/')]
 final class EventNeedController extends AbstractController
 {
+    private ChatService $chatService;
+
+    public function __construct(ChatService $chatService)
+    {
+        $this->chatService = $chatService;
+    }
+    
     #[Route('needs', name: 'event_needs', methods: ['GET'])]
     public function showNeeds(
         Event $event,
         #[CurrentUser] ?User $user,
         NeedContributionRepository $needContributionRepository
     ): Response {
-        // dump($this->getUser());
+
+        $chatData = $this->chatService->getChatData($event);
+
         $forms = [];
 
         foreach ($event->getNeeds() as $need) {
@@ -48,10 +58,10 @@ final class EventNeedController extends AbstractController
             $forms[$need->getId()] = $form->createView();
         }
 
-        return $this->render('event/needs/index.html.twig', [
+        return $this->render('event/needs/index.html.twig', array_merge($chatData, [
             'event' => $event,
             'forms' => $forms,
-        ]);
+        ]));
     }
 
     #[Route('need/create', name: 'need_create', methods: ['GET', 'POST'])]
