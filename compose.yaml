@@ -16,6 +16,7 @@ services:
     volumes:
       - caddy_data:/data
       - caddy_config:/config
+      - lannify_var:/app/var
     ports:
       - target: 80
         published: ${HTTP_PORT:-81}
@@ -100,6 +101,7 @@ volumes:
   caddy_data:
   caddy_config:
   database_data:
+  lannify_var:
 
 ###> symfony/mercure-bundle ###
   mercure_data:
