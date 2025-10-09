@@ -1,14 +1,9 @@
-# see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
     secret: '%env(APP_SECRET)%'
 
-    # Note that the session will be started ONLY if you read or write from it.
-    session: true
+    default_locale: fr
 
-    default_locale: fr    
-
-    #esi: true
-    #fragments: true
+    session: true   
 
 when@test:
     framework:

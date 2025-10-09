@@ -25,24 +25,4 @@ services:
     ports:
       - "5432:5432"
 
-  mercure:
-    image: dunglas/mercure
-    restart: unless-stopped
-    environment:
-      # Développement : autoriser les connexions anonymes
-      MERCURE_ALLOW_ANONYMOUS: '1'
-      # CORS pour ton frontend local
-      MERCURE_CORS_ALLOWED_ORIGINS: 'http://localhost:81,http://127.0.0.1:81'
-      MERCURE_PUBLISHER_JWT_KEY: '!ChangeThisMercureHubJWTSecretKey!'
-      MERCURE_SUBSCRIBER_JWT_KEY: '!ChangeThisMercureHubJWTSecretKey!'
-      MERCURE_PUBLIC_URL: 'http://localhost:81/.well-known/mercure'
-    command: /usr/bin/caddy run --config /etc/caddy/dev.Caddyfile
-    volumes:
-      - mercure_data:/data
-      - mercure_config:/config
-    ports:
-      - "8081:80"
 
-volumes:
-  mercure_data:
-  mercure_config:
