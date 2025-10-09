@@ -24,17 +24,7 @@ class EventChatController extends AbstractController
     public function __construct(ChatService $chatService)
     {
         $this->chatService = $chatService;
-    }
-
-    #[Route('/event/{id}/chat-fragment', name: 'event_chat_fragment', methods: ['GET'])]
-    public function chatFragment(Event $event): Response
-    {
-        $chatData = $this->chatService->getChatData($event);
-
-        return $this->render('partials/_chat.html.twig', array_merge($chatData, [
-            'event' => $event,
-        ]));
-    }
+    }   
 
     #[Route('/event/{id}/chat', name: 'event_chat_post', methods: ['POST'])]
     public function postMessage(
