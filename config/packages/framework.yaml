@@ -3,14 +3,8 @@ framework:
 
     default_locale: fr
 
-<<<<<<< HEAD
-    default_locale: fr
-
-    #esi: true
-    #fragments: true
-=======
     session: true   
->>>>>>> 34df46bc84a061602093431bceeefdaec1b67e99
+
 
 when@test:
     framework:

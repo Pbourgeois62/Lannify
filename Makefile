@@ -2,7 +2,7 @@ PHP_CONTAINER=lannify-php-1
 
 # Démarrer les conteneurs
 docker-start:
-	docker compose up -d --build
+	docker compose --env-file .env.local up -d --build
 
 # Arrêter les conteneurs
 docker-stop:
