@@ -1,55 +1,61 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Dashboard Admin{% endblock %}
+{% block title %}Dashboard Admin
+{% endblock %}
 
 {% block body %}
-<div class="max-w-7xl mx-auto p-6 space-y-8">
+	<div
+		class="max-w-7xl mx-auto p-6 space-y-8">
 
-    {# --- Stats Cards --- #}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-gradient-to-br from-purple-500 to-indigo-600 text-white p-6 rounded-2xl shadow-lg">
-            <h3 class="text-sm font-medium uppercase">Utilisateurs</h3>
-            <p class="text-3xl font-bold mt-2">{{ stats.users }}</p>
-        </div>        
+		{# --- Stats Cards --- #}
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+			<div class="bg-gradient-to-br from-purple-500 to-indigo-600 text-white p-6 rounded-2xl shadow-lg">
+				<h3 class="text-sm font-medium uppercase">Utilisateurs</h3>
+				<p class="text-3xl font-bold mt-2">{{ stats.users }}</p>
+				<div>
+					<a href="{{ path('admin_user_management') }}" class="text-sm text-white underline mt-2 inline-block">Voir tous les utilisateurs</a>
+				</div>
+			</div>
 
-        <div class="bg-gradient-to-br from-yellow-400 to-orange-500 text-white p-6 rounded-2xl shadow-lg">
-            <h3 class="text-sm font-medium uppercase">Feedbacks</h3>
-            <p class="text-3xl font-bold mt-2">{{ stats.feedbacks }}</p>
-        </div>
-    </div>
+			<div class="bg-gradient-to-br from-yellow-400 to-orange-500 text-white p-6 rounded-2xl shadow-lg">
+				<h3 class="text-sm font-medium uppercase">Feedbacks</h3>
+				<p class="text-3xl font-bold mt-2">{{ stats.feedbacks }}</p>
+			</div>
+		</div>
 
-    {# --- Latest Items --- #}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-       
-        {# Latest Events #}
-        <div class="bg-darkGrey p-6 rounded-2xl shadow-lg border-2 border-neonBlue">
-            <h2 class="text-xl font-bold text-neonBlue mb-4">Derniers événements</h2>
-            <ul class="space-y-2">
-                {% for event in latestEvents %}
-                    <li class="flex justify-between text-white">
-                        <span>{{ event.name }}</span>
-                        <span class="text-gray-400 text-sm">{{ event.createdAt|date('d/m/Y') }}</span>
-                    </li>
-                {% else %}
-                    <li class="text-gray-400">Aucun événement récent.</li>
-                {% endfor %}
-            </ul>
-        </div>
+		{# --- Latest Items --- #}
+		<div
+			class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {# Latest Feedbacks #}
-        <div class="bg-darkGrey p-6 rounded-2xl shadow-lg border-2 border-neonBlue">
-            <h2 class="text-xl font-bold text-neonBlue mb-4">Derniers feedbacks</h2>
-            <ul class="space-y-2">
-                {% for feedback in latestFeedbacks %}
-                    <li class="flex justify-between text-white">
-                        <span>{{ feedback.title }}</span>
-                        <span class="text-gray-400 text-sm">{{ feedback.createdAt|date('d/m/Y') }}</span>
-                    </li>
-                {% else %}
-                    <li class="text-gray-400">Aucun feedback récent.</li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
-</div>
+			{# Latest Events #}
+			<div class="bg-darkGrey p-6 rounded-2xl shadow-lg border-2 border-neonBlue">
+				<h2 class="text-xl font-bold text-neonBlue mb-4">Derniers événements</h2>
+				<ul class="space-y-2">
+					{% for event in latestEvents %}
+						<li class="flex justify-between text-white">
+							<span>{{ event.name }}</span>
+							<span class="text-gray-400 text-sm">{{ event.createdAt|date('d/m/Y') }}</span>
+						</li>
+					{% else %}
+						<li class="text-gray-400">Aucun événement récent.</li>
+					{% endfor %}
+				</ul>
+			</div>
+
+			{# Latest Feedbacks #}
+			<div class="bg-darkGrey p-6 rounded-2xl shadow-lg border-2 border-neonBlue">
+				<h2 class="text-xl font-bold text-neonBlue mb-4">Derniers feedbacks</h2>
+				<ul class="space-y-2">
+					{% for feedback in latestFeedbacks %}
+						<li class="flex justify-between text-white">
+							<span>{{ feedback.title }}</span>
+							<span class="text-gray-400 text-sm">{{ feedback.createdAt|date('d/m/Y') }}</span>
+						</li>
+					{% else %}
+						<li class="text-gray-400">Aucun feedback récent.</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	</div>
 {% endblock %}

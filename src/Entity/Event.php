@@ -57,19 +57,19 @@ class Event
     /**
      * @var Collection<int, Game>
      */
-    #[ORM\OneToMany(targetEntity: Game::class, mappedBy: 'event')]
+    #[ORM\OneToMany(targetEntity: Game::class, mappedBy: 'event', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $games;
 
     /**
      * @var Collection<int, EventImage>
      */
-    #[ORM\OneToMany(targetEntity: EventImage::class, mappedBy: 'event')]
+    #[ORM\OneToMany(targetEntity: EventImage::class, mappedBy: 'event', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $eventImages;
 
     /**
      * @var Collection<int, Message>
      */
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'event', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'event', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $messages;
 
     #[ORM\Column (type: 'boolean', nullable: true)]

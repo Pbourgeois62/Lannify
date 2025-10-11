@@ -1,0 +1,65 @@
+{# templates/admin/users/list.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des utilisateurs{% endblock %}
+
+{% block body %}
+<div class="p-6 space-y-6">
+    <h1 class="text-3xl font-bold text-indigo-700">Gestion des utilisateurs</h1>
+
+    {# Tableau utilisateurs #}
+    <div class="overflow-x-auto bg-gray-800 shadow-lg rounded-2xl mt-4">
+        <table class="min-w-full divide-y divide-gray-700">
+            <thead class="bg-indigo-700 text-white">
+                <tr>
+                    <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">#</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Nom</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Email</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Rôle</th>
+                    <th class="px-6 py-3 text-center text-sm font-semibold uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-gray-900 divide-y divide-gray-700">
+                {% for user in users %}
+                    <tr class="hover:bg-gray-800 transition-colors">
+                        <td class="px-6 py-4 text-sm font-medium text-gray-300">{{ loop.index }}</td>
+                        <td class="px-6 py-4 flex items-center gap-2 text-sm text-gray-200">                            
+                            {{ user.profile.nickname is defined and user.profile.nickname ?: '—' }}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-200">{{ user.email }}</td>
+                        <td class="px-6 py-4 text-sm">
+                            {% if user.isAdmin %}
+                                <span class="px-2 py-1 inline-flex text-xs font-semibold rounded-full bg-red-600 text-white">
+                                    Admin
+                                </span>
+                            {% else %}
+                                <span class="px-2 py-1 inline-flex text-xs font-semibold rounded-full bg-blue-600 text-white">
+                                    User
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-center flex justify-center gap-2">
+                            {# Modifier si nécessaire #}
+                            {# <a href="{{ path('admin_user_edit', {id: user.id}) }}"
+                               class="px-3 py-1 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-xs">
+                               Modifier
+                            </a> #}
+                            <a href="{{ path('admin_user_delete', {user: user.id}) }}"
+                               class="px-3 py-1 bg-red-500 hover:bg-red-700 text-white rounded-lg text-xs"
+                               onclick="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');">
+                               Supprimer
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                            Aucun utilisateur trouvé.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

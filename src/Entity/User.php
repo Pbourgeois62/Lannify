@@ -43,7 +43,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     /**
      * @var Collection<int, Event>
      */
-    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'users', cascade: ['persist', 'remove'])]
     private Collection $events;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -66,13 +66,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     /**
      * @var Collection<int, ParticipantGame>
      */
-    #[ORM\OneToMany(targetEntity: ParticipantGame::class, mappedBy: 'participant')]
+    #[ORM\OneToMany(targetEntity: ParticipantGame::class, mappedBy: 'participant', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $participantGames;
 
     /**
      * @var Collection<int, EventImage>
      */
-    #[ORM\OneToMany(targetEntity: EventImage::class, mappedBy: 'uploadedBy')]
+    #[ORM\OneToMany(targetEntity: EventImage::class, mappedBy: 'uploadedBy', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $eventImages;
 
     /**

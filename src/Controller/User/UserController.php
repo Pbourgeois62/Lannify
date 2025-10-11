@@ -23,18 +23,12 @@ final class UserController extends AbstractController
     #[Route('/profile', name: 'user_profile')]
     public function profile(#[CurrentUser] ?User $user, Request $request, EntityManagerInterface $em): Response
     {
-        if($user->getEmail() === 'admin@admin.com') {
+        if ($user->getEmail() === 'admin@admin.com') {
             $user->setRoles(['ROLE_ADMIN']);
             $em->persist($user);
             $em->flush();
         }
 
-        if (!$user->getProfile()) {
-            $profile = new Profile();
-            $user->setProfile($profile);
-        } else {
-            $profile = $user->getProfile();
-        }
         if (!$user->getProfile()->getAvatar()) {
             $user->getProfile()->setAvatar(new Image());
         }
@@ -57,25 +51,25 @@ final class UserController extends AbstractController
     }
 
     #[Route('/credentials', name: 'user_edit_credentials')]
-    public function editCredentials(#[CurrentUser] User $user,Request $request, UserPasswordHasherInterface $passwordHasher,EntityManagerInterface $em): Response
-{
-    $form = $this->createForm(UserCredentialsType::class, $user);
-    $form->handleRequest($request);
+    public function editCredentials(#[CurrentUser] User $user, Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em): Response
+    {
+        $form = $this->createForm(UserCredentialsType::class, $user);
+        $form->handleRequest($request);
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        $password = $form->get('password')->getData();
-        if ($password) {
-            $user->setPassword($passwordHasher->hashPassword($user, $password));
+        if ($form->isSubmitted() && $form->isValid()) {
+            $password = $form->get('password')->getData();
+            if ($password) {
+                $user->setPassword($passwordHasher->hashPassword($user, $password));
+            }
+
+            $em->flush();
+            $this->addFlash('success', 'Identifiants mis à jour !');
+
+            return $this->redirectToRoute('home');
         }
 
-        $em->flush();
-        $this->addFlash('success', 'Identifiants mis à jour !');
-
-        return $this->redirectToRoute('home');
+        return $this->render('user/edit_credentials.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
-
-    return $this->render('user/edit_credentials.html.twig', [
-        'form' => $form->createView(),
-    ]);
-}
 }

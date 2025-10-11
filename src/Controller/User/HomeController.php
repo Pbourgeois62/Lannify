@@ -4,6 +4,7 @@ namespace App\Controller\User;
 
 use App\Entity\User;
 use App\Repository\EventRepository;
+use App\Service\ProfileManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -16,13 +17,21 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 final class HomeController extends AbstractController
 {
     #[Route('/home', name: 'user_home')]
-    public function index(#[CurrentUser] User $user, EventRepository $eventRepository, Request $request): Response
-    {       
+    public function index(
+        #[CurrentUser] User $user,
+        EventRepository $eventRepository,
+        Request $request,
+        ProfileManager $profileManager
+    ): Response {
+        $profileManager->ensureUserProfile($user);
+
         $session = $request->getSession();
         $showFeedback = !$session->get('feedback_seen', false);
+
         $openedEvents = $eventRepository->getOpenedEventsForUser($user);
         $closedEvents = $eventRepository->getClosedEventsForUser($user);
-        return $this->render('home/index.html.twig',[
+
+        return $this->render('home/index.html.twig', [
             'openedEvents' => $openedEvents,
             'closedEvents' => $closedEvents,
             'showFeedback' => $showFeedback,
