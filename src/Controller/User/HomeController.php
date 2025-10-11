@@ -12,9 +12,10 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[IsGranted('ROLE_USER')]
+#[Route('/user')]
 final class HomeController extends AbstractController
 {
-    #[Route('/user/home', name: 'user_home')]
+    #[Route('/home', name: 'user_home')]
     public function index(#[CurrentUser] User $user, EventRepository $eventRepository, Request $request): Response
     {       
         $session = $request->getSession();
