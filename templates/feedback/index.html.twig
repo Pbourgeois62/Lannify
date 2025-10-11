@@ -1,40 +1,47 @@
 {% extends 'user/partials/_account_layout.html.twig' %}
 
-{% block title %}Feedbacks{% endblock %}
+{% block title %}Feedbacks
+{% endblock %}
 
 {% block account_layout %}
-<div class="max-w-5xl mx-auto mt-12 space-y-6">
-    <h1 class="text-3xl font-extrabold text-neonBlue mb-6 text-center drop-shadow-lg mb-16">
-       Merci de vos retours ! nous apprécions grandement votre aide pour améliorer notre service!
-    </h1>
+		<div class="flex items-center justify-center gap-4 px-4 mb-12">
+		<h2 class="text-3xl font-bold text-neonBlue">Vos retours</h2>
+		<a href="{{ path('feedback_new') }}" class="btn-primary px-3 py-1 text-base hover:scale-105 transform shadow-xl transition-all duration-300">
+			➕
+		</a>
+	</div>
 
-    {% if feedbacks is empty %}
-        <p class="text-gray-300 text-center">Aucun feedback n'a encore été soumis.</p>
-    {% else %}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {% for feedback in feedbacks %}
-                <div class="bg-darkGrey border border-neonBlue rounded-xl shadow-lg p-6 space-y-3 hover:shadow-neonBlue/50 transition-all duration-300">
-                    <div class="flex justify-between items-start">
-                        <span class="text-sm text-gray-400">
-                            {{ feedback.createdAt ? feedback.createdAt|date('d/m/Y H:i') : '' }}
-                        </span>
-                        <span class="text-xs font-medium text-white px-2 py-1 rounded bg-neonBlue/30">
-                            {{ feedback.category }}
-                        </span>
-                    </div>
+		{% if feedbacks is empty %}
+			<p class="text-gray-300 text-center">Aucun feedback n'a encore été soumis.</p>
+		{% else %}
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+				{% for feedback in feedbacks %}
+					<div class="bg-darkGrey border border-neonBlue rounded-xl shadow-lg p-6 space-y-3 hover:shadow-neonBlue/50 transition-all duration-300">
+						<div class="flex justify-between items-start">
+							<span class="text-sm text-gray-400">
+								{{ feedback.createdAt ? feedback.createdAt|date('d/m/Y H:i') : '' }}
+							</span>
+							<span class="text-xs font-medium text-white px-2 py-1 rounded bg-neonBlue/30">
+								{{ feedback.category }}
+							</span>
+						</div>
 
-                    <h2 class="text-lg font-bold text-white">{{ feedback.title }}</h2>
+						<h2 class="text-lg font-bold text-white">{{ feedback.title }}</h2>
 
-                    <p class="text-gray-300 text-sm">
-                        {{ feedback.content|length > 150 ? feedback.content[:150] ~ '…' : feedback.content }}
-                    </p>                
+						<p class="text-gray-300 text-sm">
+							{{ feedback.content|length > 150 ? feedback.content[:150] ~ '…' : feedback.content }}
+						</p>
 
-                    <a href="{{ path('feedback_show', {feedback: feedback.id}) }}" class="btn-primary text-sm w-full text-center block mt-2">
-                        Voir plus
-                    </a>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-</div>
+						<a href="{{ path('feedback_show', {feedback: feedback.id}) }}" class="btn-primary text-sm w-full text-center block mt-2">
+							Voir plus
+						</a>
+					</div>
+				{% endfor %}
+			</div>
+		{% endif %}
+        <div class="flex justify-center mt-12">
+		<a href="{{ path('feedback_new') }}" class="btn-primary px-3 py-1 text-base hover:scale-105 transform shadow-xl transition-all duration-300">
+			➕ Faire un retour
+		</a>
+	</div>
 {% endblock %}

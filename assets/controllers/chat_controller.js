@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus'
 
 export default class extends Controller {
-    static targets = ['container', 'messages', 'form']
+    static targets = ['container', 'messages', 'form', 'defaultAvatar']
     static values = { mercureUrl: String, userId: Number, postUrl: String }
 
     connect() {
@@ -31,16 +31,21 @@ export default class extends Controller {
             const data = JSON.parse(event.data)
             const isUser = parseInt(data.userId) === this.userIdValue
 
+            const avatarUrl = data.avatar && data.avatar.trim() !== ''
+                ? data.avatar
+                : this.defaultAvatarValue;
+
+
             const div = document.createElement('div')
             div.className = `flex ${isUser ? 'justify-end' : 'justify-start'} mb-2`
             div.innerHTML = `
                 <div class="flex items-end gap-2 ${isUser ? 'flex-row-reverse' : ''}">
-                    <img src="${data.avatar}" alt="avatar" class="w-8 h-8 rounded-full shadow-sm shrink-0">
+                    <img src="${avatarUrl}" alt="avatar" class="w-8 h-8 rounded-full shadow-sm shrink-0">
                     <div class="flex flex-col ${isUser ? 'items-end' : 'items-start'}">
                         <div class="relative px-4 py-2 rounded-2xl inline-block shadow-sm
-                            ${isUser 
-                                ? 'bg-gradient-to-br from-neonBlue/90 to-blue-600/80 text-darkGrey rounded-br-none self-end' 
-                                : 'bg-gray-700/80 text-white rounded-bl-none self-start'}">
+                            ${isUser
+                    ? 'bg-gradient-to-br from-neonBlue/90 to-blue-600/80 text-darkGrey rounded-br-none self-end'
+                    : 'bg-gray-700/80 text-white rounded-bl-none self-start'}">
                             <p class="text-[13px] font-medium mb-0.5">
                                 ${isUser ? 'Vous' : data.user}
                             </p>

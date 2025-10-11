@@ -6,6 +6,8 @@
 /public/bundles/
 /var/
 /vendor/
+/env.dev
+/Makefile
 ###< symfony/framework-bundle ###
 
 ###> symfony/asset-mapper ###

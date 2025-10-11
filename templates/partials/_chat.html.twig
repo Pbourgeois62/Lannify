@@ -1,10 +1,5 @@
 <div
-	data-controller="chat" 
-    data-chat-mercure-url-value="{{ mercureUrl }}" 
-    data-chat-user-id-value="{{ app.user.id }}" 
-    data-chat-post-url-value="{{ path('event_chat_post', { id: event.id }) }}" id="event-chat-container" 
-    class="hidden fixed top-20 right-6 z-40 flex flex-col w-96 max-h-[500px] backdrop-blur-md bg-gray-900/95 border border-electricPurple rounded-xl shadow-2xl shadow-electricPurple overflow-hidden" 
-    data-chat-target="container">
+	data-controller="chat" data-chat-default-avatar-value="{{ 'assets/images/default-avatar.webp' }}" data-chat-mercure-url-value="{{ mercureUrl }}" data-chat-user-id-value="{{ app.user.id }}" data-chat-post-url-value="{{ path('event_chat_post', { id: event.id }) }}" id="event-chat-container" class="hidden fixed top-20 right-6 z-40 flex flex-col w-96 max-h-[500px] backdrop-blur-md bg-gray-900/95 border border-electricPurple rounded-xl shadow-2xl shadow-electricPurple overflow-hidden" data-chat-target="container">
 	{# ✅ En-tête du chat (simple titre) #}
 	<div class="flex items-center justify-center px-4 py-3 border-b border-gray-700 bg-gray-800/80">
 		<h3 class="text-white font-semibold text-sm tracking-wide flex items-center gap-2">
@@ -21,15 +16,17 @@
 			{% set isUser = message.sender.id == app.user.id %}
 			<div class="flex {{ isUser ? 'justify-end' : 'justify-start' }}">
 				<div class="flex items-end gap-2 {{ isUser ? 'flex-row-reverse' : '' }}">
-
-					<img src="{{ message.sender.profile.avatar ? asset('uploads/events/' ~ message.sender.profile.avatar.imageName) : asset('images/default-avatar.webp') }}" alt="avatar" class="w-8 h-8 rounded-full shadow-sm shrink-0">
-
+					{% if message.sender.profile and message.sender.profile.avatar is not null %}
+						<img src="{{ asset('uploads/events/' ~ message.sender.profile.avatar.imageName) }}" alt="avatar" class="w-8 h-8 rounded-full shadow-sm shrink-0">
+					{% else %}
+						<img src="{{  asset('images/default-avatar.webp') }}" alt="avatar" class="w-8 h-8 rounded-full shadow-sm shrink-0">
+					{% endif %}
 					<div class="flex flex-col {{ isUser ? 'items-end' : 'items-start' }}">
 						<div class="relative px-4 py-2 rounded-2xl inline-block shadow-sm
-								                        {{ isUser
-								                            ? 'bg-gradient-to-br from-neonBlue/90 to-blue-600/80 text-darkGrey rounded-br-none self-end'
-								                            : 'bg-gray-700/80 text-white rounded-bl-none self-start' }}
-								                            ">
+																                        {{ isUser
+																                            ? 'bg-gradient-to-br from-neonBlue/90 to-blue-600/80 text-darkGrey rounded-br-none self-end'
+																                            : 'bg-gray-700/80 text-white rounded-bl-none self-start' }}
+																                            ">
 							<p class="text-[13px] font-medium mb-0.5">
 								{{ isUser ? 'Vous' : message.sender.profile.nickname ?: message.sender.email }}
 							</p>
