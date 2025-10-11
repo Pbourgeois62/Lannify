@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block body %}
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold mb-6 text-neonBlue">Admin Dashboard</h1>
+
+        {% for user in allUsers %}
+            <div class="bg-darkGrey border border-neonBlue rounded-xl shadow-lg p-6 space-y-3 hover:shadow-neonBlue/50 transition-all duration-300 mb-4">
+                <div class="flex justify-between items-start">                   
+                    <span class="text-xs font-medium text-white px-2 py-1 rounded bg-neonBlue/30">
+                        {{ user.email }}
+                    </span>
+                </div>
+                <p class="text-gray-300 text-sm">
+                    Roles: {{ user.roles|join(', ') }}
+                </p>
+            </div>
+            <a href="{{ path('user_profile') }}" class="btn-primary px-3 py-1 text-base hover:scale-105 transform shadow-xl transition-all duration-300 mb-6">
+                ➕ Voir le profil
+            </a>
+        {% else %}
+            <p class="text-gray-300 text-center">Aucun utilisateur enregistré</p>
+        {% endfor %}
+    </div>
+{% endblock %}

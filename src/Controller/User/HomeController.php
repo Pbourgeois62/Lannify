@@ -14,9 +14,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[IsGranted('ROLE_USER')]
 final class HomeController extends AbstractController
 {
-    #[Route('/home', name: 'home')]
+    #[Route('/user/home', name: 'user_home')]
     public function index(#[CurrentUser] User $user, EventRepository $eventRepository, Request $request): Response
-    {
+    {       
         $session = $request->getSession();
         $showFeedback = !$session->get('feedback_seen', false);
         $openedEvents = $eventRepository->getOpenedEventsForUser($user);

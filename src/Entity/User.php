@@ -403,4 +403,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
         }
         return $this;
     }
+
+    public function isAdmin(): bool
+    {
+        return in_array('ROLE_ADMIN', $this->getRoles(), true);
+    }
 }

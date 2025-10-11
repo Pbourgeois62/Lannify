@@ -76,7 +76,7 @@ final class EventController extends AbstractController
         $event = $eventRepository->findOneBy(['code' => $code]);
         if (!$event) {
             $this->addFlash('error', 'Code d’événement invalide.');
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('user_home');
         }
         $user = $this->getUser();
         if ($user && !$event->getUsers()->contains($user)) {
@@ -126,7 +126,7 @@ final class EventController extends AbstractController
         $em->flush();
         $this->addFlash('success', 'Événement supprimé avec succès !');
 
-        return $this->redirectToRoute('home');
+        return $this->redirectToRoute('user_home');
     }
 
     #[Route('/{event}/close', name: 'event_close')]
