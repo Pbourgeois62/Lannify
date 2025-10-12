@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des événements{% endblock %}
+
+{% block body %}
+<div class="p-6 space-y-6">
+    <h1 class="text-3xl font-bold text-indigo-700">Gestion des événements</h1>
+
+    <div class="overflow-x-auto bg-gray-800 shadow-lg rounded-2xl mt-4">
+        <table class="min-w-full divide-y divide-gray-700">
+            <thead class="bg-indigo-700 text-white">
+                <tr>
+                    <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">#</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Nom</th>
+                    <th class="px-6 py-3 text-center text-sm font-semibold uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-gray-900 divide-y divide-gray-700">
+                {% for event in events %}
+                    <tr class="hover:bg-gray-800 transition-colors">
+                        <td class="px-6 py-4 text-sm font-medium text-gray-300">{{ loop.index }}</td>
+
+                        {# Nom de l'événement #}
+                        <td class="px-6 py-4 text-sm text-gray-200">
+                            {{ event.name ?: '—' }}
+                        </td>
+
+                        {# Actions #}
+                        <td class="px-6 py-4 text-center flex justify-center gap-2">
+                            <a href="{{ path('admin_event_delete', {event: event.id}) }}"
+                               class="px-3 py-1 bg-red-500 hover:bg-red-700 text-white rounded-lg text-xs"
+                               onclick="return confirm('Voulez-vous vraiment supprimer cet événement ?');">
+                               Supprimer
+                            </a>
+
+                            {% if not event.magicToken %}
+                                <a href="{{ path('admin_event_edit_magicToken', {event: event.id}) }}"
+                                   class="px-3 py-1 bg-blue-500 hover:bg-blue-700 text-white rounded-lg text-xs">
+                                   Régénérer le lien magique
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3" class="px-6 py-4 text-center text-gray-500">
+                            Aucun événement trouvé.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

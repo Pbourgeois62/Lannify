@@ -24,6 +24,7 @@ final class DashboardController extends AbstractController
         $stats = [
             'users' => $userRepository->count([]),            
             'feedbacks' => $feedbackRepository->count([]),
+            'events' => $eventRepository->count([]),
         ];
 
         $latestEvents = $eventRepository->findBy([], ['createdAt' => 'DESC'], 5);
