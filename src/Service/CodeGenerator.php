@@ -2,9 +2,9 @@
 
 namespace App\Service;
 
-Use App\Entity\Event;
+use App\Entity\Event;
 
-Class CodeGenerator
+class CodeGenerator
 {
     public function generateEventCode(Event $event): string
     {

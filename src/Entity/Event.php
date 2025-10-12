@@ -46,10 +46,7 @@ class Event
     private Collection $needs;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $code = null;
+    private ?\DateTimeImmutable $createdAt = null;   
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -74,6 +71,9 @@ class Event
 
     #[ORM\Column (type: 'boolean', nullable: true)]
     private ?bool $isClosed = null;
+
+    #[ORM\Column(length: 64, unique: true, nullable: true)]
+    private ?string $magicToken = null;
 
     public function __construct()
     {
@@ -152,18 +152,7 @@ class Event
     {
         $this->organizer = $organizer;
         return $this;
-    }
-
-    public function getCode(): ?string
-    {
-        return $this->code;
-    }
-
-    public function setCode(string $code): static
-    {
-        $this->code = $code;
-        return $this;
-    }
+    }    
 
     public function getAddress(): ?Address
     {
@@ -317,6 +306,17 @@ class Event
     {
         $this->isClosed = $isClosed;
 
+        return $this;
+    }
+
+    public function getMagicToken(): ?string
+    {
+        return $this->magicToken;
+    }
+
+    public function setMagicToken(string $magicToken): static
+    {
+        $this->magicToken = $magicToken;
         return $this;
     }
 }

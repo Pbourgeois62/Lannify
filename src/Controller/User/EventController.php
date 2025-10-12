@@ -2,17 +2,19 @@
 
 namespace App\Controller\User;
 
+use App\Entity\User;
 use App\Entity\Event;
 use App\Entity\Image;
 use App\Form\EventType;
 use App\Service\ChatService;
-use App\Service\CodeGenerator;
 use App\Repository\EventRepository;
+use App\Service\MagicLinkGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[IsGranted('ROLE_USER')]
@@ -26,7 +28,7 @@ final class EventController extends AbstractController
         $this->chatService = $chatService;
     }
 
-    #[Route('/{event}/home', name: 'event_home')]
+    #[Route('/{id}/home', name: 'event_home')]
     public function home(Event $event): Response
     {
         $chatData = $this->chatService->getChatData($event);
@@ -37,7 +39,7 @@ final class EventController extends AbstractController
     }
 
     #[Route('/create', name: 'event_create')]
-    public function create(Request $request, EntityManagerInterface $em, CodeGenerator $code): Response
+    public function create(#[CurrentUser] User $user, Request $request, EntityManagerInterface $em, MagicLinkGenerator $magicLinkGenerator): Response
     {
         $event = new Event();
 
@@ -51,16 +53,17 @@ final class EventController extends AbstractController
             if ($coverImage) {
                 $coverImage->setEvent($event);
             }
-            $event->setCode($code->generateEventCode($event));
-            $event->setOrganizer($this->getUser());
-            $event->addUser($this->getUser());
+            
+            $event->setOrganizer($user);
+            $event->setMagicToken($magicLinkGenerator->generate($event));
+            $event->addUser($user);
 
             $em->persist($event);
             $em->flush();
 
             $this->addFlash('success', 'Événement créé avec succès !');
 
-            return $this->redirectToRoute('event_home', ['event' => $event->getId()]);
+            return $this->redirectToRoute('event_home', ['id' => $event->getId()]);
         }
 
         return $this->render('event/form.html.twig', [
@@ -69,28 +72,28 @@ final class EventController extends AbstractController
         ]);
     }
 
-    #[Route('/join', name: 'event_join')]
-    public function join(EventRepository $eventRepository, EntityManagerInterface $em, Request $request): Response
-    {
-        $code = $request->query->get('code');
-        $event = $eventRepository->findOneBy(['code' => $code]);
+    #[Route('/join/{token}', name: 'event_join')]
+    public function join(
+        #[CurrentUser] ?User $user,
+        string $token,
+        EntityManagerInterface $em,
+        \App\Repository\EventRepository $eventRepository
+    ): Response {
+        $event = $eventRepository->findOneBy(['magicToken' => $token]);
         if (!$event) {
-            $this->addFlash('error', 'Code d’événement invalide.');
+            $this->addFlash('error', 'Lien invalide.');
             return $this->redirectToRoute('user_home');
         }
-        $user = $this->getUser();
+
         if ($user && !$event->getUsers()->contains($user)) {
             $event->addUser($user);
-            $em->persist($event);
             $em->flush();
-            $this->addFlash('success', 'Vous avez rejoint la Lan avec succès !');
-        } else {
-            $this->addFlash('info', 'Vous participez déjà à cette Lan.');
+            $this->addFlash('success', 'Vous avez rejoint l’événement !');
         }
-        return $this->redirectToRoute('event_home', [
-            'event' => $event->getId(),
-        ]);
+
+        return $this->redirectToRoute('event_home', ['id' => $event->getId()]);
     }
+
 
     #[Route('/{event}/edit', name: 'event_edit')]
     public function edit(Event $event, Request $request, EntityManagerInterface $em): Response

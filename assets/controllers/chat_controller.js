@@ -1,20 +1,18 @@
 import { Controller } from '@hotwired/stimulus'
 
 export default class extends Controller {
-    static targets = ['container', 'messages', 'form', 'defaultAvatar']
+    static targets = ['container', 'messages', 'form']
     static values = { mercureUrl: String, userId: Number, postUrl: String }
 
     connect() {
-        // Toggle ouverture / fermeture du chat
+        // Toggle ouverture/fermeture chat
         const chatToggle = document.getElementById('chat-toggle')
         chatToggle?.addEventListener('click', () => {
             this.containerTarget.classList.toggle('hidden')
             const isHidden = this.containerTarget.classList.contains('hidden')
-
             chatToggle.textContent = isHidden ? 'Ouvrir le chat' : 'Fermer le chat'
             chatToggle.classList.toggle('btn-return', !isHidden)
             chatToggle.classList.toggle('btn-secondary', isHidden)
-
             if (!isHidden) this.scrollToBottom()
         })
 
@@ -33,8 +31,7 @@ export default class extends Controller {
 
             const avatarUrl = data.avatar && data.avatar.trim() !== ''
                 ? data.avatar
-                : this.defaultAvatarValue;
-
+                : data.defaultAvatarUrl
 
             const div = document.createElement('div')
             div.className = `flex ${isUser ? 'justify-end' : 'justify-start'} mb-2`
@@ -44,8 +41,8 @@ export default class extends Controller {
                     <div class="flex flex-col ${isUser ? 'items-end' : 'items-start'}">
                         <div class="relative px-4 py-2 rounded-2xl inline-block shadow-sm
                             ${isUser
-                    ? 'bg-gradient-to-br from-neonBlue/90 to-blue-600/80 text-darkGrey rounded-br-none self-end'
-                    : 'bg-gray-700/80 text-white rounded-bl-none self-start'}">
+                                ? 'bg-gradient-to-br from-neonBlue/90 to-blue-600/80 text-darkGrey rounded-br-none self-end'
+                                : 'bg-gray-700/80 text-white rounded-bl-none self-start'}">
                             <p class="text-[13px] font-medium mb-0.5">
                                 ${isUser ? 'Vous' : data.user}
                             </p>
@@ -59,16 +56,19 @@ export default class extends Controller {
             `
             this.messagesTarget.appendChild(div)
             this.scrollToBottom()
+
+            // Jouer le son seulement pour les messages des autres
+            if (!isUser && data.new_message) {
+                const audio = new Audio(data.new_message)
+                audio.play().catch(() => console.log('Impossible de jouer le son'))
+            }
         }
     }
 
     async sendMessage(e) {
         e.preventDefault()
         const formData = new FormData(this.formTarget)
-        const response = await fetch(this.postUrlValue, {
-            method: 'POST',
-            body: formData
-        })
+        const response = await fetch(this.postUrlValue, { method: 'POST', body: formData })
         if (response.ok) this.formTarget.reset()
     }
 

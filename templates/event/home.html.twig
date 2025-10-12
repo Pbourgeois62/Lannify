@@ -59,33 +59,7 @@
                     <strong class="text-cyanShadow">Organisateur :</strong>
                     {{ event.organizer.profile.nickname ?? event.organizer.email }}
                 </p>
-            {% endif %}
-
-            {% if event.code %}
-            <div x-data="{ copied: false }" class="flex items-center gap-2">
-                <p class="flex items-center gap-1">
-                    <strong class="text-cyanShadow">Code LAN :</strong>
-                    <span x-ref="code" class="text-electricPurple font-mono tracking-wide drop-shadow-[0_0_6px_#9f7aea]">
-                        {{ event.code }}
-                    </span>
-                </p>
-                <button @click="
-                    if ($refs.code) {
-                        navigator.clipboard.writeText($refs.code.textContent.trim());
-                        copied = true;
-                        setTimeout(() => copied = false, 2000);
-                    }
-                " class="flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-cyan-600 hover:bg-cyan-700 text-white transition cursor-pointer">
-                    <span x-show="!copied">Copier</span>
-                    <span x-show="copied" x-transition class="inline-flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                        </svg>
-                        Copié !
-                    </span>
-                </button>
-            </div>
-            {% endif %}
+            {% endif %}            
         </div>
 
         {# Bloc adresse #}

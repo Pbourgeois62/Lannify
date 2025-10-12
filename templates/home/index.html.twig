@@ -9,13 +9,12 @@
 		<div id="feedback-toast" class="fixed top-5 right-5 bg-darkGrey border border-neonBlue rounded-lg shadow-lg p-4 flex flex-col space-y-2 z-50 max-w-[90%] w-auto">
 			<div class="flex justify-between items-start">
 				<h3 class="text-neonBlue font-bold text-lg">Aidez-nous à améliorer Lannify !</h3>
-				<button type="button" data-dismiss-target="#feedback-toast" aria-label="Close"
-            class="ms-auto -mx-1.5 -my-1.5 bg-darkGrey text-gray-400 hover:text-white rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 inline-flex h-6 w-6">
-            <span class="sr-only">Close</span>
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 14 14">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-            </svg>
-        </button>
+				<button type="button" data-dismiss-target="#feedback-toast" aria-label="Close" class="ms-auto -mx-1.5 -my-1.5 bg-darkGrey text-gray-400 hover:text-white rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 inline-flex h-6 w-6">
+					<span class="sr-only">Close</span>
+					<svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 14 14">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+					</svg>
+				</button>
 			</div>
 			<p class="text-gray-300 text-sm">
 				Une idée, une remarque ou un bug à signaler ?
@@ -52,12 +51,12 @@
 				Organiser une LAN
 			</a>
 
-			<form action="{{ path('event_join') }}" method="get" class="flex items-center space-x-2 flex-1 min-w-[200px]">
-				<input type="text" name="code" placeholder="Entrez le code" class="input text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue flex-grow" aria-label="Code d'inscription à l'événement">
-				<button type="submit" class="btn-primary">
-					Rejoindre
-				</button>
-			</form>
+			{# <form action="{{ path('event_join') }}" method="get" class="flex items-center space-x-2 flex-1 min-w-[200px]">
+																<input type="text" name="code" placeholder="Entrez le code" class="input text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue flex-grow" aria-label="Code d'inscription à l'événement">
+																<button type="submit" class="btn-primary">
+																	Rejoindre
+																</button>
+															</form> #}
 		</div>
 	</div>
 
@@ -68,11 +67,11 @@
 			<p class="text-gray-300">Aucun événement à venir pour le moment.</p>
 		{% else %}
 			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-				{% for event in openedEvents %}				
+				{% for event in openedEvents %}
 					<div
 						class="bg-darkGrey border border-neonBlue rounded-xl overflow-hidden shadow-lg hover:shadow-neonBlue/50 transition-all duration-300 relative">
 
-						{# Image de couverture, décorative si le nom est déjà visible #}
+						{# Image de couverture #}
 						{% if event.coverImage and event.coverImage.imageName %}
 							<img src="{{ asset('uploads/events/' ~ event.coverImage.imageName) }}" alt="" class="rounded-t-xl w-full h-60 object-cover shadow-inner">
 						{% else %}
@@ -106,21 +105,50 @@
 							</div>
 						{% endif %}
 
-						<div class="p-4 space-y-2">
+						<div class="p-4 space-y-3">
 							<h3 class="text-lg font-bold text-white">{{ event.name }}</h3>
 							<p class="text-sm text-gray-300">
 								Débute le
 								<span class="text-neonBlue">{{ event.startDate|date('d/m/Y H:i') }}</span><br>
 								Se termine le
-								<span class="text-neonBlue">{{ event.endDate|date('d/m/Y H:i') }}</span>
+								<span class="text-neonBlue">{{ event.endDate|date('d/m/Y H:i') }}</span><br>
+
+								Organisé par:
+								<span class="text-neonBlue">
+									{% if event.organizer.profile.nickname is defined and event.organizer.profile.nickname %}
+										{{ event.organizer.profile.nickname }}
+									{% else %}
+										{{ event.organizer.email }}
+									{% endif %}
+								</span>
 							</p>
-							<a href="{{ path('event_home', {event: event.id}) }}" class="btn-primary mt-2 w-full block text-center">
+
+							<a href="{{ path('event_home', { id: event.id }) }}" class="btn-primary mt-2 w-full block text-center">
 								Voir
 							</a>
+
+							{% if event.organizer and event.organizer.id == app.user.id and event.magicToken is not empty %}
+								<div x-data="{ copied: false }" class="mt-2">
+									<button type="button" class="btn-secondary mt-2 w-full block text-center" :data-link="'{{ app.request.schemeAndHttpHost ~ path('event_join', { token: event.magicToken }) }}'" @click="
+											                navigator.clipboard.writeText($el.dataset.link);
+											                copied = true;
+											                setTimeout(() => copied = false, 2000);
+											            ">
+										<span x-show="!copied">Partager le lien</span>
+										<span x-show="copied" x-transition class="inline-flex items-center gap-1">
+											<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewbox="0 0 24 24" stroke="currentColor">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+											</svg>
+											Copié !
+										</span>
+									</button>
+								</div>
+							{% endif %}
 						</div>
 					</div>
 				{% endfor %}
 			</div>
+
 		{% endif %}
 	</div>
 
@@ -140,7 +168,7 @@
 							<img src="{{ asset('images/default.webp') }}" alt="" class="rounded-t-xl w-full h-60 object-cover shadow-inner">
 						{% endif %}
 
-						{% if event.organizer and event.organizer.id == app.user.id %}					
+						{% if event.organizer and event.organizer.id == app.user.id %}
 							<div class="absolute bottom-44 right-2">
 								<span class="badge-fun">Organisateur</span>
 							</div>

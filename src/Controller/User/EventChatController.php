@@ -60,6 +60,8 @@ class EventChatController extends AbstractController
                 'content' => $message->getContent(),
                 'createdAt' => $message->getCreatedAt()->format('H:i'),
                 'avatar' => $avatarUrl,
+                'defaultAvatarUrl' => '/images/default-avatar.webp',
+                'new_message' =>'/audio/new_message.mp3'
             ], JSON_THROW_ON_ERROR)
         ));
 
