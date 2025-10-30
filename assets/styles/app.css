@@ -318,7 +318,6 @@
         font-family: var(--font-body);
         font-size: 0.875rem;
         background-color: #44445A;
-        /* sombre mais permet texte noir */
     }
 
 
@@ -423,3 +422,33 @@
     inset 0 0 12px rgba(0, 255, 255, 0.3);
   transform: translateY(-3px);
 }
+
+/* Glassmorphism countdown cards */
+.countdown-card {
+  @apply relative flex flex-col items-center justify-center 
+         bg-white/10 backdrop-blur-md border border-cyanShadow/40 
+         rounded-2xl p-4 shadow-lg overflow-hidden transition-all duration-300;
+}
+
+.countdown-card::before {
+  content: '';
+  @apply absolute inset-0 rounded-2xl pointer-events-none;
+  background: radial-gradient(circle at center, rgba(0,255,255,0.15) 0%, transparent 80%);
+  animation: pulse 2s infinite;
+  z-index: 0;
+}
+
+.countdown-card span {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+}
+
+.countdown-card:hover {
+  @apply shadow-neonBlue/40 scale-[1.02];
+}
+

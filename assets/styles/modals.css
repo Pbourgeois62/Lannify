@@ -1,7 +1,7 @@
 /* -------------------------------
    Glassmorphism Modal — Neon Dark Theme
 ---------------------------------*/
-.glass-modal {
+.glass-modal-danger {
   position: relative;
   backdrop-filter: blur(41px) saturate(140%);
   -webkit-backdrop-filter: blur(41px) saturate(140%);
@@ -22,7 +22,7 @@
 }
 
 /* --- Reflet supérieur --- */
-.glass-modal::before {
+.glass-modal-danger::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -37,7 +37,7 @@
 }
 
 /* --- Reflet inférieur --- */
-.glass-modal::after {
+.glass-modal-danger::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -61,3 +61,72 @@
     0 0 60px rgba(155, 48, 255, 0.2),
     inset 0 0 10px rgba(255, 255, 255, 0.3);
 }
+
+/* -------------------------------
+   Glassmorphism Modal — Neon Dark Theme (Warning)
+---------------------------------*/
+.glass-modal-warning {
+  position: relative;
+  backdrop-filter: blur(41px) saturate(140%);
+  -webkit-backdrop-filter: blur(41px) saturate(140%);
+  background: rgba(20, 20, 30, 0.25); /* fond légèrement teinté */
+  border-radius: 40px;
+
+  /* Bordure épaisse avec halo clair, rappelant ton neonOrange */
+  border: 6px solid rgba(255, 255, 255, 0.15);
+
+  /* Ombres externes & internes pour la profondeur */
+  box-shadow:
+    0 0 12px 3px rgba(255, 200, 0, 0.25),     /* lueur jaune/orangé douce */
+    inset 0 0 8px rgba(255, 255, 255, 0.25);   /* relief interne clair */
+
+  color: #fff;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  padding: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* Reflet supérieur */
+.glass-modal-warning::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    to left top,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0) 50%
+  );
+  z-index: 1;
+}
+
+/* Reflet inférieur */
+.glass-modal-warning::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  z-index: 1;
+}
+
+/* Hover : lueur jaune/orangé + intensification du flou */
+.glass-modal-warning:hover {
+  backdrop-filter: blur(45px) saturate(160%);
+  -webkit-backdrop-filter: blur(45px) saturate(160%);
+  border-color: rgba(255, 200, 0, 0.35);
+  box-shadow:
+    0 0 40px rgba(255, 200, 0, 0.4),
+    0 0 60px rgba(255, 180, 0, 0.2),
+    inset 0 0 10px rgba(255, 255, 255, 0.3);
+}
+

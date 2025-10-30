@@ -22,39 +22,42 @@ final class UserController extends AbstractController
 {
     #[Route('/profile', name: 'user_profile')]
     public function profile(#[CurrentUser] ?User $user, Request $request, EntityManagerInterface $em): Response
-{
-    if ($user->getEmail() === 'admin@admin.com') {
-        $user->setRoles(['ROLE_ADMIN']);
-        $em->persist($user);
-        $em->flush();
+    {
+        if ($user->getEmail() === 'admin@admin.com') {
+            $user->setRoles(['ROLE_ADMIN']);
+            $em->persist($user);
+            $em->flush();
+        }
+
+        $profile = $user->getProfile();
+        if (!$profile) {
+            $profile = new Profile();
+            $user->setProfile($profile);
+        }
+
+        if (!$profile->getAvatar()) {
+            $image = new Image();
+            $image->setImageName('default-avatar.webp');
+            $profile->setAvatar($image);
+        }
+
+
+        $form = $this->createForm(ProfileType::class, $profile);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($user);
+            $em->flush();
+
+            $this->addFlash('success', 'Profil mis à jour avec succès !');
+
+            return $this->redirectToRoute('home');
+        }
+
+        return $this->render('user/profile.html.twig', [
+            'form' => $form,
+        ]);
     }
-
-    $profile = $user->getProfile();
-    if (!$profile) {
-        $profile = new Profile();
-        $user->setProfile($profile);
-    }
-
-    if (!$profile->getAvatar()) {
-        $profile->setAvatar(new Image());
-    }
-
-    $form = $this->createForm(ProfileType::class, $profile);
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted() && $form->isValid()) {
-        $em->persist($user);
-        $em->flush();
-
-        $this->addFlash('success', 'Profil mis à jour avec succès !');
-
-        return $this->redirectToRoute('home');
-    }
-
-    return $this->render('user/profile.html.twig', [
-        'form' => $form,
-    ]);
-}
 
 
     #[Route('/credentials', name: 'user_edit_credentials')]

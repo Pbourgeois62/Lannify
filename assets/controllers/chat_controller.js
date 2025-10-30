@@ -28,11 +28,7 @@ export default class extends Controller {
         eventSource.onmessage = event => {
             const data = JSON.parse(event.data)
             const isUser = parseInt(data.userId) === this.userIdValue
-
-            const avatarUrl = data.avatar && data.avatar.trim() !== ''
-                ? data.avatar
-                : data.defaultAvatarUrl
-
+            const avatarUrl = data.avatar
             const div = document.createElement('div')
             div.className = `flex ${isUser ? 'justify-end' : 'justify-start'} mb-2`
             div.innerHTML = `

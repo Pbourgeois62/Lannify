@@ -47,9 +47,7 @@ class EventChatController extends AbstractController
         $em->persist($message);
         $em->flush();
 
-        $avatarUrl = $user->getProfile()?->getAvatar()
-            ? '/uploads/events/' . $user->getProfile()->getAvatar()->getImageName()
-            : '/images/default-avatar.webp';
+       $avatarUrl = $user->getProfile()->getAvatar();
 
         $hub->publish(new Update(
             "/event/{$event->getId()}/chat",
