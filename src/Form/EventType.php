@@ -47,7 +47,7 @@ class EventType extends AbstractType
                 'widget' => 'single_text',
                 'constraints' => [
                     new NotBlank(['message' => 'La date de fin est obligatoire.']),
-                    new GreaterThan(['value' => 'today', 'message' => 'La date de fin doit être ultérieure à aujourd’hui.']),
+                    new GreaterThan(['value' => 'today', 'message' => 'La date de fin doit être antérieure à aujourd’hui.']),
                     new Callback(function ($endDate, ExecutionContextInterface $context) {
                         $form = $context->getRoot();
                         $startDate = $form->get('startDate')->getData();

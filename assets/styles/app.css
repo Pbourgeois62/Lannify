@@ -63,58 +63,114 @@
     /* ----------------------
        Buttons
     ------------------------ */
+
     .btn-primary {
-        @apply bg-neonBlue text-spaceBlack font-bold px-6 py-2 rounded-md ring-2 ring-neonBlue shadow-md transform transition-all duration-150;
-        @apply cursor-pointer;
-        box-shadow: 0 0 4px #00ffff, 0 0 8px #00ffff;
+        @apply relative font-bold text-spaceBlack px-6 py-2 rounded-md transition-all duration-200 cursor-pointer select-none;
+
+        /* Fond dégradé sombre pour effet “relief” */
+        background-image: linear-gradient(145deg, #0f172a, #1e293b);
+
+        /* Ombres externes pour relief (neumorphism) */
+        box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.6),
+            -6px -6px 12px rgba(255, 255, 255, 0.05),
+            inset 0 0 6px rgba(0, 255, 255, 0.15);
+
+        /* Bordure subtile bleue */
+        border: 1px solid rgba(0, 255, 255, 0.15);
+        color: #00ffff;
     }
 
     .btn-primary:hover {
-        @apply hover:scale-105;
-        @apply cursor-pointer;
-        box-shadow: 0 0 6px #00ffff, 0 0 12px #00ffff;
+        @apply scale-105;
+
+        background-image: linear-gradient(145deg, #16223a, #0d1322);
+
+        /* Intensifie glow et relief */
+        box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.7),
+            -8px -8px 16px rgba(255, 255, 255, 0.07),
+            0 0 10px rgba(0, 255, 255, 0.3);
     }
 
     .btn-primary:active {
-        @apply active:translate-y-1 active:shadow-sm;
-        @apply cursor-pointer;
-        box-shadow: 0 0 2px #00ffff, 0 0 4px #00ffff;
+        @apply scale-98;
+
+        background-image: linear-gradient(145deg, #0d1322, #16223a);
+
+        /* effet “creusé” */
+        box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.7),
+            inset -4px -4px 8px rgba(255, 255, 255, 0.05),
+            inset 0 0 8px rgba(0, 255, 255, 0.25);
     }
 
+    /* ---------------------- 
+     Bouton secondaire : Neumorphism Violet 
+  ------------------------ */
     .btn-secondary {
-        @apply bg-electricPurple text-white font-semibold py-2 px-4 rounded-md shadow transform transition-all duration-150;
-        @apply cursor-pointer;
-        box-shadow: 0 0 4px #9B30FF, 0 0 8px #9B30FF;
+        @apply relative font-semibold text-white px-4 py-2 rounded-md transition-all duration-200 cursor-pointer select-none;
+
+        /* Fond dégradé violet sombre pour relief */
+        background-image: linear-gradient(145deg, #3f0f6f, #5e1ebf);
+
+        /* Ombres externes pour relief + glow violet */
+        box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.6),
+            -6px -6px 12px rgba(255, 255, 255, 0.05),
+            inset 0 0 6px rgba(155, 48, 255, 0.15);
+
+        border: 1px solid rgba(155, 48, 255, 0.15);
     }
 
     .btn-secondary:hover {
-        @apply hover:scale-105;
-        @apply cursor-pointer;
-        box-shadow: 0 0 6px #9B30FF, 0 0 12px #9B30FF;
+        @apply scale-105;
+
+        background-image: linear-gradient(145deg, #5e1ebf, #3f0f6f);
+
+        box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.7),
+            -8px -8px 16px rgba(255, 255, 255, 0.07),
+            0 0 10px rgba(155, 48, 255, 0.3);
     }
 
     .btn-secondary:active {
-        @apply active:translate-y-1 active:shadow-sm;
-        @apply cursor-pointer;
-        box-shadow: 0 0 2px #9B30FF, 0 0 4px #9B30FF;
+        @apply scale-98;
+
+        background-image: linear-gradient(145deg, #3f0f6f, #5e1ebf);
+
+        box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.7),
+            inset -4px -4px 8px rgba(255, 255, 255, 0.05),
+            inset 0 0 8px rgba(155, 48, 255, 0.25);
     }
 
+    /* ---------------------- 
+     Bouton retour : Neumorphism DarkGrey + Violet 
+  ------------------------ */
     .btn-return {
-        @apply bg-darkGrey text-white font-semibold py-2 px-4 rounded-md border-2 border-electricPurple transform transition-all duration-150;
-        @apply cursor-pointer;
-        box-shadow: 0 0 4px #9B30FF, 0 0 8px #9B30FF;
+        @apply relative font-semibold text-white px-4 py-2 rounded-md border-2 transition-all duration-200 cursor-pointer select-none;
+
+        background-image: linear-gradient(145deg, #1a1a2f, #2e2e40);
+        border-color: rgba(155, 48, 255, 0.25);
+
+        box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.6),
+            -6px -6px 12px rgba(255, 255, 255, 0.05),
+            inset 0 0 6px rgba(155, 48, 255, 0.15);
     }
 
     .btn-return:hover {
-        @apply hover:scale-105;
-        @apply cursor-pointer;
-        box-shadow: 0 0 6px #9B30FF, 0 0 12px #9B30FF;
+        @apply scale-105;
+
+        background-image: linear-gradient(145deg, #2e2e40, #1a1a2f);
+
+        box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.7),
+            -8px -8px 16px rgba(255, 255, 255, 0.07),
+            0 0 10px rgba(155, 48, 255, 0.3);
     }
 
     .btn-return:active {
-        @apply active:translate-y-1 active:shadow-sm;
-        @apply cursor-pointer;
-        box-shadow: 0 0 2px #9B30FF, 0 0 4px #9B30FF;
+        @apply scale-98;
+
+        background-image: linear-gradient(145deg, #1a1a2f, #2e2e40);
+
+        box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.7),
+            inset -4px -4px 8px rgba(255, 255, 255, 0.05),
+            inset 0 0 8px rgba(155, 48, 255, 0.25);
     }
 
     .btn-disabled {
@@ -149,6 +205,40 @@
         @apply hover:scale-110;
         @apply cursor-pointer;
         box-shadow: 0 0 6px #FF3B3B, 0 0 12px #FF3B3B;
+    }
+
+    .btn-delete-lg {
+        @apply relative font-bold text-white py-2 px-3 rounded-md transition-all duration-200 cursor-pointer select-none;
+
+        /* Fond rouge sombre pour effet relief */
+        background-image: linear-gradient(145deg, #5c0000, #a60000);
+
+        /* Ombres externes pour relief + glow rouge */
+        box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.6),
+            -6px -6px 12px rgba(255, 255, 255, 0.05),
+            inset 0 0 6px rgba(255, 59, 59, 0.15);
+
+        border: 1px solid rgba(255, 59, 59, 0.25);
+    }
+
+    .btn-delete-lg:hover {
+        @apply scale-110;
+
+        background-image: linear-gradient(145deg, #a60000, #5c0000);
+
+        box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.7),
+            -8px -8px 16px rgba(255, 255, 255, 0.07),
+            0 0 10px rgba(255, 59, 59, 0.3);
+    }
+
+    .btn-delete-lg:active {
+        @apply scale-98;
+
+        background-image: linear-gradient(145deg, #5c0000, #a60000);
+
+        box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.7),
+            inset -4px -4px 8px rgba(255, 255, 255, 0.05),
+            inset 0 0 8px rgba(255, 59, 59, 0.25);
     }
 
     .btn-delete:active {
@@ -224,11 +314,13 @@
     .input,
     textarea.input,
     select.input {
-        @apply bg-darkGrey text-white border-2 border-electricPurple rounded-md py-2 px-3 w-full transition duration-150 ease-in-out;
+        @apply text-black border-2 border-electricPurple rounded-md py-2 px-3 w-full transition duration-150 ease-in-out;
         font-family: var(--font-body);
         font-size: 0.875rem;
-        /* text-sm */
+        background-color: #44445A;
+        /* sombre mais permet texte noir */
     }
+
 
     .input:focus,
     textarea.input:focus,
@@ -278,5 +370,56 @@
     .custom-scrollbar::-webkit-scrollbar-track {
         background: #1a1a1a;
     }
+}
 
+.card-glass {
+  position: relative;
+  background: #1E1E2F; /* fond sombre translucide */
+  border: 1px solid rgba(0, 255, 255, 0.25); /* rappel du néon bleu */
+  border-radius: 1rem; /* équivalent Tailwind: rounded-xl */
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  box-shadow:
+    0 8px 32px 0 rgba(0, 0, 0, 0.6),
+    inset 0 0 8px rgba(0, 255, 255, 0.25),
+    inset 0 0 4px rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Reflets doux */
+.card-glass::before,
+.card-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.card-glass::before {
+  background: linear-gradient(
+    to top left,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  z-index: 1;
+}
+
+.card-glass::after {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  z-index: 1;
+}
+
+/* Effet hover doux */
+.card-glass:hover {
+  border-color: rgba(0, 255, 255, 0.5);
+  box-shadow:
+    0 0 24px rgba(0, 255, 255, 0.3),
+    inset 0 0 12px rgba(0, 255, 255, 0.3);
+  transform: translateY(-3px);
 }

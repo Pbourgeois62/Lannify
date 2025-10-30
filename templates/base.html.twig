@@ -1,63 +1,70 @@
 <!DOCTYPE html>
 <html lang="fr" class="h-full">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-    <title>{% block title %}Bienvenue !{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}Découvrez Lannify, votre plateforme pour organiser des LANs{% endblock %}">
+		<title>
+			{% block title %}Bienvenue !
+			{% endblock %}
+		</title>
+		<meta
+		name="description" content="{% block meta_description %}Découvrez Lannify, votre plateforme pour organiser des LANs{% endblock %}">
 
-    <!-- Open Graph / Réseaux sociaux -->
-    <meta property="og:title" content="{% block og_title %}Bienvenue sur Lannify{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}Découvrez Lannify, votre plateforme pour organiser des LANs{% endblock %}">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ app.request.uri }}">
-    <meta property="og:image" content="{{ asset('images/logo.webp') }}">
+		<!-- Open Graph / Réseaux sociaux -->
+		<meta property="og:title" content="{% block og_title %}Bienvenue sur Lannify{% endblock %}">
+		<meta property="og:description" content="{% block og_description %}Découvrez Lannify, votre plateforme pour organiser des LANs{% endblock %}">
+		<meta property="og:type" content="website">
+		<meta property="og:url" content="{{ app.request.uri }}">
+		<meta
+		property="og:image" content="{{ asset('images/logo.webp') }}">
 
-    <!-- Canonical URL -->
-    <link rel="canonical" href="{{ app.request.uri }}">
+		<!-- Canonical URL -->
+		<link
+		rel="canonical" href="{{ app.request.uri }}">
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.ico') }}">
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+		<!-- Favicon -->
+		<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.ico') }}">
+		<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+		<link
+		rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
 
-    <!-- Fonts & Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.0/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    {% block stylesheets %}        
-    {% endblock %}
+		<!-- Fonts & Icons -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.0/font/bootstrap-icons.css">
+		<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+		<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"> {% block stylesheets %}{% endblock %}
 
-    {% block javascripts %}
-        {{ importmap('app') }}
-        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.0/dist/cdn.min.js"></script>        
-    {% endblock %}
-</head>
+		{% block javascripts %}
+			{{ importmap('app') }}
+			<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.0/dist/cdn.min.js"></script>
+		{% endblock %}
+	</head>
 
-<body class="relative min-h-screen h-full overflow-x-hidden">
+	<body class="relative min-h-screen h-full overflow-x-hidden">
 
-    <div class="bg-aurora fixed inset-0 z-0" aria-hidden="true"></div>
+		<div class="bg-aurora fixed inset-0 z-0" aria-hidden="true"></div>
 
-    <div class="relative z-10 min-h-screen flex flex-col">
-        {% if app.user %}
-            <header class="sticky top-0 z-20 bg-darkGrey/90 backdrop-blur-sm py-4 px-6" role="banner" aria-label="Navigation principale">
-                {% include 'partials/_navbar.html.twig' %}
-            </header>
-        {% endif %}
+		<div class="relative z-10 min-h-screen flex flex-col">
+			{% if app.user %}
+				<header class="sticky top-0 z-20 bg-darkGrey/90 backdrop-blur-sm py-4 px-6" role="banner" aria-label="Navigation principale">
+					{% include 'partials/_navbar.html.twig' %}
+				</header>
+			{% endif %}
 
-        <main id="main-content" role="main" class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            {% include 'partials/_flashes.html.twig' %}
-            {% block body %}{% endblock %}
-        </main>
+			<main
+				id="main-content" role="main" class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+				{% include 'partials/_flashes.html.twig' %}				
 
-        {% if app.user %}
-            <footer role="contentinfo" aria-label="Pied de page">
-                {% include 'partials/_footer.html.twig' %}
-            </footer>
-        {% endif %}
-    </div>
-    {% block modals %}{% endblock %}
-</body>
+				{% block body %}{% endblock %}
+			</main>
+
+			{% if app.user %}
+				<footer role="contentinfo" aria-label="Pied de page">
+					{% include 'partials/_footer.html.twig' %}
+				</footer>
+			{% endif %}
+		</div>
+		{% block modals %}{% endblock %}
+	</body>
 </html>

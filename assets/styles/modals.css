@@ -1,0 +1,63 @@
+/* -------------------------------
+   Glassmorphism Modal — Neon Dark Theme
+---------------------------------*/
+.glass-modal {
+  position: relative;
+  backdrop-filter: blur(41px) saturate(140%);
+  -webkit-backdrop-filter: blur(41px) saturate(140%);
+  background: rgba(20, 20, 30, 0.25); /* fond légèrement teinté, pour ton darkGrey */
+  border-radius: 40px;
+
+  /* --- Bordure épaisse avec halo clair, rappelant ton neonBlue/neonRed --- */
+  border: 6px solid rgba(255, 255, 255, 0.15);
+
+  /* --- Ombres externes & internes pour la profondeur --- */
+  box-shadow:
+    0 0 12px 3px rgba(255, 0, 80, 0.25),     /* lueur rouge douce */
+    inset 0 0 8px rgba(255, 255, 255, 0.25); /* relief interne clair */
+
+  color: #fff;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* --- Reflet supérieur --- */
+.glass-modal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    to left top,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0) 50%
+  );
+  z-index: 1;
+}
+
+/* --- Reflet inférieur --- */
+.glass-modal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  z-index: 1;
+}
+
+/* --- Hover : lueur rouge + intensification du flou --- */
+.glass-modal:hover {
+  backdrop-filter: blur(45px) saturate(160%);
+  -webkit-backdrop-filter: blur(45px) saturate(160%);
+  border-color: rgba(255, 0, 80, 0.35);
+  box-shadow:
+    0 0 40px rgba(255, 0, 80, 0.4),
+    0 0 60px rgba(155, 48, 255, 0.2),
+    inset 0 0 10px rgba(255, 255, 255, 0.3);
+}

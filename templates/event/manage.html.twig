@@ -1,0 +1,91 @@
+{% extends 'event/partials/_event_layout.html.twig' %}
+
+{% block title %}
+	{{ event.name }}
+{% endblock %}
+
+{% block event_layout %}
+<section id="organizer-section" class="relative pb-20 text-white max-w-5xl mx-auto space-y-12">
+	
+	{# --- Bloc 1 : Gestion de l’organisateur --- #}
+	<div class="p-8 ">
+		<header class="flex items-center mb-6">
+			<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-neonBlue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.657 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14v7m0 0l3-3m-3 3l-3-3"/>
+			</svg>
+			<h2 class="ml-4 text-2xl font-bold text-neonBlue tracking-wide">Gestion de l’organisateur</h2>
+		</header>
+
+		{% if event.organizer %}
+			<p class="text-gray-300 text-sm mb-6 leading-relaxed">
+				Vous pouvez <span class="text-cyanShadow font-semibold">désigner un nouveau responsable</span>
+				parmi les participants de cet événement. Cette action transférera les droits d’organisation et de modification à l’utilisateur sélectionné.
+			</p>
+
+			{{ form_start(form) }}
+				<div class="mb-6">
+					{{ form_row(form.userchoice, {
+						attr: {
+							class: 'w-full bg-white/10 border border-cyanShadow/30 text-white rounded-lg p-3 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue transition'
+						}
+					}) }}
+				</div>
+
+				<div class="flex justify-center">
+					<button type="submit" class="btn-secondary">
+						Valider le changement
+					</button>
+				</div>
+			{{ form_end(form) }}
+		{% else %}
+			<p class="text-gray-400 italic">Aucun organisateur défini pour cet événement.</p>
+		{% endif %}
+	</div>
+
+	{# --- Bloc 2 : Partage du lien --- #}
+	<div class="p-8 ">
+		<header class="flex items-center mb-6">
+			<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 justify-center text-neonBlue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2H3m9 0h8m-4 5a9 9 0 100-18 9 9 0 000 18z"/>
+			</svg>
+			<h2 class="ml-4 text-2xl font-bold text-neonBlue tracking-wide">Lien d’invitation</h2>
+		</header>
+
+		<p class="text-gray-300 text-sm mb-6 leading-relaxed">
+			Cliquez sur le <span class="text-cyanShadow font-semibold">bouton ci-dessous</span>
+			pour copier le lien d’invitation et le partager facilement.  
+			Vos amis pourront rejoindre l’événement en un seul clic !
+		</p>
+
+		<div x-data="{ copied: false }" class="text-center">
+			<button 
+				type="button"
+				class="btn-secondary"
+				:data-link="'{{ app.request.schemeAndHttpHost ~ path('event_join', { token: event.magicToken }) }}'"
+				@click="
+					navigator.clipboard.writeText($el.dataset.link);
+					copied = true;
+					setTimeout(() => copied = false, 2000);
+				">
+				
+				<span x-show="!copied" class="inline-flex items-center gap-2">
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 010 5.656l-2 2a4 4 0 01-5.656-5.656l1-1M10.172 13.828a4 4 0 010-5.656l2-2a4 4 0 015.656 5.656l-1 1"/>
+					</svg>
+					Partager le lien d’invitation
+				</span>
+
+				<span x-show="copied" x-transition class="inline-flex items-center gap-1 text-neonBlue font-semibold">
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+					</svg>
+					Lien copié !
+				</span>
+			</button>
+		</div>
+	</div>
+</section>
+
+{% block modals %}{% endblock %}
+{% endblock %}

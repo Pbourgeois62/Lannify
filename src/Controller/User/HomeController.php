@@ -21,11 +21,9 @@ final class HomeController extends AbstractController
         #[CurrentUser] User $user,
         EventRepository $eventRepository,
         Request $request,
-        ProfileManager $profileManager
     ): Response {
-        $profileManager->ensureUserProfile($user);
-
         $session = $request->getSession();
+
         $showFeedback = !$session->get('feedback_seen', false);
 
         $openedEvents = $eventRepository->getOpenedEventsForUser($user);

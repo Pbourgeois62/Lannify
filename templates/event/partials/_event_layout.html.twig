@@ -1,18 +1,67 @@
+{# templates/event/home.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<div class="sticky top-32 z-50 flex justify-center gap-4 p-4 backdrop-blur-md mb-12 border-b border-gray-700/50">	
-	<a href="{{ path('event_home', { id: event.id }) }}" class="btn-secondary px-4 py-2">Accueil</a>
-	<a href="{{ path('event_needs', { event: event.id }) }}" class="btn-secondary px-4 py-2">Besoins</a>
-	<a href="{{ path('event_games', { event: event.id }) }}" class="btn-secondary px-4 py-2">Akoikonjoue</a>
-	<a href="{{ path('event_photo_index', { event: event.id }) }}" class="btn-secondary px-4 py-2">Photos souvenirs</a>
+	<div x-data="{ mobileOpen: false }" class="sticky top-0 z-50 backdrop-blur-md border-b border-cyanShadow/30 shadow-lg shadow-black/20 mb-6">
 
-	{# bouton chat #}
-	<button id="chat-toggle" class="btn-secondary px-4 py-2">Ouvrir le chat</button>
+		<nav class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4 text-white">
 
-	{# inclusion du chat (conteneur + JS) #}
-	{% include 'partials/_chat.html.twig' with {'event': event} %}
-</div>
-	
-	{% block event_layout %}{% endblock %}
+			<div
+				class="flex items-center gap-3">
+				<!-- Icône maison -->
+				
+
+				<!-- Nom de l'événement cliquable -->
+				<a href="{{ path('event_home', { id: event.id }) }}" class="text-lg font-semibold tracking-wide text-cyanShadow truncate hover:underline flex items-center gap-2">
+					<i class="bi bi-house-door text-neonBlue text-2xl"></i>
+                    {{ event.name }}
+				</a>
+			</div>
+
+			<!-- Liens desktop -->
+			<div class="hidden md:flex items-center gap-3">
+				{% if app.user == event.organizer %}
+					<a href="{{ path('event_manage', { event: event.id }) }}" class="btn-secondary px-4 py-2">Gestion</a>
+				{% endif %}
+				<a href="{{ path('event_needs', { event: event.id }) }}" class="btn-secondary px-4 py-2">Besoins</a>
+				<a href="{{ path('event_games', { event: event.id }) }}" class="btn-secondary px-4 py-2">Akoikonjoue</a>
+				<a href="{{ path('event_photo_index', { event: event.id }) }}" class="btn-secondary px-4 py-2">Souvenirs</a>
+
+				<!-- Bouton chat -->
+				<button id="chat-toggle" class="btn-primary px-4 py-2 ml-3">
+					Chat
+				</button>
+			</div>
+
+			<!-- Bouton burger mobile -->
+			<button @click="mobileOpen = !mobileOpen" class="md:hidden text-neonBlue focus:outline-none transition-transform duration-200 hover:scale-110" :aria-expanded="mobileOpen">
+				<svg x-show="!mobileOpen" class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+				</svg>
+				<svg x-show="mobileOpen" x-transition class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+				</svg>
+			</button>
+		</nav>
+
+		<!-- Menu mobile -->
+		<div x-show="mobileOpen" x-transition.origin.top @click.away="mobileOpen = false" class="md:hidden flex flex-col items-center gap-3 px-6 pb-6 text-white bg-black/50 backdrop-blur-md border-t border-cyanShadow/20">
+			{% if app.user == event.organizer %}
+				<a href="{{ path('event_manage', { event: event.id }) }}" class="w-full text-center btn-secondary py-2 rounded-lg">Gestion</a>
+			{% endif %}
+			<a href="{{ path('event_needs', { event: event.id }) }}" class="w-full text-center btn-secondary py-2 rounded-lg">Besoins</a>
+			<a href="{{ path('event_games', { event: event.id }) }}" class="w-full text-center btn-secondary py-2 rounded-lg">Akoikonjoue</a>
+			<a href="{{ path('event_photo_index', { event: event.id }) }}" class="w-full text-center btn-secondary py-2 rounded-lg">Souvenirs</a>
+			<button id="chat-toggle-mobile" class="w-full btn-primary py-2 rounded-lg">
+				Chat
+			</button>
+		</div>
+
+		{% include 'partials/_chat.html.twig' with {'event': event} %}
+	</div>
+
+
+	{% block event_layout %}
+		{% block modals %}{% endblock %}
+	{% endblock %}
 {% endblock %}

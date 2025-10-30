@@ -5,6 +5,7 @@ use App\Entity\Feedback;
 use App\Entity\FeedbackMessage;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class FeedbackMessageService
 {

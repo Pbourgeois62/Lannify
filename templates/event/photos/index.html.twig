@@ -5,103 +5,116 @@
 {% endblock %}
 
 {% block event_layout %}
-	<h1 class="text-3xl font-extrabold text-neonBlue mb-12 text-center drop-shadow-lg">{{ event.name }}</h1>
-
-	{# ---------------- CARROUSEL FLOWBITE (5 PHOTOS RANDOM) ---------------- #}
-	<div id="carousel-event-photos" class="relative w-full" data-carousel="slide">
-		<div class="relative h-64 md:h-96 overflow-hidden rounded-lg">
-			{% for photo in photos %}
-				<div data-carousel-item class="hidden duration-700 transform ease-in-out" {% if loop.first %} data-carousel-item-active {% endif %}>
-					<img src="{{ asset('uploads/eventImages/' ~ photo.imageName) }}" class="absolute top-1/2 left-1/2 w-full h-full object-cover -translate-x-1/2 -translate-y-1/2 rounded-lg" alt="Photo de la LAN {{ event.name }}">
-				</div>
-			{% endfor %}
-		</div>
-
-		{# Slider indicators #}
-		<div class="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3">
-			{% for photo in photos %}
-				<button type="button" class="w-3 h-3 rounded-full bg-gray-500/50 hover:bg-gray-300 transition-colors" aria-current="{{ loop.first ? 'true' : 'false' }}" aria-label="Slide {{ loop.index }}" data-carousel-slide-to="{{ loop.index0 }}"></button>
-			{% endfor %}
-		</div>
-
-		{# Slider controls #}
-		<button type="button" class="absolute top-0 left-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group" data-carousel-prev>
-			<span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-black/50 group-hover:bg-black/70 text-white text-2xl">&#10094;</span>
-		</button>
-		<button type="button" class="absolute top-0 right-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group" data-carousel-next>
-			<span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-black/50 group-hover:bg-black/70 text-white text-2xl">&#10095;</span>
-		</button>
+	<div class="flex items-center justify-center gap-4 mb-12">
+		<h2 class="text-3xl font-bold text-neonBlue">Photos souvenirs</h2>
+		<a href="{{ path('event_photo_add', { event: event.id }) }}" class="btn-primary px-3 py-1">➕</a>
 	</div>
 
-	{# ---------------- GRILLE DES PHOTOS ---------------- #}
-	<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-12 text-white">
-		{% for photo in photos %}
-			<div class="relative rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
-
+	<div x-data="{ activePhoto: null }">
+		<div class="flex flex-wrap justify-center mt-12 text-white gap-8">
+			{% for photo in photos %}
 				<div
-					class="absolute top-2 right-2 flex space-x-2 z-10">
-					{# Bouton supprimer #}
-					{% if app.user and (app.user == photo.uploadedBy or app.user == event.organizer) %}
-						<button type="button" data-modal-target="delete-photo-{{ photo.id }}" data-modal-toggle="delete-photo-{{ photo.id }}" class="btn-delete">
-							<i class="bi bi-trash"></i>
-						</button>
-					{% endif %}
+					class="relative rounded-xl overflow-hidden shadow-lg cursor-pointer flex flex-col items-center justify-start bg-gray-900 transition-all duration-700 ease-in-out" x-show="!activePhoto || activePhoto === {{ photo.id }}" :style="activePhoto === {{ photo.id }}
+						    ? (window.innerWidth < 768 ? 'width: 100%; z-index: 20;' : 'width: 50%; z-index: 20;')
+						    : 'width: 18rem; z-index: 0;'">
 
-					{# Ouvrir la photo dans un nouvel onglet #}
-					<a href="{{ asset('uploads/eventImages/' ~ photo.imageName) }}" target="_blank" class="btn-edit">
-						<i class="bi bi-arrows-fullscreen"></i>
-					</a>
+					<!-- Boutons -->
+					<div class="absolute right-2 flex space-x-2 z-20 transition-all duration-300" :class="activePhoto === {{ photo.id }} ? 'top-2' : 'top-2'">
 
-					{# Valider : seulement organizer et photo non approuvée #}
-					{% if app.user and app.user == event.organizer and not photo.isApproved %}
-						<a href="{{ path('event_photo_approve', {photo: photo.id, event: event.id}) }}" class="btn-view" onclick="return confirm('Approuver cette photo ?');" title="Approuver cette photo">
-							<i class="bi bi-check-lg"></i>
-						</a>
-					{% endif %}
-				</div>
-
-				{# Image #}
-				<img
-				src="{{ asset('uploads/eventImages/' ~ photo.imageName) }}" alt="Photo de la LAN {{ event.name }}" class="w-full h-64 object-cover rounded-lg">
-
-				{# Caption & infos #}
-				<div class="p-4 bg-gray-800 space-y-2">
-					<p class="text-sm text-gray-400">
-						Ajoutée le
-						{{ photo.createdAt|date('d/m/Y') }}
-						par
-						{% if photo.uploadedBy and photo.uploadedBy.profile and photo.uploadedBy.profile.nickname %}
-							{{ photo.uploadedBy.profile.nickname }}
-						{% else %}
-							Anonyme
+						{% if app.user and (app.user == photo.uploadedBy or app.user == event.organizer) %}
+							<button type="button" data-modal-target="delete-photo-{{ photo.id }}" data-modal-toggle="delete-photo-{{ photo.id }}" class="btn-delete" x-show="activePhoto !== {{ photo.id }}">
+								<i class="bi bi-trash"></i>
+							</button>
 						{% endif %}
-					</p>
 
-					{% if photo.caption %}
-						<p class="text-gray-200 mt-1">{{ photo.caption }}</p>
-					{% endif %}
+						<button class="btn-edit" @click.stop="activePhoto = (activePhoto === {{ photo.id }} ? null : {{ photo.id }})" title="Étendre / réduire">
+							<i :class="activePhoto === {{ photo.id }} ? 'bi bi-arrows-collapse text-xl' : 'bi bi-arrows-fullscreen'"></i>
+						</button>
+
+						{% if app.user and app.user == event.organizer and not photo.isApproved %}
+							<button type="button" data-modal-target="approve-photo-{{ photo.id }}" data-modal-toggle="approve-photo-{{ photo.id }}" class="btn-view" x-show="activePhoto !== {{ photo.id }}">
+								<i class="bi bi-check-lg"></i>
+							</button>
+						{% endif %}
+					</div>
+
+
+					<!-- Image -->
+					<img
+					src="{{ asset('uploads/eventImages/' ~ photo.imageName) }}" alt="Photo de la LAN {{ event.name }}" class="w-full object-cover rounded-t-xl transition-all duration-700 ease-in-out" :style="activePhoto === {{ photo.id }} ? 'height: 32rem;' : 'height: 16rem;'">
+
+					<!-- Contenu -->
+					<div class="bg-gray-800 w-full transition-all duration-500" :class="activePhoto === {{ photo.id }} ? 'p-6' : 'p-4'">
+
+						<p class="text-sm text-gray-400" x-show="activePhoto !== {{ photo.id }}">
+							Ajoutée le
+							{{ photo.createdAt|date('d/m/Y') }}
+							par
+							{% if photo.uploadedBy and photo.uploadedBy.profile and photo.uploadedBy.profile.nickname %}
+								{{ photo.uploadedBy.profile.nickname }}
+							{% else %}
+								Anonyme
+							{% endif %}
+						</p>
+
+						{% if photo.caption %}
+							<p class="text-gray-200 mt-1" x-show="activePhoto !== {{ photo.id }}">{{ photo.caption }}</p>
+						{% endif %}
+
+						<div x-show="activePhoto === {{ photo.id }}" class="mt-4 " x-ref="comments{{ photo.id }}">
+
+							<h3 class="text-lg font-semibold mb-3 text-neonBlue">Commentaires</h3>
+
+							<div class="relative space-y-2 h-48 overflow-y-auto pr-2 custom-scrollbar">
+								{% for comment in photo.commentaries %}
+									<div class="bg-gray-700/50 p-2 rounded-lg">
+										<p class="text-sm text-gray-200">
+											<strong class="text-neonBlue">@{{ comment.author.profile.nickname ?: 'Anonyme' }}</strong>
+											:
+											{{ comment.content }}
+										</p>
+									</div>
+								{% else %}
+									<p class="text-gray-500 text-sm italic">Aucun commentaire pour le moment.</p>
+								{% endfor %}
+							</div>
+
+							<!-- Formulaire -->
+							<div class="mt-4 flex gap-3">
+								{{ form_start(commentForms[photo.id], {'attr': {'class': 'flex w-full gap-3'}}) }}
+								{{ form_widget(commentForms[photo.id].content, {
+										'attr': {
+											'id': 'comment_content_' ~ photo.id,
+											'class': 'flex-1 bg-gray-800/80 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 placeholder-gray-500 focus:ring-2 focus:ring-neonBlue focus:outline-none',
+											'placeholder': 'Écrire un commentaire...',
+											'x-ref': 'input' ~ photo.id,
+											'x-effect': "if (activePhoto === " ~ photo.id ~ ") { $nextTick(() => $refs['input" ~ photo.id ~ "'].scrollIntoView({behavior: 'smooth', block: 'center'})); }"
+										}
+									}) }}
+								<button type="submit" class="btn-primary px-3 py-2 text-sm">Envoyer</button>
+								{{ form_end(commentForms[photo.id]) }}
+							</div>
+						</div>
+					</div>
 				</div>
-			</div>
-
-		{% else %}
-			<p class="col-span-4 text-center text-gray-400">Aucune photo disponible pour le moment.</p>
-		{% endfor %}
+			{% else %}
+				<p class="w-full text-center text-gray-400">Aucune photo disponible pour le moment.</p>
+			{% endfor %}
+		</div>
 	</div>
 
-	{# ---------------- BOUTON AJOUTER PHOTO ---------------- #}
 	<div class="flex justify-center mt-12">
-		<a href="{{ path('event_photo_add', {event: event.id}) }}" class="btn-primary px-3 py-1 text-base hover:scale-105 transform shadow-xl transition-all duration-300">
+		<a href="{{ path('event_photo_add', {event: event.id}) }}" class="btn-primary px-3 py-1 text-base hover:scale-105 transform shadow-xl transition-all duration-300 ease-in-out">
 			➕ Ajouter une photo
 		</a>
 	</div>
 {% endblock %}
 
-{# ---------------- INJECTION DES MODALES ---------------- #}
 {% block modals %}
 	{% for photo in photos %}
 		{% if app.user and (app.user == photo.uploadedBy or app.user == event.organizer) %}
 			{% include 'event/photos/partials/_delete_photo_modal.html.twig' with { photo: photo } %}
-            {# {% include 'event/photos/partials/_show_photo_modal.html.twig' with { photo: photo } %} #}
+			{% include 'event/photos/partials/_approve_photo_modal.html.twig' with { photo: photo } %}
 		{% endif %}
 	{% endfor %}
 {% endblock %}

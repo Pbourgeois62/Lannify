@@ -6,8 +6,8 @@ use App\Entity\User;
 use App\Entity\Event;
 use App\Entity\Image;
 use App\Form\EventType;
+use App\Form\EventUserChoiceType;
 use App\Service\ChatService;
-use App\Repository\EventRepository;
 use App\Service\MagicLinkGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,10 +31,10 @@ final class EventController extends AbstractController
     #[Route('/{id}/home', name: 'event_home')]
     public function home(Event $event): Response
     {
-        $chatData = $this->chatService->getChatData($event);
+        $chatData = $this->chatService->getChatData($event);        
 
         return $this->render('event/home.html.twig', array_merge($chatData, [
-            'event' => $event,
+            'event' => $event,            
         ]));
     }
 
@@ -53,7 +53,7 @@ final class EventController extends AbstractController
             if ($coverImage) {
                 $coverImage->setEvent($event);
             }
-            
+
             $event->setOrganizer($user);
             $event->setMagicToken($magicLinkGenerator->generate($event));
             $event->addUser($user);
@@ -140,5 +140,36 @@ final class EventController extends AbstractController
         $this->addFlash('success', 'Événement cloturé avec succès !');
 
         return $this->redirectToRoute('home');
+    }
+
+
+    #[Route('/{event}/manage', name: 'event_manage')]
+    public function manage(Event $event, Request $request, EntityManagerInterface $em): Response
+    {
+        $chatData = $this->chatService->getChatData($event);
+
+        $form = $this->createForm(EventUserChoiceType::class, null, [
+            'users' => $event->getUsers()->toArray(),
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($event->getOrganizer() === $this->getUser()) {
+                $selectedUser = $form->get('userchoice')->getData();
+                $event->setOrganizer($selectedUser);
+                $em->flush();
+                $this->addFlash('success', 'Organisateur changé avec succès !');
+            } else {
+                $this->addFlash('error', 'Vous n’êtes pas autorisé à changer l’organisateur.');
+            }
+
+            return $this->redirectToRoute('event_manage', ['id' => $event->getId()]);
+        }
+
+        return $this->render('event/manage.html.twig', array_merge($chatData, [
+            'event' => $event,
+            'form' => $form
+        ]));
     }
 }

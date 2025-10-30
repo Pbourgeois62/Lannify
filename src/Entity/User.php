@@ -93,6 +93,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     #[ORM\OneToMany(mappedBy: 'sender', targetEntity: FeedbackMessage::class, orphanRemoval: true)]
     private Collection $feedbackMessages;
 
+    /**
+     * @var Collection<int, Commentary>
+     */
+    #[ORM\OneToMany(targetEntity: Commentary::class, mappedBy: 'sender', orphanRemoval: true)]
+    private Collection $commentaries;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -102,6 +108,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
         $this->messages = new ArrayCollection();
         $this->feedback = new ArrayCollection();
         $this->feedbackMessages = new ArrayCollection();
+        $this->commentaries = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -407,5 +414,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     public function isAdmin(): bool
     {
         return in_array('ROLE_ADMIN', $this->getRoles(), true);
+    }
+
+    /**
+     * @return Collection<int, Commentary>
+     */
+    public function getCommentaries(): Collection
+    {
+        return $this->commentaries;
+    }
+
+    public function addCommentary(Commentary $commentary): static
+    {
+        if (!$this->commentaries->contains($commentary)) {
+            $this->commentaries->add($commentary);
+            $commentary->setSender($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentary(Commentary $commentary): static
+    {
+        if ($this->commentaries->removeElement($commentary)) {
+            // set the owning side to null (unless already changed)
+            if ($commentary->getSender() === $this) {
+                $commentary->setSender(null);
+            }
+        }
+
+        return $this;
     }
 }

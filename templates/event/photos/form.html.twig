@@ -1,40 +1,46 @@
-{% extends 'event/partials/_event_layout.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block title %}Ajouter une photo souvenir à la LAN {{ event.name }}{% endblock %}
+{% block title %}Ajouter une photo souvenir à la LAN
+	{{ event.name }}
+{% endblock %}
 
-{% block event_layout %}
-<h1 class="text-3xl font-extrabold text-neonBlue mb-12 text-center drop-shadow-lg">
-    Ajouter une photo souvenir pour {{ event.name }}
-</h1>
+{% block body %}
+	<h1 class="text-3xl font-extrabold text-neonBlue mb-12 text-center drop-shadow-lg">
+		Ajouter une photo souvenir pour
+		{{ event.name }}
+	</h1>
 
-<div class="max-w-xl mx-auto mt-6 p-6 bg-darkGrey rounded-xl shadow-2xl border-2 border-neonBlue">
+	<div class="max-w-xl mx-auto mt-6 p-6 bg-darkGrey rounded-xl shadow-2xl border-2 border-neonBlue">
 
-    {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+		{{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
 
-    {# Caption #}
-    <div class="relative">
-        {{ form_row(form.caption, {
+		{# Caption #}
+		<div class="relative">
+			{{ form_row(form.caption, {
             'attr': {
                 'class': 'input text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'
             },
             'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
         }) }}
-    </div>
+		</div>
 
-    {# Image upload #}
-    <div class="relative">
-        {{ form_row(form.imageFile, {            
+		{# Image upload #}
+		<div class="relative">
+			{{ form_row(form.imageFile, {            
             'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
         }) }}
-    </div>
+		</div>
 
-    {# Bouton submit #}
-    <div class="flex justify-center mt-6">
-        <button type="submit" class="btn-primary ">
-            Envoyer la photo
-        </button>
-    </div>
+		{# Bouton submit #}
+		<div class="flex justify-center gap-4 mt-6">
+			<button type="submit" class="btn-primary ">
+				Envoyer la photo
+			</button>
+			<a href="{{ path('event_photo_index' , { event: event.id }) }}" class="btn-return">
+				Retour
+			</a>
+		</div>
 
-    {{ form_end(form) }}
-</div>
+		{{ form_end(form) }}
+	</div>
 {% endblock %}

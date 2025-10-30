@@ -7,7 +7,7 @@
             bg-black/70 backdrop-blur-sm p-4 overflow-y-auto">
 
     <div class="relative w-full max-w-sm">
-        <div class="bg-darkGrey border border-neonRed rounded-xl shadow-2xl p-6 text-center">
+        <div class="glass-modal relative text-center p-6">
             
             <h3 id="delete-photo-title-{{ photo.id }}"
                 class="text-xl font-bold text-white mb-3">
@@ -20,7 +20,7 @@
 
             <div class="flex justify-center gap-4">
                 <a href="{{ path('event_photo_delete', {photo: photo.id, event: event.id}) }}"
-                   class="btn-delete">
+                   class="btn-delete-lg">
                     Oui, supprimer
                 </a>
 

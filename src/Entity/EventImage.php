@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\EventImageRepository;
 use Symfony\Component\HttpFoundation\File\File;
@@ -45,10 +47,18 @@ class EventImage
     #[ORM\Column(nullable: true)]
     private ?int $imageSize = null;
 
+    /**
+     * @var Collection<int, Commentary>
+     */
+    #[ORM\OneToMany(targetEntity: Commentary::class, mappedBy: 'eventImage', orphanRemoval: true)]
+    private Collection $commentaries;
+
+
     public function __construct()
     {
         $this->isApproved = false;
-        $this->createdAt = new \DateTimeImmutable();       
+        $this->createdAt = new \DateTimeImmutable();
+        $this->commentaries = new ArrayCollection();       
     }
 
     public function getId(): ?int
@@ -160,5 +170,35 @@ class EventImage
     public function getImageSize(): ?int
     {
         return $this->imageSize;
+    }
+
+    /**
+     * @return Collection<int, Commentary>
+     */
+    public function getCommentaries(): Collection
+    {
+        return $this->commentaries;
+    }
+
+    public function addCommentary(Commentary $commentary): static
+    {
+        if (!$this->commentaries->contains($commentary)) {
+            $this->commentaries->add($commentary);
+            $commentary->setEventImage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentary(Commentary $commentary): static
+    {
+        if ($this->commentaries->removeElement($commentary)) {
+            // set the owning side to null (unless already changed)
+            if ($commentary->getEventImage() === $this) {
+                $commentary->setEventImage(null);
+            }
+        }
+
+        return $this;
     }
 }
