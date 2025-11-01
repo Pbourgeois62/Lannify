@@ -1,0 +1,24 @@
+# config/packages/hwi_oauth.yaml
+hwi_oauth:
+    firewall_names: [main]
+    resource_owners:
+        facebook:
+            type:                facebook
+            client_id:           '%env(FB_ID)%'
+            client_secret:       '%env(FB_SECRET)%'
+            scope:               "email public_profile"
+
+        discord:
+            type: oauth2
+            client_id: '%env(DISCORD_ID)%'
+            client_secret: '%env(DISCORD_SECRET)%'
+            access_token_url: 'https://discord.com/api/oauth2/token'
+            authorization_url: 'https://discord.com/api/oauth2/authorize'
+            infos_url: 'https://discord.com/api/users/@me'
+            scope: 'identify email'
+            paths:
+                identifier: id
+                nickname: username
+                realname: username     # Discord n’a pas de “realname”, donc on réutilise username
+                email: email
+                avatar: avatar

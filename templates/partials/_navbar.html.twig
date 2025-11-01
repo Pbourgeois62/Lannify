@@ -1,55 +1,68 @@
 <nav x-data="{ open: false }" class="bg-darkGrey border-b-2 border-neonBlue">
-	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-		<div
-			class="flex justify-between h-16 items-center">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 items-center">
 
-			<!-- Logo -->
-			<div class="flex items-center">
-				<a href="{{ path('app_login') }}" class="flex items-center space-x-2 group">
-					<img src="{{ asset('images/logo.webp') }}" alt="Lannify" class="h-20 w-auto transition group-hover:brightness-110"/>
-					<span class="text-neonBlue font-extrabold text-2xl tracking-wide transition group-hover:text-cyanShadow">
-						Lannify
-					</span>
-				</a>
-			</div>
+            <!-- Logo -->
+            <div class="flex items-center">
+                <a href="{{ path('app_login') }}" class="flex items-center space-x-2 group">
+                    <img src="{{ asset('images/logo.webp') }}" alt="Lannify" class="h-20 w-auto transition group-hover:brightness-110"/>
+                    <span class="text-neonBlue font-extrabold text-2xl tracking-wide transition group-hover:text-cyanShadow">
+                        Lannify
+                    </span>
+                </a>
+            </div>
 
-			<!-- Menu Desktop -->
-			<div class="hidden md:flex space-x-6 items-center">
-				<a href="{{ path('user_profile') }}" class="text-neonBlue hover:brightness-125 transition">
-					Mon compte
-				</a>
-				<img src="{{ vich_uploader_asset(app.user.profile.avatar, 'imageFile') }}" alt="avatar" class="rounded-full w-8 h-8">
-				<span class="text-white font-medium">{{ app.user.email }}</span>
-				<a href="{{ path('app_logout') }}" class="text-neonRed hover:brightness-125 transition px-2 flex items-center gap-2">
-					Déconnexion
-					<i class="bi bi-box-arrow-left"></i>
-				</a>
-			</div>
+            <!-- Menu Desktop -->
+            <div class="hidden md:flex space-x-6 items-center">
+                {% if is_granted('IS_IMPERSONATOR') %}
+                    <a href="{{ impersonation_exit_path(path('admin_user_management')) }}" class="text-neonYellow hover:brightness-125 transition">
+                        Exit impersonation
+                    </a>
+                {% endif %}
 
-			<!-- Burger Mobile -->
-			<div class="md:hidden flex items-center">
-				<button @click="open = !open" type="button" class="text-neonBlue focus:outline-none focus:ring-2 focus:ring-neonBlue" aria-label="Menu">
-					<svg x-show="!open" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke="currentColor">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-					</svg>
-					<svg x-show="open" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke="currentColor">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-					</svg>
-				</button>
-			</div>
-		</div>
+                <a href="{{ path('user_profile') }}" class="text-neonBlue hover:brightness-125 transition">
+                    Mon compte
+                </a>
 
-		<!-- Menu Mobile déroulant -->
-		<div x-show="open" @click.away="open = false" class="md:hidden mt-2 space-y-2">
-			<a href="{{ path('user_profile') }}" class="block text-neonBlue px-4 py-2 hover:bg-gray-800 rounded transition">Mon compte</a>
-				<div class="flex items-center px-4 py-2 gap-2">
-					<img src="{{ vich_uploader_asset(app.user.profile.avatar, 'imageFile') }}" alt="avatar" class="rounded-full w-8 h-8">
-					<span class="text-white font-medium">{{ app.user.email }}</span>
-				</div>			
-			<a href="{{ path('app_logout') }}" class="block text-neonRed px-4 py-2 hover:bg-gray-800 rounded flex items-center gap-2 transition">
-				Déconnexion
-				<i class="bi bi-box-arrow-left"></i>
-			</a>
-		</div>
-	</div>
+                {% if app.user %}
+                    <img src="{{ app.user.profile.getAvatarPath() }}" alt="avatar" class="rounded-full w-8 h-8">
+                    <span class="text-white font-medium">{{ app.user.email }}</span>
+                    <a href="{{ path('app_logout') }}" class="text-neonRed hover:brightness-125 transition px-2 flex items-center gap-2">
+                        Déconnexion
+                        <i class="bi bi-box-arrow-left"></i>
+                    </a>
+                {% endif %}
+            </div>
+
+            <!-- Burger Mobile -->
+            <div class="md:hidden flex items-center">
+                <button @click="open = !open" type="button" class="text-neonBlue focus:outline-none focus:ring-2 focus:ring-neonBlue" aria-label="Menu">
+                    <svg x-show="!open" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                    <svg x-show="open" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Menu Mobile déroulant -->
+        <div x-show="open" @click.away="open = false" class="md:hidden mt-2 space-y-2">
+            <a href="{{ path('user_profile') }}" class="block text-neonBlue px-4 py-2 hover:bg-gray-800 rounded transition">
+                Mon compte
+            </a>
+
+            {% if app.user %}
+                <div class="flex items-center px-4 py-2 gap-2">
+                    <img src="{{ app.user.profile.getAvatarPath() }}" alt="avatar" class="rounded-full w-8 h-8">
+                    <span class="text-white font-medium">{{ app.user.email }}</span>
+                </div>
+                <a href="{{ path('app_logout') }}" class="block text-neonRed px-4 py-2 hover:bg-gray-800 rounded flex items-center gap-2 transition">
+                    Déconnexion
+                    <i class="bi bi-box-arrow-left"></i>
+                </a>
+            {% endif %}
+        </div>
+    </div>
 </nav>

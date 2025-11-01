@@ -8,6 +8,7 @@ use App\Entity\Profile;
 use App\Form\ProfileType;
 use App\Form\UserCredentialsType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -82,4 +83,32 @@ final class UserController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    #[Route('/account/delete', name: 'user_delete_account', methods: ['POST'])]
+public function deleteAccount(Request $request, EntityManagerInterface $em): Response
+{
+    $user = $this->getUser();
+
+    if (!$user) {
+        throw $this->createAccessDeniedException();
+    }
+
+    $token = $request->request->get('_token');
+    if (!$this->isCsrfTokenValid('delete-account', $token)) {
+        $this->addFlash('error', 'Token invalide, suppression annulée.');
+        return $this->redirectToRoute('user_profile');
+    }
+
+    // 1️⃣ Invalider la session
+    $request->getSession()->invalidate();
+
+    // 2️⃣ Supprimer l’utilisateur
+    $em->remove($user);
+    $em->flush();
+
+    // 3️⃣ Rediriger vers la page login
+    $this->addFlash('success', 'Votre compte a été supprimé avec succès.');
+    return $this->redirectToRoute('app_login');
+}
+
 }

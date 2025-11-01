@@ -46,21 +46,21 @@
             <h2 class="text-neonBlue font-semibold">Adresse de l'événement</h2>
 
             {{ form_row(form.address.street, {
-                'attr': {'class': 'input w-full text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'},
+                'attr': {'class': 'input'},
                 'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
             }) }}
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {{ form_row(form.address.city, {
-                    'attr': {'class': 'input w-full text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'},
+                    'attr': {'class': 'input'},
                     'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
                 }) }}
                 {{ form_row(form.address.postalCode, {
-                    'attr': {'class': 'input w-full text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'},
+                    'attr': {'class': 'input'},
                     'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
                 }) }}
                 {{ form_row(form.address.country, {
-                    'attr': {'class': 'input w-full text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'},
+                    'attr': {'class': 'input'},
                     'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
                 }) }}
             </div>

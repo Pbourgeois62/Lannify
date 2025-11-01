@@ -29,9 +29,8 @@
 			{# Avatar actuel (affichage classique) #}
 			{% if form.vars.data and form.vars.data.avatar and form.vars.data.avatar.imageName %}
 				<div class="flex items-center justify-center h-64">
-					<img src="{{ asset('uploads/events/' ~ form.vars.data.avatar.imageName) }}" alt="Avatar actuel" class="w-auto max-h-64 mb-8">
+					<img src="{{ asset('uploads/events/' ~ event.coverImage.imageName) }}" alt="Avatar actuel" class="w-auto max-h-64 mb-8">
 				</div>
-
 			{% endif %}
 
 

@@ -20,7 +20,7 @@ class ParticipantGame
     private ?Game $game = null;
 
     #[ORM\Column(type: 'boolean')]
-private bool $owns = false;
+    private bool $owns = false;
 
     #[ORM\Column]
     private ?bool $interested = null;
@@ -82,5 +82,10 @@ private bool $owns = false;
         $this->interested = $interested;
 
         return $this;
+    }
+
+    public function isReadyToPlay(): bool
+    {
+        return $this->owns && $this->interested;
     }
 }

@@ -23,10 +23,10 @@ final class UserManagementController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/{user}', name: 'admin_user_delete', methods: ['POST', 'GET'])]
+    #[Route('/delete/{user}', name: 'admin_user_delete')]
     public function delete(User $user, EntityManagerInterface $em): Response
     {
-        $em->remove($user, true);
+        $em->remove($user);
         $em->flush();
 
         $this->addFlash('success', 'Utilisateur supprimé avec succès.');

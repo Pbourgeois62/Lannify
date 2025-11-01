@@ -24,6 +24,9 @@ class Profile
     #[ORM\OneToOne(targetEntity: Image::class, mappedBy: 'profile', cascade: ['persist', 'remove'])]
     private ?Image $avatar = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?string $discordAvatarUrl = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -50,7 +53,7 @@ class Profile
         $this->nickname = $nickname;
         return $this;
     }
-    
+
     public function getAvatar(): ?Image
     {
         return $this->avatar;
@@ -64,6 +67,31 @@ class Profile
             $avatar->setProfile($this);
         }
 
+        return $this;
+    }
+
+    public function getDiscordAvatarUrl(): ?string
+    {
+        return $this->discordAvatarUrl;
+    }
+
+    public function getAvatarPath(): string
+    {
+
+         if ($this->avatar) {
+            return '/uploads/events/' . $this->avatar->getImageName();
+        }
+        
+        if ($this->discordAvatarUrl) {
+            return $this->discordAvatarUrl;
+        }       
+
+        return '/images/default-avatar.webp';
+    }
+
+    public function setAvatarUrl(?string $discordAvatarUrl): self
+    {
+        $this->discordAvatarUrl = $discordAvatarUrl;
         return $this;
     }
 }

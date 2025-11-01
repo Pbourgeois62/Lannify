@@ -34,16 +34,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     /**
      * @var string The hashed password
      */
-    #[ORM\Column]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $password = null;
 
     #[ORM\Column]
     private bool $isVerified = false;
 
+    #[ORM\Column(nullable: true)]
+    private ?string $discordId = null;
+
     /**
      * @var Collection<int, Event>
      */
-    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'users', cascade: ['persist', 'remove'])]
+    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'users')]
     private Collection $events;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -96,7 +99,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     /**
      * @var Collection<int, Commentary>
      */
-    #[ORM\OneToMany(targetEntity: Commentary::class, mappedBy: 'sender', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Commentary::class, mappedBy: 'author', orphanRemoval: true)]
     private Collection $commentaries;
 
     public function __construct()
@@ -390,7 +393,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
         }
 
         return $this;
-    }   
+    }
 
     public function addFeedbackMessage(FeedbackMessage $message): static
     {
@@ -428,7 +431,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     {
         if (!$this->commentaries->contains($commentary)) {
             $this->commentaries->add($commentary);
-            $commentary->setSender($this);
+            $commentary->setAuthor($this);
         }
 
         return $this;
@@ -438,11 +441,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     {
         if ($this->commentaries->removeElement($commentary)) {
             // set the owning side to null (unless already changed)
-            if ($commentary->getSender() === $this) {
-                $commentary->setSender(null);
+            if ($commentary->getAuthor() === $this) {
+                $commentary->setAuthor(null);
             }
         }
 
+        return $this;
+    }
+    
+    public function getDiscordId(): ?string
+    {
+        return $this->discordId;
+    }
+    public function setDiscordId(?string $discordId): self
+    {
+        $this->discordId = $discordId;
         return $this;
     }
 }

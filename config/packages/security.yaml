@@ -1,29 +1,38 @@
 security:
-    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
-    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: "auto"
     providers:
-        # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
             entity:
                 class: App\Entity\User
                 property: email
+    role_hierarchy:
+        ROLE_ADMIN: ROLE_ALLOWED_TO_SWITCH
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
+            switch_user: true
             lazy: true
             provider: app_user_provider
             custom_authenticator: App\Security\UserAuthenticator
+            entry_point: App\Security\UserAuthenticator
+            oauth:
+                resource_owners:
+                    discord: "/connect/service/discord" # chemin HWIOAuthBundle pour Discord
+                login_path: /login
+                use_forward: false
+                oauth_user_provider:
+                    service: App\Security\DiscordUserProvider
+
             logout:
                 path: app_logout
                 # where to redirect after logout
                 # target: app_any_route
 
             remember_me:
-                secret: '%kernel.secret%'
+                secret: "%kernel.secret%"
                 lifetime: 604800
                 path: /
                 # by default, the feature is enabled by checking a checkbox in the

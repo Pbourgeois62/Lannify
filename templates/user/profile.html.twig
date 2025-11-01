@@ -16,7 +16,7 @@
 		<div class="relative">
 			{{ form_row(form.nickname, {
                 'attr': {
-                    'class': 'input text-white placeholder-gray-400 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue'
+                    'class': 'input'
                 },
                 'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
             }) }}
@@ -29,11 +29,9 @@
 			{# Avatar actuel (affichage classique) #}
 			{% if form.vars.data and form.vars.data.avatar and form.vars.data.avatar.imageName %}
 				<div class="flex items-center justify-center h-64">
-					<img src="{{ asset('uploads/events/' ~ form.vars.data.avatar.imageName) }}" alt="Avatar actuel" class="w-auto max-h-64 mb-8">
+					<img src="{{ app.user.profile.avatarPath() }}" alt="Avatar actuel" class="w-auto max-h-64 mb-8">
 				</div>
-
 			{% endif %}
-
 
 			{# Upload stylisé du sous-champ imageFile #}
 			<div class="relative">
@@ -53,33 +51,6 @@
 				</p>
 			{% endif %}
 		</div>
-
-		{% if app.user.code is defined and app.user.code is not empty %}
-            <div x-data="{ copied: false }" class="flex items-center gap-2">
-                <p class="flex items-center gap-1">
-                    <strong class="text-cyanShadow">Code LAN :</strong>
-                    <span x-ref="code" class="text-electricPurple font-mono tracking-wide drop-shadow-[0_0_6px_#9f7aea]">
-                        {{ app.user.code }}
-                    </span>
-                </p>
-                <button @click="
-                    if ($refs.code) {
-                        navigator.clipboard.writeText($refs.code.textContent.trim());
-                        copied = true;
-                        setTimeout(() => copied = false, 2000);
-                    }
-                " class="flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-cyan-600 hover:bg-cyan-700 text-white transition cursor-pointer">
-                    <span x-show="!copied">Copier</span>
-                    <span x-show="copied" x-transition class="inline-flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                        </svg>
-                        Copié !
-                    </span>
-                </button>
-            </div>
-        {% endif %}
-
 
 		{# Bouton submit #}
 		<button type="submit" class="btn-primary w-full">

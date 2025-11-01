@@ -50,5 +50,18 @@ class ParticipantGameRepository extends ServiceEntityRepository
             ->setParameter('event', $event)
             ->getQuery()
             ->getResult();
-    }    
+    }
+
+    public function findReadyUsers(int $gameId): array
+{
+    return $this->createQueryBuilder('pg')
+        ->join('pg.participant', 'p')
+        ->addSelect('p') // sélectionne l'entité User complète
+        ->where('pg.game = :gameId')
+        ->andWhere('pg.owns = true') // ou autre condition pour "ready"
+        ->setParameter('gameId', $gameId)
+        ->getQuery()
+        ->getResult(); // retourne un tableau d'objets User
+}
+
 }

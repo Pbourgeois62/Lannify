@@ -39,8 +39,7 @@
             {% set isUser = message.sender.id == app.user.id %}
             <div class="flex {{ isUser ? 'justify-end' : 'justify-start' }}">
                 <div class="flex items-end gap-2 {{ isUser ? 'flex-row-reverse' : '' }}">
-                    {% set avatar = message.sender.profile.avatar.imageName ?? 'default-avatar.webp' %}
-                    <img src="{{ asset(avatar starts with 'default' ? 'images/' ~ avatar : 'uploads/events/' ~ avatar) }}"
+                    <img src="{{ message.sender.profile.avatarPath() }}"
                          alt="avatar" class="w-8 h-8 rounded-full shadow-sm shrink-0">
                     <div class="flex flex-col {{ isUser ? 'items-end' : 'items-start' }}">
                         <div class="relative px-4 py-2 rounded-2xl inline-block shadow-sm

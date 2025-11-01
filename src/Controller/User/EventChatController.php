@@ -47,8 +47,6 @@ class EventChatController extends AbstractController
         $em->persist($message);
         $em->flush();
 
-       $avatarUrl = $user->getProfile()->getAvatar();
-
         $hub->publish(new Update(
             "/event/{$event->getId()}/chat",
             json_encode([
@@ -57,8 +55,7 @@ class EventChatController extends AbstractController
                 'user' => $user->getProfile()?->getNickname() ?? $user->getEmail(),
                 'content' => $message->getContent(),
                 'createdAt' => $message->getCreatedAt()->format('H:i'),
-                'avatar' => $avatarUrl,
-                'defaultAvatarUrl' => '/images/default-avatar.webp',
+                'avatar' => $user->getProfile()?->getAvatarPath(),
                 'new_message' =>'/audio/new_message.mp3'
             ], JSON_THROW_ON_ERROR)
         ));

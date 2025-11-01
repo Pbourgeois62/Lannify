@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Entity\User;
 use App\Entity\Profile;
-use App\Entity\Image;
 use App\Service\PseudoGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -15,22 +14,25 @@ class ProfileManager
         private EntityManagerInterface $em
     ) {}
 
+    /**
+     * S'assure que l'utilisateur possède un profil minimal.
+     * Ne remplace jamais un pseudo ou un avatar déjà défini.
+     */
     public function ensureUserProfile(User $user): void
     {
-        if ($user->getProfile() === null) {
+        $profile = $user->getProfile();
+
+        if ($profile === null) {
             $profile = new Profile();
-            $profile->setNickname($this->pseudoGenerator->generate());
-
-            // 🟢 Création de l'avatar par défaut
-            $defaultAvatar = new Image();
-            $defaultAvatar->setImageName('default-avatar.webp');
-            $profile->setAvatar($defaultAvatar);
-
             $user->setProfile($profile);
-
-            $this->em->persist($defaultAvatar);
-            $this->em->persist($profile);
-            $this->em->flush();
         }
+
+        if (!$profile->getNickname()) {
+            $profile->setNickname($this->pseudoGenerator->generate());
+        }
+
+        $this->em->persist($profile);
+        $this->em->persist($user);
+        $this->em->flush();
     }
 }

@@ -22,10 +22,8 @@ class GamePreferencesComponent extends AbstractController
     public Event $event;
 
     public array $participantGames = [];
-
-    public array $owningCounts = [];
-    public array $interestedCounts = [];
     public array $readyCounts = [];
+    public array $readyUsers = [];
 
     public function __construct(
         private EntityManagerInterface $em,
@@ -44,8 +42,8 @@ class GamePreferencesComponent extends AbstractController
             ]);
 
             $this->participantGames[$game->getId()] = $pg;
-
             $this->readyCounts[$game->getId()] = $this->gameRepository->countReadyGames($game->getId());
+            $this->readyUsers[$game->getId()] = $this->pgRepo->findReadyUsers($game->getId());
         }
     }
 
@@ -77,24 +75,21 @@ class GamePreferencesComponent extends AbstractController
         $this->refreshData();
     }
 
-    /**
-     * Recharge participantGames et les stats depuis la BDD
-     */
     private function refreshData(): void
-{
-    $this->participantGames = [];
-    $this->readyCounts = [];
+    {
+        $this->participantGames = [];
+        $this->readyCounts = [];
+        $this->readyUsers = [];
 
-    foreach ($this->event->getGames() as $game) {
-        $pg = $this->pgRepo->findOneBy([
-            'participant' => $this->getUser(),
-            'game' => $game,
-        ]);
+        foreach ($this->event->getGames() as $game) {
+            $pg = $this->pgRepo->findOneBy([
+                'participant' => $this->getUser(),
+                'game' => $game,
+            ]);
 
-        $this->participantGames[$game->getId()] = $pg;
-
-        $this->readyCounts[$game->getId()] = $this->gameRepository->countReadyGames($game->getId());
+            $this->participantGames[$game->getId()] = $pg;
+            $this->readyCounts[$game->getId()] = $this->gameRepository->countReadyGames($game->getId());
+            $this->readyUsers[$game->getId()] = $this->pgRepo->findReadyUsers($game->getId());
+        }
     }
-}
-
 }
