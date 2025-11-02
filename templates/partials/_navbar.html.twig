@@ -21,7 +21,7 @@
                 {% endif %}
 
                 <a href="{{ path('user_profile') }}" class="text-neonBlue hover:brightness-125 transition">
-                    Mon compte
+                    Espace membre
                 </a>
 
                 {% if app.user %}
@@ -50,7 +50,7 @@
         <!-- Menu Mobile déroulant -->
         <div x-show="open" @click.away="open = false" class="md:hidden mt-2 space-y-2">
             <a href="{{ path('user_profile') }}" class="block text-neonBlue px-4 py-2 hover:bg-gray-800 rounded transition">
-                Mon compte
+                Espace membre
             </a>
 
             {% if app.user %}

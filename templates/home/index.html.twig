@@ -8,40 +8,89 @@
 		{% include 'home/partials/toasts.html.twig' %}
 	{% endif %}
 
-	<div class="card mb-6 p-6 bg-darkGrey border border-neonBlue rounded-xl shadow-xl space-y-4">
-		<h1 class="text-white text-2xl font-bold">
-			Bonjour
-			{% if app.user.profile.nickname is defined and app.user.profile.nickname %}
-				{{ app.user.profile.nickname }}
-			{% else %}
-				{{ app.user.email }}
+	<div
+		class="flex flex-col space-y-12">
+		{# Section de bienvenue #}
+		<div class="space-y-6 flex flex-col items-center justify-center p-8" style="min-height: calc(100vh - 10rem);">
+			<h1 class="text-neonBlue text-4xl font-bold text-center">
+				Salut
+				{% if app.user.profile.nickname is defined and app.user.profile.nickname %}
+					{{ app.user.profile.nickname }}
+				{% else %}
+					{{ app.user.email }}
+				{% endif %}
+			</h1>
+
+			<p class="text-white text-2xl text-center max-w-2xl">
+				Prêt à
+				<span class="text-neonBlue">organiser</span>,
+				<span class="text-electricPurple">rejoindre</span>
+				ou
+				<span class="text-neonYellow">découvrir</span>
+				ta prochaine session gaming ?
+			</p>
+
+			{% if app.user.profile.isNickNameEdited == false %}
+
+				<div class="flex items-center justify-center space-x-2">
+					<p class="text-white text-center max-w-2xl">
+						Oui, tu as un pseudo un peu bizarre... N'hésite pas à le changer dans ton profil !
+					</p>
+					<a href="{{ path('user_profile') }}" class="btn-primary">➡️Profil</a>
+				</div>
 			{% endif %}
-		</h1>
+			<div class="flex flex-col items-center justify-center space-y-4 w-full max-w-xl mx-auto">
+				<div class="w-full border p-4 border-gray-700 text-center input">
+					{{ component('SearchSomethingComponent', {        	 
+    				}) }}
+				</div>
 
-		<div class="flex flex-wrap gap-4">
-			<a href="{{ path('event_create') }}" class="btn-primary">
-				Organiser une LAN
-			</a>
+				<div class="flex w-full space-x-4">
+					<a href="#" class="btn-primary flex-1 text-center py-3">Organiser une partie multi</a>
+					<a href="{{ path('event_create') }}" class="btn-secondary flex-1 text-center py-3">Organiser une LAN</a>
+				</div>
+			</div>
+
+			{# CTA principaux, centrés horizontalement #}
+			<div class="grid grid-cols-1 sm:grid-cols-3 gap-8 mt-8 justify-items-center">
+				<a href="#" class="glass-modal-success space-y-4">
+					<span class="text-neonBlue text-3xl">🎮</span>
+					<span class="text-white font-semibold">Organiser une LAN</span>
+					<p class="text-gray-400 text-sm text-center">Créez votre événement, invitez des participants et gérez votre LAN.</p>
+				</a>
+				<a href="#" class="glass-modal-success space-y-4">
+					<span class="text-neonBlue text-3xl">🤝</span>
+					<span class="text-white font-semibold">Trouver un groupe en ligne</span>
+					<p class="text-gray-400 text-sm text-center">Rejoignez ou créez un groupe pour jouer en ligne avec d’autres joueurs.</p>
+				</a>
+				<a href="#" class="glass-modal-success space-y-4">
+					<span class="text-neonBlue text-3xl">💬</span>
+					<span class="text-white font-semibold">Connecter Discord</span>
+					<p class="text-gray-400 text-sm text-center">Intégrez votre serveur pour créer automatiquement des salons vocaux et textuels.</p>
+				</a>
+			</div>
 		</div>
-	</div>
 
-	<div>
-		<h2 class="text-neonBlue text-xl font-semibold mb-6">Evénements à venir</h2>
 
-		{% if openedEvents is empty %}
-			<p class="text-gray-300">Aucun événement à venir pour le moment.</p>
-		{% else %}
-			{% include 'home/partials/_opened_lans_section.html.twig' %}
-		{% endif %}
-	</div>
+		{# Événements à venir #}
+		<div class="container mx-auto px-4">
+			<h2 class="text-neonBlue text-xl font-semibold mb-6">Événements à venir</h2>
+			{% if openedEvents is empty %}
+				<p class="text-gray-300">Aucun événement à venir pour le moment.</p>
+			{% else %}
+				{% include 'home/partials/_opened_lans_section.html.twig' %}
+			{% endif %}
+		</div>
 
-	<div>
-		<h2 class="text-neonBlue text-xl font-semibold mb-6 mt-8">Evénements passés</h2>
-		{% if closedEvents is empty %}
-			<p class="text-gray-300">Aucun événement à venir pour le moment.</p>
-		{% else %}
-			{% include 'home/partials/_closed_lans_section.html.twig' %}
-		{% endif %}
+		{# Événements passés #}
+		{# <div class="container mx-auto px-4">
+			<h2 class="text-neonBlue text-xl font-semibold mb-6">Événements passés</h2>
+			{% if closedEvents is empty %}
+				<p class="text-gray-300">Aucun événement passé pour le moment.</p>
+			{% else %}
+				{% include 'home/partials/_closed_lans_section.html.twig' %}
+			{% endif %}
+		</div> #}
 	</div>
 {% endblock %}
 {% block modals %}

@@ -27,6 +27,14 @@ class Profile
     #[ORM\Column(nullable: true)]
     private ?string $discordAvatarUrl = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $nickNameEdited = null;
+
+    public function __construct()
+    {
+        $this->nickNameEdited = false;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -92,6 +100,18 @@ class Profile
     public function setAvatarUrl(?string $discordAvatarUrl): self
     {
         $this->discordAvatarUrl = $discordAvatarUrl;
+        return $this;
+    }
+
+    public function isNickNameEdited(): ?bool
+    {
+        return $this->nickNameEdited;
+    }
+
+    public function setNickNameEdited(bool $nickNameEdited): static
+    {
+        $this->nickNameEdited = $nickNameEdited;
+
         return $this;
     }
 }

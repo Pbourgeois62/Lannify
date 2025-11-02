@@ -24,29 +24,21 @@ final class UserController extends AbstractController
     #[Route('/profile', name: 'user_profile')]
     public function profile(#[CurrentUser] ?User $user, Request $request, EntityManagerInterface $em): Response
     {
-        if ($user->getEmail() === 'admin@admin.com') {
-            $user->setRoles(['ROLE_ADMIN']);
-            $em->persist($user);
-            $em->flush();
-        }
-
         $profile = $user->getProfile();
-        if (!$profile) {
-            $profile = new Profile();
-            $user->setProfile($profile);
-        }
 
-        if (!$profile->getAvatar()) {
-            $image = new Image();
-            $image->setImageName('default-avatar.webp');
-            $profile->setAvatar($image);
-        }
-
+        $originalNickname  = $profile->getNickname();
 
         $form = $this->createForm(ProfileType::class, $profile);
-        $form->handleRequest($request);
+        $form->handleRequest($request);        
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $submittedNickname = $form->get('nickname')->getData();
+
+            if ($submittedNickname !== $originalNickname) {
+                $profile->setNickNameEdited(true);
+            } else {
+                $profile->setNickNameEdited(false);
+            }
             $em->persist($user);
             $em->flush();
 
@@ -85,30 +77,29 @@ final class UserController extends AbstractController
     }
 
     #[Route('/account/delete', name: 'user_delete_account', methods: ['POST'])]
-public function deleteAccount(Request $request, EntityManagerInterface $em): Response
-{
-    $user = $this->getUser();
+    public function deleteAccount(Request $request, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
 
-    if (!$user) {
-        throw $this->createAccessDeniedException();
+        if (!$user) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $token = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('delete-account', $token)) {
+            $this->addFlash('error', 'Token invalide, suppression annulée.');
+            return $this->redirectToRoute('user_profile');
+        }
+
+        // 1️⃣ Invalider la session
+        $request->getSession()->invalidate();
+
+        // 2️⃣ Supprimer l’utilisateur
+        $em->remove($user);
+        $em->flush();
+
+        // 3️⃣ Rediriger vers la page login
+        $this->addFlash('success', 'Votre compte a été supprimé avec succès.');
+        return $this->redirectToRoute('app_login');
     }
-
-    $token = $request->request->get('_token');
-    if (!$this->isCsrfTokenValid('delete-account', $token)) {
-        $this->addFlash('error', 'Token invalide, suppression annulée.');
-        return $this->redirectToRoute('user_profile');
-    }
-
-    // 1️⃣ Invalider la session
-    $request->getSession()->invalidate();
-
-    // 2️⃣ Supprimer l’utilisateur
-    $em->remove($user);
-    $em->flush();
-
-    // 3️⃣ Rediriger vers la page login
-    $this->addFlash('success', 'Votre compte a été supprimé avec succès.');
-    return $this->redirectToRoute('app_login');
-}
-
 }

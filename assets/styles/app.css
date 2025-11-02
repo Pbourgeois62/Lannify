@@ -310,7 +310,7 @@
     .input,
     textarea.input,
     select.input {
-        @apply text-darkGrey bg-white border-2 border-electricPurple rounded-md py-2 px-3 w-full transition duration-150 ease-in-out;
+        @apply text-darkGrey bg-gray-100 border-2 border-electricPurple rounded-md py-2 px-3 w-full transition duration-150 ease-in-out;
         font-family: var(--font-body);
         font-size: 0.875rem;
     }

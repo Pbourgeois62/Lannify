@@ -1,110 +1,108 @@
 <div {{ attributes }}>
-	<div class="overflow-x-auto rounded-2xl border border-neonBlue/50 shadow-xl bg-darkGrey/60 backdrop-blur-md">
-		<table class="w-full text-left text-white">
+	<div class="rounded-2xl border border-neonBlue/50 shadow-xl bg-darkGrey/60 backdrop-blur-md">
+		<table class="w-full text-left text-white table-auto border-separate border-spacing-0">
 			<thead class="bg-darkGrey/80 border-b border-neonBlue/50">
 				<tr>
-					<th class="px-6 py-3 text-neonBlue font-semibold uppercase text-sm tracking-wide">Nom</th>
-					<th class="px-6 py-3 text-neonBlue font-semibold uppercase text-sm tracking-wide">Source</th>
-					<th class="px-6 py-3 text-neonBlue font-semibold uppercase text-sm tracking-wide">Gratuit ?</th>
-					<th class="px-6 py-3 text-neonBlue font-semibold uppercase text-sm tracking-wide">Je possède</th>
-					<th class="px-6 py-3 text-neonBlue font-semibold uppercase text-sm tracking-wide">Je veux jouer</th>
+					<th class="px-6 py-3 text-neonBlue font-semibold uppercase text-sm tracking-wide text-left">Nom</th>
+					<th class="px-6 py-3 text-neonBlue font-semibold uppercase text-sm tracking-wide text-center"></th>
+					<!-- Colonne ready -->
+					<th class="px-6 py-3 text-neonBlue font-semibold uppercase text-sm tracking-wide text-center">Source</th>
+					<th class="px-6 py-3 text-neonBlue font-semibold uppercase text-sm tracking-wide text-center">Gratuit ?</th>
+					<th class="px-6 py-3 text-neonBlue font-semibold uppercase text-sm tracking-wide text-center">Je possède</th>
+					<th class="px-6 py-3 text-neonBlue font-semibold uppercase text-sm tracking-wide text-center">Je veux jouer</th>
+					<th class="px-6 py-3 text-neonBlue font-semibold uppercase text-sm tracking-wide text-center">Actions</th>
 				</tr>
 			</thead>
 
 			<tbody>
 				{% for pg in participantGames %}
 					{% set game = pg.game %}
-					<tr class="border-b border-neonBlue/30 hover:bg-neonBlue/10 transition-all duration-300">
+					<tr
+						class="border-b border-neonBlue/30 hover:bg-neonBlue/10 transition-all duration-300 hover:shadow-lg hover:scale-[1.01]">
 
-						<!-- Nom + tooltip joueurs prêts -->
-						<td id="game-{{ game.id }}" class="px-6 py-4 font-medium text-neonBlue flex items-center gap-3">
+						<!-- Nom -->
+						<td class="px-6 py-4 font-medium text-neonBlue">
+							<span class="text-base font-semibold">{{ game.label }}</span>
+						</td>
+
+						<!-- Ready -->
+						<td class="px-6 py-4 flex justify-center">
 							{% set ready = readyCounts[game.id] ?? 0 %}
-
 							{% if ready > 0 %}
-								<button
-									type="button"
-									class="flex items-center text-xs bg-vibrantGreen/90 hover:bg-vibrantGreen text-spaceBlack px-3 py-1.5 rounded-full font-semibold shadow-sm transition"
-									data-tooltip-target="tooltip-{{ game.id }}"
-									data-tooltip-placement="right"
-								>
-									<span class="font-bold mr-1">{{ ready }}</span> 👍
+								<button type="button" class="flex items-center text-xs bg-vibrantGreen/90 hover:bg-vibrantGreen text-spaceBlack px-3 py-1.5 rounded-full font-semibold shadow-sm transition shadow-neonGreen/50" data-tooltip-target="tooltip-{{ game.id }}" data-tooltip-placement="right">
+									<div class="flex items-center gap-2">
+										<span class="font-bold">{{ ready }}</span>
+										<span class="font-bold">joueur(s) prêt(s)</span>
+										👍
+									</div>
 								</button>
 
-								<div id="tooltip-{{ game.id }}"
-									role="tooltip"
-									class="absolute z-20 invisible opacity-0 inline-block max-w-xs px-4 py-3 text-sm text-white bg-darkGrey/95 rounded-xl shadow-xl border border-neonBlue/40 tooltip transition-opacity duration-200">
-									
+								<div id="tooltip-{{ game.id }}" role="tooltip" class="absolute left-full ml-2 z-20 invisible opacity-0 inline-block max-w-xs px-4 py-3 text-sm text-white bg-darkGrey/95 rounded-xl shadow-xl border border-neonBlue/40 tooltip transition-all duration-200 transform scale-95 origin-left">
+
 									<div class="flex flex-col gap-2">
 										<span class="text-neonBlue font-semibold border-b border-neonBlue/40 pb-1">Prêts à jouer :</span>
-										{% for pg in readyUsers[game.id]|default([]) %}
+										{% for pgReady in readyUsers[game.id]|default([]) %}
 											<div class="flex items-center gap-2 hover:bg-neonBlue/10 rounded-lg p-1 transition">
-												<img src="{{ app.user.profile.getAvatarPath() }}"
-													 alt="{{ pg.participant.profile.nickname }}"
-													 class="rounded-full w-8 h-8 object-cover border border-neonBlue/60">
-												<span>{{ pg.participant.profile.nickname }}</span>
+												<img src="{{ pgReady.participant.profile.getAvatarPath() }}" alt="{{ pgReady.participant.profile.nickname }}" class="rounded-full w-8 h-8 object-cover border border-neonBlue/60">
+												<span>{{ pgReady.participant.profile.nickname }}</span>
 											</div>
 										{% else %}
-											<span class="text-gray-400">Aucun participant prêt</span>
+											<span class="text-gray-400 italic">Aucun participant prêt</span>
 										{% endfor %}
 									</div>
 
 									<div class="tooltip-arrow" data-popper-arrow></div>
 								</div>
 							{% endif %}
-
-							<span class="text-base font-semibold">{{ game.label }}</span>
 						</td>
 
 						<!-- Source -->
-						<td class="px-6 py-4 text-gray-300 italic">{{ game.source ?: '—' }}</td>
+						<td class="px-6 py-4 text-gray-300 italic text-center">{{ game.source ?: '—' }}</td>
 
 						<!-- Gratuit -->
-						<td class="px-6 py-4">
+						<td class="px-6 py-4 text-center">
 							<span class="px-3 py-1 rounded-full text-sm font-semibold
-								{% if game.free %} bg-neonBlue/90 text-darkGrey
-								{% elseif game.free is same as(false) %} bg-red-600/80 text-white
-								{% else %} bg-gray-600/70 text-white {% endif %}">
+									                {% if game.free %} bg-neonBlue/90 text-darkGrey
+									                {% elseif game.free is same as(false) %} bg-red-600/80 text-white
+									                {% else %} bg-gray-600/70 text-white {% endif %}">
 								{{ game.free ? 'Oui' : (game.free is same as(false) ? 'Non' : '—') }}
 							</span>
 						</td>
 
 						<!-- Je possède -->
-						<td class="px-6 py-4">
+						<td class="px-6 py-4 text-center">
 							<label class="inline-flex items-center cursor-pointer">
-								<input type="checkbox"
-									   class="sr-only peer"
-									   {{ pg.owns ? 'checked' : '' }}
-									   data-action="live#action"
-									   data-live-action-param="toggleOwned"
-									   data-live-id-param="{{ game.id }}">
+								<input type="checkbox" class="sr-only peer" {{ pg.owns ? 'checked' : '' }} data-action="live#action" data-live-action-param="toggleOwned" data-live-id-param="{{ game.id }}">
 								<div class="relative w-11 h-6 rounded-full bg-gray-700 peer-checked:bg-green-500
-									after:content-[''] after:absolute after:top-[2px] after:left-[2px]
-									after:bg-white after:border after:border-gray-300 after:rounded-full
-									after:h-5 after:w-5 after:transition-all
-									peer-checked:after:translate-x-full"></div>
+									                  after:content-[''] after:absolute after:top-[2px] after:left-[2px]
+									                  after:bg-white after:border after:border-gray-300 after:rounded-full
+									                  after:h-5 after:w-5 after:transition-all
+									                  peer-checked:after:translate-x-full"></div>
 							</label>
 						</td>
 
 						<!-- Je veux jouer -->
-						<td class="px-6 py-4">
+						<td class="px-6 py-4 text-center">
 							<label class="inline-flex items-center cursor-pointer">
-								<input type="checkbox"
-									   class="sr-only peer"
-									   {{ pg.interested ? 'checked' : '' }}
-									   data-action="live#action"
-									   data-live-action-param="toggleInterested"
-									   data-live-id-param="{{ game.id }}">
+								<input type="checkbox" class="sr-only peer" {{ pg.interested ? 'checked' : '' }} data-action="live#action" data-live-action-param="toggleInterested" data-live-id-param="{{ game.id }}">
 								<div class="relative w-11 h-6 rounded-full bg-gray-700 peer-checked:bg-neonBlue
-									after:content-[''] after:absolute after:top-[2px] after:left-[2px]
-									after:bg-white after:border after:border-gray-300 after:rounded-full
-									after:h-5 after:w-5 after:transition-all
-									peer-checked:after:translate-x-full"></div>
+									                  after:content-[''] after:absolute after:top-[2px] after:left-[2px]
+									                  after:bg-white after:border after:border-gray-300 after:rounded-full
+									                  after:h-5 after:w-5 after:transition-all
+									                  peer-checked:after:translate-x-full"></div>
 							</label>
 						</td>
+						{% if pg.participant and pg.participant.id == app.user.id %}
+							<td class="px-6 py-4 text-center">
+								<a href="{{ path('game_edit', {'game': game.id, 'event': event.id}) }}" class="btn-edit">
+									<i class="bi bi-pencil"></i>
+								</a>
+							</td>
+						{% endif %}
 					</tr>
 				{% else %}
 					<tr>
-						<td colspan="5" class="text-center py-6 text-gray-400 italic">Aucun jeu trouvé pour cet évènement.</td>
+						<td colspan="6" class="text-center py-6 text-gray-400 italic">Aucun jeu trouvé pour cet évènement.</td>
 					</tr>
 				{% endfor %}
 			</tbody>

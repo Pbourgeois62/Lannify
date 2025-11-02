@@ -19,7 +19,7 @@ use Symfony\Component\Security\Http\Attribute\{IsGranted, CurrentUser};
 #[IsGranted('ROLE_USER')]
 #[Route('/event/{event}/games')]
 final class EventGameController extends AbstractController
-{    
+{
     private ChatService $chatService;
 
     public function __construct(ChatService $chatService)
@@ -70,7 +70,27 @@ final class EventGameController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($game);
             $em->flush();
-            $this->addFlash('success', 'Jeu ajouté');
+            $this->addFlash('success', 'Jeu ajouté avec succès !');
+
+            return $this->redirectToRoute('event_games', ['event' => $event->getId()]);
+        }
+
+        return $this->render('event/games/form.html.twig', [
+            'form' => $form->createView(),
+            'event' => $event,
+        ]);
+    }
+
+    #[Route('edit/{game}', name: 'game_edit')]
+    public function edit(Event $event, Game $game, Request $request, EntityManagerInterface $em): Response
+    {
+        $form = $this->createForm(GameType::class, $game);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($game);
+            $em->flush();
+            $this->addFlash('success', 'Jeu modifié avc succès !');
 
             return $this->redirectToRoute('event_games', ['event' => $event->getId()]);
         }

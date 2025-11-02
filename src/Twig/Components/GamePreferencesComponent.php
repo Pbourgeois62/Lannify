@@ -34,43 +34,37 @@ class GamePreferencesComponent extends AbstractController
     public function mount(Event $event): void
     {
         $this->event = $event;
-
-        foreach ($event->getGames() as $game) {
-            $pg = $this->pgRepo->findOneBy([
-                'participant' => $this->getUser(),
-                'game' => $game,
-            ]);
-
-            $this->participantGames[$game->getId()] = $pg;
-            $this->readyCounts[$game->getId()] = $this->gameRepository->countReadyGames($game->getId());
-            $this->readyUsers[$game->getId()] = $this->pgRepo->findReadyUsers($game->getId());
-        }
+        $this->refreshData();
     }
 
     #[LiveAction]
-    public function toggleOwned(#[LiveArg] int $id, ParticipantGameRepository $pgRepo): void
+    public function toggleOwned(#[LiveArg] int $id): void
     {
-        $pg = $pgRepo->findOneBy([
+        $pg = $this->pgRepo->findOneBy([
             'game' => $id,
             'participant' => $this->getUser(),
         ]);
 
-        $pg->setOwns(!$pg->getOwns());
-        $this->em->flush();
+        if ($pg) {
+            $pg->setOwns(!$pg->getOwns());
+            $this->em->flush();
+        }
 
         $this->refreshData();
     }
 
     #[LiveAction]
-    public function toggleInterested(#[LiveArg] int $id, ParticipantGameRepository $pgRepo): void
+    public function toggleInterested(#[LiveArg] int $id): void
     {
-        $pg = $pgRepo->findOneBy([
+        $pg = $this->pgRepo->findOneBy([
             'game' => $id,
             'participant' => $this->getUser(),
         ]);
 
-        $pg->setInterested(!$pg->getInterested());
-        $this->em->flush();
+        if ($pg) {
+            $pg->setInterested(!$pg->getInterested());
+            $this->em->flush();
+        }
 
         $this->refreshData();
     }

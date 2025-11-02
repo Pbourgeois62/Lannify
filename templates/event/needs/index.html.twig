@@ -57,7 +57,7 @@
 						<div class="space-y-2 mt-4">
 							{% for contribution in need.contributions %}
 								<div class="flex items-center bg-darkGrey/60 rounded-lg">
-								<img src="{{ need.createdBy.profile.getAvatarPath() }}" alt="Avatar" class="w-6 h-6 rounded-full object-cover">
+								<img src="{{ contribution.user.profile.getAvatarPath() }}" alt="Avatar" class="w-6 h-6 rounded-full object-cover">
 									<div class="flex items-center gap-2 ml-3">
 										<span class="text-sm text-gray-300">
 											{{ contribution.user.profile.nickname ?? contribution.user.email }}
