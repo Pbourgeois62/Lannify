@@ -34,9 +34,16 @@ class Game
     #[ORM\OneToMany(targetEntity: ParticipantGame::class, mappedBy: 'game', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $participantGames;
 
+    /**
+     * @var Collection<int, GameSession>
+     */
+    #[ORM\OneToMany(targetEntity: GameSession::class, mappedBy: 'game', orphanRemoval: true)]
+    private Collection $gameSessions;
+
     public function __construct()
     {
         $this->participantGames = new ArrayCollection();
+        $this->gameSessions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -116,6 +123,36 @@ class Game
             // set the owning side to null (unless already changed)
             if ($participantGame->getGame() === $this) {
                 $participantGame->setGame(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, GameSession>
+     */
+    public function getGameSessions(): Collection
+    {
+        return $this->gameSessions;
+    }
+
+    public function addGameSession(GameSession $gameSession): static
+    {
+        if (!$this->gameSessions->contains($gameSession)) {
+            $this->gameSessions->add($gameSession);
+            $gameSession->setGame($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGameSession(GameSession $gameSession): static
+    {
+        if ($this->gameSessions->removeElement($gameSession)) {
+            // set the owning side to null (unless already changed)
+            if ($gameSession->getGame() === $this) {
+                $gameSession->setGame(null);
             }
         }
 

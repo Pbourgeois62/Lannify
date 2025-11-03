@@ -20,8 +20,12 @@ class Message
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Event $event = null;
+
+    #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?GameSession $gameSession = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false)]
@@ -81,6 +85,18 @@ class Message
     public function setSender(?User $sender): static
     {
         $this->sender = $sender;
+
+        return $this;
+    }
+
+    public function getGameSession(): ?GameSession
+    {
+        return $this->gameSession;
+    }
+
+    public function setGameSession(?GameSession $gameSession): static
+    {
+        $this->gameSession = $gameSession;
 
         return $this;
     }    

@@ -3,7 +3,7 @@
     data-controller="chat"
     data-chat-mercure-url-value="{{ mercureUrl }}"
     data-chat-user-id-value="{{ app.user.id }}"
-    data-chat-post-url-value="{{ path('event_chat_post', { id: event.id }) }}"
+data-chat-post-url-value="{{ path('chat_post', { type: contextType == 'event' ? 'event' : 'game-session', id: context.id }) }}"
     class="hidden fixed top-20 right-6 z-40 flex flex-col w-96 max-h-[500px] backdrop-blur-md bg-gray-900/95 border border-electricPurple rounded-xl shadow-2xl shadow-electricPurple overflow-hidden"
     data-chat-target="container"
     x-data

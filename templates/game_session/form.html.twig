@@ -1,0 +1,88 @@
+    {% extends 'base.html.twig' %}
+
+    {% block title %}{{ isEdit ? 'Modifier la LAN' : 'Créer une LAN' }}{% endblock %}
+
+    {% block body %}
+    <div class="max-w-3xl mx-auto mt-12 p-8 bg-darkGrey rounded-xl shadow-2xl border-2 border-neonBlue">
+
+        <h1 class="text-3xl font-extrabold text-neonBlue mb-8 text-center drop-shadow-lg">
+            {{ isEdit ? 'Modifier la LAN' : 'Créer une nouvelle LAN' }}
+        </h1>
+
+        {{ form_start(form, {'attr': {'class': 'space-y-8'}}) }}
+
+        {# Nom + Dates alignés sur une seule ligne #}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+            <div class="md:col-span-1">
+                {{ form_row(form.title, {
+                    'attr': {
+                        'class': 'input'
+                    },
+                    'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
+                }) }}
+            </div>
+
+            <div class="md:col-span-1">
+                {{ form_row(form.description, {
+                    'attr': {
+                        'class': 'input'
+                    },
+                    'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
+                }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.startDate, {
+                    'attr': {
+                        'class': 'input'
+                    },
+                    'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
+                }) }}
+            </div>
+
+            <div>
+                {{ form_row(form.endDate, {
+                    'attr': {
+                        'class': 'input'
+                    },
+                    'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
+                }) }}
+            </div>
+        </div>
+
+        <div class="md:col-span-1">
+                {{ form_row(form.game, {
+                    'attr': {
+                        'class': 'input '
+                    },
+                    'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
+                }) }}
+            </div>
+
+
+
+        {# Image #}
+        {# <div class="space-y-3">
+            <h2 class="text-neonBlue font-semibold">Image représentative</h2>
+            {{ form_row(form.coverImage.imageFile, {
+                'attr': {
+                    'class': 'block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4
+                            file:rounded-md file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-neonBlue file:text-black
+                            hover:file:bg-cyanShadow'
+                },
+                'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-1'}
+            }) }}
+        </div> #}
+
+        {# Bouton #}
+        <div class="pt-4">
+            <button type="submit" class="btn-primary w-full text-center text-lg hover:scale-105 transform shadow-xl transition-all duration-300">
+                {{ isEdit ? 'Mettre à jour' : 'Créer le groupe multi' }}
+            </button>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+    {% endblock %}

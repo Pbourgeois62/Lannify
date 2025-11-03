@@ -46,7 +46,7 @@
 				</div>
 
 				<div class="flex w-full space-x-4">
-					<a href="#" class="btn-primary flex-1 text-center py-3">Organiser une partie multi</a>
+					<a href="{{ path('game_session_create') }}" class="btn-primary flex-1 text-center py-3">Organiser une partie multi</a>
 					<a href="{{ path('event_create') }}" class="btn-secondary flex-1 text-center py-3">Organiser une LAN</a>
 				</div>
 			</div>
@@ -58,7 +58,7 @@
 					<span class="text-white font-semibold">Organiser une LAN</span>
 					<p class="text-gray-400 text-sm text-center">Créez votre événement, invitez des participants et gérez votre LAN.</p>
 				</a>
-				<a href="#" class="glass-modal-success space-y-4">
+				<a href="{{ path('game_session_create') }}" class="glass-modal-success space-y-4">
 					<span class="text-neonBlue text-3xl">🤝</span>
 					<span class="text-white font-semibold">Trouver un groupe en ligne</span>
 					<p class="text-gray-400 text-sm text-center">Rejoignez ou créez un groupe pour jouer en ligne avec d’autres joueurs.</p>

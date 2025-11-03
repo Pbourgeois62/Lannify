@@ -4,10 +4,14 @@ namespace App\Controller\User;
 
 use App\Entity\User;
 use App\Entity\Event;
+use App\Entity\Game;
 use App\Entity\Image;
 use App\Form\EventType;
-use App\Form\EventUserChoiceType;
+use App\Entity\GameSession;
 use App\Service\ChatService;
+use App\Form\GameSessionType;
+use App\Form\EventUserChoiceType;
+use App\Repository\EventRepository;
 use App\Service\MagicLinkGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,8 +22,8 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[IsGranted('ROLE_USER')]
-#[Route('/event')]
-final class EventController extends AbstractController
+#[Route('/game-session')]
+final class GameSessionController extends AbstractController
 {
     private ChatService $chatService;
 
@@ -28,56 +32,58 @@ final class EventController extends AbstractController
         $this->chatService = $chatService;
     }
 
-    #[Route('/{id}/home', name: 'event_home')]
-    public function home(Event $event): Response
+    #[Route('/{id}/home', name: 'game_session_home')]
+    public function home(GameSession $gameSession): Response
     {
-        $chatData = $this->chatService->getChatData($event);        
+        $chatData = $this->chatService->getChatData($gameSession);       
 
-        return $this->render('event/home.html.twig', array_merge($chatData, [
-            'event' => $event,            
+        return $this->render('game_session/home.html.twig', array_merge(
+            $chatData, 
+            [
+            'gameSession' => $gameSession,
         ]));
     }
 
-    #[Route('/create', name: 'event_create')]
+    #[Route('/create', name: 'game_session_create')]
     public function create(#[CurrentUser] User $user, Request $request, EntityManagerInterface $em, MagicLinkGenerator $magicLinkGenerator): Response
     {
-        $event = new Event();
+        $gameSession = new GameSession();
 
-        $event->setCoverImage(new Image());
+        // $gameSession->setCoverImage(new Image());
 
-        $form = $this->createForm(EventType::class, $event);
+        $form = $this->createForm(GameSessionType::class, $gameSession);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $coverImage = $event->getCoverImage();
-            if ($coverImage) {
-                $coverImage->setEvent($event);
-            }
+            // $coverImage = $gameSession->getCoverImage();
+            // if ($coverImage) {
+            //     $coverImage->setEvent($gameSession);
+            // }
 
-            $event->setOrganizer($user);
-            $event->setMagicToken($magicLinkGenerator->generate($event));
-            $event->addUser($user);
+            $gameSession->setOrganizer($user);
+            // $gameSession->setMagicToken($magicLinkGenerator->generate($gameSession));
+            $gameSession->addParticipant($user);
 
-            $em->persist($event);
+            $em->persist($gameSession);
             $em->flush();
 
-            $this->addFlash('success', 'Événement créé avec succès !');
+            $this->addFlash('success', 'Événement multi créé avec succès !');
 
-            return $this->redirectToRoute('event_home', ['id' => $event->getId()]);
+            return $this->redirectToRoute('game_session_home', ['id' => $gameSession->getId()]);
         }
 
-        return $this->render('event/form.html.twig', [
+        return $this->render('game_session/form.html.twig', [
             'form' => $form->createView(),
             'isEdit' => false,
         ]);
     }
 
-    #[Route('/join/{token}', name: 'event_join')]
+    #[Route('/join/{token}', name: 'game_session_join')]
     public function join(
         #[CurrentUser] ?User $user,
         string $token,
         EntityManagerInterface $em,
-        \App\Repository\EventRepository $eventRepository
+        EventRepository $eventRepository
     ): Response {
         $event = $eventRepository->findOneBy(['magicToken' => $token]);
         if (!$event) {
@@ -91,11 +97,11 @@ final class EventController extends AbstractController
             $this->addFlash('success', 'Vous avez rejoint l’événement !');
         }
 
-        return $this->redirectToRoute('event_home', ['id' => $event->getId()]);
+        return $this->redirectToRoute('game_session_home', ['id' => $event->getId()]);
     }
 
 
-    #[Route('/{event}/edit', name: 'event_edit')]
+    #[Route('/{gameSession}/edit', name: 'game_session_edit')]
     public function edit(Event $event, Request $request, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(EventType::class, $event);
@@ -112,7 +118,7 @@ final class EventController extends AbstractController
 
             $this->addFlash('success', 'Événement mis à jour avec succès !');
 
-            return $this->redirectToRoute('event_home', ['id' => $event->getId()]);
+            return $this->redirectToRoute('game_session_home', ['id' => $event->getId()]);
         }
 
         return $this->render('event/form.html.twig', [
@@ -122,7 +128,7 @@ final class EventController extends AbstractController
     }
 
 
-    #[Route('/{event}/delete', name: 'event_delete')]
+    #[Route('/{gameSession}/delete', name: 'game_session_delete')]
     public function delete(Event $event, EntityManagerInterface $em): Response
     {
         $em->remove($event);
@@ -132,7 +138,7 @@ final class EventController extends AbstractController
         return $this->redirectToRoute('user_home');
     }
 
-    #[Route('/{event}/close', name: 'event_close')]
+    #[Route('/{gameSession}/close', name: 'game_session_close')]
     public function close(Event $event, EntityManagerInterface $em): Response
     {
         $event->setClosed(true);
@@ -143,7 +149,7 @@ final class EventController extends AbstractController
     }
 
 
-    #[Route('/{event}/manage', name: 'event_manage')]
+    #[Route('/{gameSession}/manage', name: 'game_session_manage')]
     public function manage(Event $event, Request $request, EntityManagerInterface $em): Response
     {
         $chatData = $this->chatService->getChatData($event);
@@ -164,10 +170,10 @@ final class EventController extends AbstractController
                 $this->addFlash('error', 'Vous n’êtes pas autorisé à changer l’organisateur.');
             }
 
-            return $this->redirectToRoute('event_manage', ['id' => $event->getId()]);
+            return $this->redirectToRoute('user_home_manage', ['id' => $event->getId()]);
         }
 
-        return $this->render('event/manage.html.twig', array_merge($chatData, [
+        return $this->render('game_session/manage.html.twig', array_merge($chatData, [
             'event' => $event,
             'form' => $form
         ]));

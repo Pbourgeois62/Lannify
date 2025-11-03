@@ -102,6 +102,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     #[ORM\OneToMany(targetEntity: Commentary::class, mappedBy: 'author', orphanRemoval: true)]
     private Collection $commentaries;
 
+    /**
+     * @var Collection<int, GameSession>
+     */
+    #[ORM\ManyToMany(targetEntity: GameSession::class, mappedBy: 'participants')]
+    private Collection $gameSessions;
+
+    /**
+     * @var Collection<int, GameSession>
+     */
+    #[ORM\OneToMany(targetEntity: GameSession::class, mappedBy: 'organizer', orphanRemoval: true)]
+    private Collection $gameSessionsOrganized;   
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -112,6 +124,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
         $this->feedback = new ArrayCollection();
         $this->feedbackMessages = new ArrayCollection();
         $this->commentaries = new ArrayCollection();
+        $this->gameSessions = new ArrayCollection();
+        $this->gameSessionsOrganized = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -458,4 +472,61 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
         $this->discordId = $discordId;
         return $this;
     }
+
+    /**
+     * @return Collection<int, GameSession>
+     */
+    public function getGameSessions(): Collection
+    {
+        return $this->gameSessions;
+    }
+
+    public function addGameSession(GameSession $gameSession): static
+    {
+        if (!$this->gameSessions->contains($gameSession)) {
+            $this->gameSessions->add($gameSession);
+            $gameSession->addParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGameSession(GameSession $gameSession): static
+    {
+        if ($this->gameSessions->removeElement($gameSession)) {
+            $gameSession->removeParticipant($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, GameSession>
+     */
+    public function getGameSessionsOrganized(): Collection
+    {
+        return $this->gameSessionsOrganized;
+    }
+
+    public function addGameSessionsOrganized(GameSession $gameSessionsOrganized): static
+    {
+        if (!$this->gameSessionsOrganized->contains($gameSessionsOrganized)) {
+            $this->gameSessionsOrganized->add($gameSessionsOrganized);
+            $gameSessionsOrganized->setOrganizer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGameSessionsOrganized(GameSession $gameSessionsOrganized): static
+    {
+        if ($this->gameSessionsOrganized->removeElement($gameSessionsOrganized)) {
+            // set the owning side to null (unless already changed)
+            if ($gameSessionsOrganized->getOrganizer() === $this) {
+                $gameSessionsOrganized->setOrganizer(null);
+            }
+        }
+
+        return $this;
+    }       
 }
