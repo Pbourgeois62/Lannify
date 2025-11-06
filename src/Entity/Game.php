@@ -16,8 +16,8 @@ class Game
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $label = null;
+    // #[ORM\Column(length: 255)]
+    // private ?string $label = null;
 
     #[ORM\Column(nullable: true)]
     private ?bool $free = null;
@@ -27,6 +27,9 @@ class Game
 
     #[ORM\ManyToOne(inversedBy: 'games')]
     private ?Event $event = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $rawgId = null;
 
     /**
      * @var Collection<int, ParticipantGame>
@@ -51,17 +54,17 @@ class Game
         return $this->id;
     }
 
-    public function getLabel(): ?string
-    {
-        return $this->label;
-    }
+    // public function getLabel(): ?string
+    // {
+    //     return $this->label;
+    // }
 
-    public function setLabel(string $label): static
-    {
-        $this->label = $label;
+    // public function setLabel(string $label): static
+    // {
+    //     $this->label = $label;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function isFree(): ?bool
     {
@@ -155,6 +158,26 @@ class Game
                 $gameSession->setGame(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * Get the value of rawgId
+     */ 
+    public function getRawgId()
+    {
+        return $this->rawgId;
+    }
+
+    /**
+     * Set the value of rawgId
+     *
+     * @return  self
+     */ 
+    public function setRawgId($rawgId)
+    {
+        $this->rawgId = $rawgId;
 
         return $this;
     }

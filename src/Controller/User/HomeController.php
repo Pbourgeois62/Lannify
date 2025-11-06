@@ -33,6 +33,7 @@ final class HomeController extends AbstractController
             'openedEvents' => $openedEvents,
             'closedEvents' => $closedEvents,
             'showFeedback' => $showFeedback,
+            'gameSessions' => $user->getGameSessions(),
         ]);
     }
 }

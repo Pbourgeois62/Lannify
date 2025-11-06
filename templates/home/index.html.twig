@@ -81,23 +81,34 @@
 				{% include 'home/partials/_opened_lans_section.html.twig' %}
 			{% endif %}
 		</div>
+		<div class="container mx-auto px-4">
+			<h2 class="text-neonBlue text-xl font-semibold mb-6">Événements à venir</h2>
+			{% if openedEvents is not empty %}
+				{% include 'home/partials/_game_sessions.html.twig' %}
+			{% endif %}
+		</div>
 
 		{# Événements passés #}
 		{# <div class="container mx-auto px-4">
-			<h2 class="text-neonBlue text-xl font-semibold mb-6">Événements passés</h2>
-			{% if closedEvents is empty %}
-				<p class="text-gray-300">Aucun événement passé pour le moment.</p>
-			{% else %}
-				{% include 'home/partials/_closed_lans_section.html.twig' %}
-			{% endif %}
-		</div> #}
+					<h2 class="text-neonBlue text-xl font-semibold mb-6">Événements passés</h2>
+					{% if closedEvents is empty %}
+						<p class="text-gray-300">Aucun événement passé pour le moment.</p>
+					{% else %}
+						{% include 'home/partials/_closed_lans_section.html.twig' %}
+					{% endif %}
+				</div> #}
 	</div>
 {% endblock %}
 {% block modals %}
+	{% for gameSession in gameSessions %}
+		{% if app.user and app.user == gameSession.organizer %}
+			{% include 'home/partials/_delete_game_session_modal.html.twig' with { gameSession: gameSession } %}
+		{% endif %}
+	{% endfor %}
 	{% for event in openedEvents %}
 		{% if app.user and app.user == event.organizer %}
 			{% include 'home/partials/_delete_event_modal.html.twig' with { event: event } %}
-			{% include 'home/partials/_close_event_modal.html.twig' with { event: event } %}
+			{% include 'home/partials/_close_event_modal.html.twig' with { event: event } %}			
 		{% endif %}
 	{% endfor %}
 {% endblock %}

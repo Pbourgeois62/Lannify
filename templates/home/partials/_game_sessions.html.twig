@@ -1,0 +1,50 @@
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for gameSession in gameSessions %}
+        <div class="card-glass overflow-hidden transition-all duration-300 relative">
+
+            {# Image de couverture #}
+            {% if gameSession.coverImage and gameSession.coverImage.imageName %}
+                <img src="{{ asset('uploads/gameSessions/' ~ gameSession.coverImage.imageName) }}" 
+                     alt="" class="rounded-t-xl w-full h-60 object-cover shadow-inner">
+            {% else %}
+                <img src="{{ asset('images/default.webp') }}" 
+                     alt="" class="rounded-t-xl w-full h-60 object-cover shadow-inner">
+            {% endif %}
+
+            {# Badges et actions #}
+            {% if gameSession.organizer and gameSession.organizer.id == app.user.id %}
+                <div class="absolute top-2 right-2 flex space-x-2">
+                    <a href="{{ path('game_session_edit', { gameSession: gameSession.id }) }}" class="btn-edit">
+                        <i class="bi bi-pencil" aria-hidden="true"></i>
+                        <span class="sr-only">Modifier l'événement {{ gameSession.title }}</span>
+                    </a>
+                    <button type="button" data-modal-target="delete-game-session-{{ gameSession.id }}" data-modal-toggle="delete-game-session-{{ gameSession.id }}" class="btn-delete">
+						<i class="bi bi-trash"></i>
+					</button>
+                </div>
+                <div class="absolute bottom-44 right-2">
+                    <span class="badge-fun">Organisateur</span>
+                </div>
+            {% else %}
+                <div class="absolute bottom-44 right-2">
+                    <span class="badge-fun2">Membre</span>
+                </div>
+            {% endif %}
+
+            {# Contenu de la card #}
+            <div class="p-4 space-y-3">
+                <h3 class="text-lg font-bold text-white">{{ gameSession.title }}</h3>
+                <p class="text-sm text-gray-300">
+                    Débute le <span class="text-neonBlue">{{ gameSession.startDate|date('d/m/Y H:i') }}</span><br>
+                    Se termine le <span class="text-neonBlue">{{ gameSession.endDate|date('d/m/Y H:i') }}</span><br>
+                    Organisé par: <span class="text-neonBlue">{{ gameSession.organizer.profile.nickname }}</span>
+                </p>
+
+                <a href="{{ path('game_session_show', { id: gameSession.id }) }}" 
+                   class="btn-primary mt-2 w-full block text-center">
+                    Voir
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+</div>

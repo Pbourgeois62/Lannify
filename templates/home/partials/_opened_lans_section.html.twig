@@ -47,17 +47,13 @@
 
 					Organisé par:
 					<span class="text-neonBlue">
-						{% if event.organizer.profile.nickname is defined and event.organizer.profile.nickname %}
-							{{ event.organizer.profile.nickname }}
-						{% else %}
-							{{ event.organizer.email }}
-						{% endif %}
+						{{ event.organizer.profile.nickname }}
 					</span>
 				</p>
 
 				<a href="{{ path('event_home', { id: event.id }) }}" class="btn-primary mt-2 w-full block text-center">
 					Voir
-				</a>				
+				</a>
 			</div>
 		</div>
 	{% endfor %}

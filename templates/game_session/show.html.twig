@@ -1,0 +1,71 @@
+    {% extends 'game_session/partials/_game_session_layout.html.twig' %}
+
+    {% block title %}Détails de la session de jeu{% endblock %}
+
+{% block gameSession_layout %}
+{# templates/game_session/show.html.twig #}
+<div class="container mx-auto p-4">
+
+    {# Header #}
+    <h1 class="text-3xl font-bold text-neonBlue mb-6">
+        {{ gameSession.title ?? 'Session de jeu' }}
+    </h1>
+
+    <div class="flex flex-col lg:flex-row gap-6">
+
+        {# Card principale du jeu #}
+            <div class="bg-gray-900 rounded-lg shadow-lg overflow-hidden w-full lg:w-2/3">
+                    <img src="{{ gameData.background_image }}" alt="{{ gameData.name }}" class="w-full h-64 object-cover">
+                <div class="p-4 flex flex-col gap-2">
+                    <p class="text-neonBlue font-semibold text-xl">{{ gameData.name }}</p>
+                    <p class="text-gray-400 text-sm">Date de sortie : {{ gameData.released }}</p>
+                    <p class="text-gray-400 text-sm">⭐ {{ gameData.rating }}</p>
+
+                    {% if gameSession.game.genres is defined and gameSession.game.genres is not empty %}
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            {% for genre in gameSession.game.genres %}
+                                <span class="text-sm bg-neonBlue/20 text-neonBlue px-2 py-1 rounded">{{ genre }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if gameSession.game.platforms is defined and gameSession.game.platforms is not empty %}
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            {% for platform in gameSession.game.platforms %}
+                                <span class="text-xs bg-gray-800 text-gray-200 px-2 py-1 rounded">{{ platform }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if gameSession.description %}
+                        <p class="text-gray-300 text-sm mt-2">{{ gameSession.description }}</p>
+                    {% elseif gameSession.game.description_raw %}
+                        <p class="text-gray-300 text-sm mt-2">{{ gameSession.game.description_raw|raw }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+        {# Sidebar informations de session #}
+        <div class="bg-gray-800 rounded-lg shadow-lg p-4 w-full lg:w-1/3 flex flex-col gap-2">
+            <p class="text-neonBlue font-semibold text-lg mb-2">Infos session</p>
+            <p class="text-gray-300 text-sm">Créée le : {{ gameSession.createdAt|date('d/m/Y H:i') }}</p>
+            <p class="text-gray-300 text-sm">Début : {{ gameSession.startDate|date('d/m/Y H:i') }}</p>
+            <p class="text-gray-300 text-sm">Fin : {{ gameSession.endDate|date('d/m/Y H:i') }}</p>
+            <p class="text-gray-300 text-sm">Participants : {{ gameSession.participants|length }}</p>
+            {% if gameSession.isPrivate %}
+                <p class="text-sm text-red-400 font-semibold">Session privée</p>
+            {% endif %}
+            {% if gameSession.magicToken %}
+                <p class="text-gray-300 text-xs">Token : {{ gameSession.magicToken }}</p>
+            {% endif %}
+
+            <a href="{{ path('user_home') }}" 
+               class="mt-4 inline-block px-4 py-2 bg-neonBlue text-black font-semibold rounded hover:bg-neonBlue/80">
+                Retour
+            </a>
+        </div>
+    </div>   
+</div>
+
+
+{% endblock %}

@@ -4,33 +4,37 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-    mercure.public_url: '%env(MERCURE_PUBLIC_URL)%'
+    mercure.public_url: "%env(MERCURE_PUBLIC_URL)%"
 
 services:
     # default configuration for services in *this* file
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
+        autowire: true # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
-        resource: '../src/'
+        resource: "../src/"
 
     App\Twig\MercureExtension:
-        tags: ['twig.extension']
+        tags: ["twig.extension"]
 
     App\Service\MercureJwtGenerator:
         arguments:
-            $secret: '%env(MERCURE_PUBLISHER_JWT_KEY)%'
+            $secret: "%env(MERCURE_PUBLISHER_JWT_KEY)%"
 
     App\Service\ChatService:
         arguments:
-            $mercurePublicUrl: '%mercure.public_url%'
+            $mercurePublicUrl: "%mercure.public_url%"
+
+    App\Service\RawgClient:
+        arguments:
+            $rawgApiKey: "%env(string:RAWG_API_KEY)%"
 
 twig:
     globals:
-        mercure_public_url: '%env(MERCURE_PUBLIC_URL)%'
+        mercure_public_url: "%env(MERCURE_PUBLIC_URL)%"
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -2,12 +2,13 @@
 
 namespace App\Controller\User;
 
+use App\Entity\Game;
 use App\Entity\User;
 use App\Entity\Event;
-use App\Entity\Game;
 use App\Entity\Image;
 use App\Form\EventType;
 use App\Entity\GameSession;
+use App\Service\RawgClient;
 use App\Service\ChatService;
 use App\Form\GameSessionType;
 use App\Form\EventUserChoiceType;
@@ -35,13 +36,28 @@ final class GameSessionController extends AbstractController
     #[Route('/{id}/home', name: 'game_session_home')]
     public function home(GameSession $gameSession): Response
     {
-        $chatData = $this->chatService->getChatData($gameSession);       
+        $chatData = $this->chatService->getChatData($gameSession);
 
         return $this->render('game_session/home.html.twig', array_merge(
-            $chatData, 
+            $chatData,
             [
-            'gameSession' => $gameSession,
-        ]));
+                'gameSession' => $gameSession,
+            ]
+        ));
+    }
+
+    #[Route('/{id}/show', name: 'game_session_show')]
+    public function show(RawgClient $rawgService, GameSession $gameSession): Response
+    {
+        $chatData = $this->chatService->getChatData($gameSession);
+        $gameData = $rawgService->getGame($gameSession->getGame()->getRawgId());
+        return $this->render('game_session/show.html.twig', array_merge(
+            $chatData,
+            [
+                'gameSession' => $gameSession,
+                'gameData' => $gameData,
+            ]
+        ));
     }
 
     #[Route('/create', name: 'game_session_create')]
@@ -69,7 +85,10 @@ final class GameSessionController extends AbstractController
 
             $this->addFlash('success', 'Événement multi créé avec succès !');
 
-            return $this->redirectToRoute('game_session_home', ['id' => $gameSession->getId()]);
+            // return $this->redirectToRoute('game_session_home', ['id' => $gameSession->getId()]);
+            return $this->redirectToRoute('game_session_choose_game', [
+            'id' => $gameSession->getId()
+        ]);
         }
 
         return $this->render('game_session/form.html.twig', [
@@ -77,6 +96,15 @@ final class GameSessionController extends AbstractController
             'isEdit' => false,
         ]);
     }
+    #[Route('/{id}/choose-game', name: 'game_session_choose_game')]
+    public function chooseGame(
+        GameSession $gameSession
+    ): Response {
+        return $this->render('game_session/choose_game.html.twig', [
+            'gameSession' => $gameSession
+        ]);
+    }
+
 
     #[Route('/join/{token}', name: 'game_session_join')]
     public function join(
@@ -102,38 +130,38 @@ final class GameSessionController extends AbstractController
 
 
     #[Route('/{gameSession}/edit', name: 'game_session_edit')]
-    public function edit(Event $event, Request $request, EntityManagerInterface $em): Response
+    public function edit(GameSession $gameSession, Request $request, EntityManagerInterface $em): Response
     {
-        $form = $this->createForm(EventType::class, $event);
+        $form = $this->createForm(GameSessionType::class, $gameSession);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $coverImage = $event->getCoverImage();
-            if ($coverImage) {
-                $coverImage->setEvent($event);
-            }
+            $coverImage = $gameSession->getCoverImage();
+            // if ($coverImage) {
+            //     $coverImage->setEvent($gameSession);
+            // }
 
-            $em->persist($event);
+            $em->persist($gameSession);
             $em->flush();
 
-            $this->addFlash('success', 'Événement mis à jour avec succès !');
+            $this->addFlash('success', 'session de jeu mis à jour avec succès !');
 
-            return $this->redirectToRoute('game_session_home', ['id' => $event->getId()]);
+            return $this->redirectToRoute('game_session_home', ['id' => $gameSession->getId()]);
         }
 
-        return $this->render('event/form.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('game_session/form.html.twig', [
+            'form' => $form,
             'isEdit' => true,
         ]);
     }
 
 
     #[Route('/{gameSession}/delete', name: 'game_session_delete')]
-    public function delete(Event $event, EntityManagerInterface $em): Response
+    public function delete(GameSession $gameSession, EntityManagerInterface $em): Response
     {
-        $em->remove($event);
+        $em->remove($gameSession);
         $em->flush();
-        $this->addFlash('success', 'Événement supprimé avec succès !');
+        $this->addFlash('success', 'session multi supprimé avec succès !');
 
         return $this->redirectToRoute('user_home');
     }

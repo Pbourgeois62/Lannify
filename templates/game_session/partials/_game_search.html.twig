@@ -1,0 +1,46 @@
+<div x-data="{ query: '', results: [], selected: null }" class="relative max-w-md mx-auto">
+    <input
+        type="text"
+        x-model="query"
+        @input.debounce.400ms="
+            if (query.length > 2) {
+                fetch(`/api/games/search?q=${encodeURIComponent(query)}`)
+                    .then(res => res.json())
+                    .then(data => results = data)
+            } else {
+                results = []
+            }"
+        placeholder="Rechercher un jeu..."
+        class="input"
+    >
+
+    <ul x-show="results.length > 0" 
+        class="absolute mt-1 w-full bg-gray-900 text-white border border-gray-700 rounded-lg shadow-lg z-50 max-h-80 overflow-y-auto">
+        <template x-for="game in results" :key="game.id">
+            <li @click="selected = game; query = game.name; results = []"
+                class="flex items-center gap-3 px-3 py-2 hover:bg-gray-700 cursor-pointer transition">
+                <img :src="game.background_image" alt="" class="w-10 h-10 rounded object-cover">
+                <div class="flex-1">
+                    <p class="font-medium" x-text="game.name"></p>
+                    <p class="text-xs text-gray-400">
+                        <span x-text="game.released ? `(${game.released.split('-')[0]})` : ''"></span>
+                        <template x-if="game.platforms.length">
+                            <span> • <span x-text="game.platforms.join(', ')"></span></span>
+                        </template>
+                    </p>
+                </div>
+            </li>
+        </template>
+    </ul>
+
+    <template x-if="selected">
+        <div class="mt-6 p-4 bg-gray-800/80 border border-gray-700 rounded-lg flex gap-4 items-center">
+            <img :src="selected.background_image" alt="" class="w-20 h-20 rounded object-cover">
+            <div>
+                <h3 class="font-semibold text-neonBlue" x-text="selected.name"></h3>
+                <p class="text-sm text-gray-400" x-text="selected.released"></p>
+                <p class="text-xs text-gray-500" x-text="selected.platforms.join(', ')"></p>
+            </div>
+        </div>
+    </template>
+</div>

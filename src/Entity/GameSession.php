@@ -31,7 +31,7 @@ class GameSession
     #[ORM\JoinColumn(nullable: false)]
     private ?User $organizer = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -47,11 +47,23 @@ class GameSession
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'gameSessions')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Game $game = null;
 
     #[ORM\Column(length: 64, unique: true, nullable: true)]
     private ?string $magicToken = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $isPrivate = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $maxParticipants = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $coverImage = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $rawgId = null;
 
     public function __construct()
     {
@@ -211,6 +223,62 @@ class GameSession
     public function setMagicToken(string $magicToken): static
     {
         $this->magicToken = $magicToken;
+        return $this;
+    }
+
+    public function isPrivate(): ?bool
+    {
+        return $this->isPrivate;
+    }
+
+    public function setIsPrivate(bool $isPrivate): static
+    {
+        $this->isPrivate = $isPrivate;
+
+        return $this;
+    }
+
+    public function getMaxParticipants(): ?string
+    {
+        return $this->maxParticipants;
+    }
+
+    public function setMaxParticipants(string $maxParticipants): static
+    {
+        $this->maxParticipants = $maxParticipants;
+
+        return $this;
+    }
+
+    public function getCoverImage(): ?string
+    {
+        return $this->coverImage;
+    }
+
+    public function setCoverImage(string $coverImage): static
+    {
+        $this->coverImage = $coverImage;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of rawgId
+     */ 
+    public function getRawgId()
+    {
+        return $this->rawgId;
+    }
+
+    /**
+     * Set the value of rawgId
+     *
+     * @return  self
+     */ 
+    public function setRawgId($rawgId)
+    {
+        $this->rawgId = $rawgId;
+
         return $this;
     }
 }
