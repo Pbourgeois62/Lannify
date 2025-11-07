@@ -22,7 +22,6 @@ class GameSearchComponent extends AbstractController
     use DefaultActionTrait;
     use ComponentWithFormTrait;
 
-    /** Résultats de recherche RAWG */
     public array $rawgData = [];
 
     #[LiveProp(writable: true)]
@@ -30,7 +29,7 @@ class GameSearchComponent extends AbstractController
 
     #[LiveProp]
     public ?GameSession $initialFormData = null;
-    
+
     #[LiveProp]
     public ?string $errorMessage = null;
 
@@ -42,20 +41,20 @@ class GameSearchComponent extends AbstractController
     #[LiveAction]
     public function search(RawgClient $rawgService): void
     {
-        if (!$this->query || trim($this->query) === '') {
+        $query = trim($this->query ?? '');
+        if ($query === '') {
             $this->rawgData = [];
             $this->errorMessage = null;
             return;
         }
 
-        $data = $rawgService->searchGames($this->query);
-
-        if (isset($data['error'])) {
-            $this->errorMessage = $data['error'];
-            $this->rawgData = [];
-        } else {
+        try {
+            $data = $rawgService->searchGames($query, 1, 500);
+            $this->rawgData = $data['results'] ?? [];
             $this->errorMessage = null;
-            $this->rawgData = $data;
+        } catch (\Throwable $e) {
+            $this->rawgData = [];
+            $this->errorMessage = 'Erreur RAWG : ' . $e->getMessage();
         }
     }
 
@@ -75,7 +74,6 @@ class GameSearchComponent extends AbstractController
 
             if (!$game) {
                 $gameData = $rawgService->getGame($id);
-
                 if (!$gameData || isset($gameData['error'])) {
                     $this->errorMessage = 'Impossible de récupérer les infos du jeu.';
                     return null;
@@ -84,7 +82,7 @@ class GameSearchComponent extends AbstractController
                 $game = new Game();
                 $game->setRawgId($gameData['id']);
                 $game->setSource('rawg');
-                // Tu peux aussi stocker le nom et l’image :
+                // tu peux aussi stocker le label et l’image si tu veux
                 // $game->setLabel($gameData['name'] ?? '');
                 // $game->setImageUrl($gameData['background_image'] ?? null);
                 $em->persist($game);
