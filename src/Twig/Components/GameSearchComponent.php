@@ -22,6 +22,7 @@ class GameSearchComponent extends AbstractController
     use DefaultActionTrait;
     use ComponentWithFormTrait;
 
+    /** Résultats de recherche RAWG */
     public array $rawgData = [];
 
     #[LiveProp(writable: true)]
@@ -29,6 +30,9 @@ class GameSearchComponent extends AbstractController
 
     #[LiveProp]
     public ?GameSession $initialFormData = null;
+    
+    #[LiveProp]
+    public ?string $errorMessage = null;
 
     protected function instantiateForm(): FormInterface
     {
@@ -38,8 +42,21 @@ class GameSearchComponent extends AbstractController
     #[LiveAction]
     public function search(RawgClient $rawgService): void
     {
-        $searchQuery = $this->query;
-        $this->rawgData = $rawgService->searchGames($searchQuery, 1, 500);
+        if (!$this->query || trim($this->query) === '') {
+            $this->rawgData = [];
+            $this->errorMessage = null;
+            return;
+        }
+
+        $data = $rawgService->searchGames($this->query);
+
+        if (isset($data['error'])) {
+            $this->errorMessage = $data['error'];
+            $this->rawgData = [];
+        } else {
+            $this->errorMessage = null;
+            $this->rawgData = $data;
+        }
     }
 
     #[LiveAction]
@@ -49,34 +66,48 @@ class GameSearchComponent extends AbstractController
         EntityManagerInterface $em
     ): mixed {
         if (!$this->initialFormData instanceof GameSession) {
+            $this->errorMessage = 'Session de jeu non trouvée.';
             return null;
         }
 
-        $game = $em->getRepository(Game::class)->findOneBy(['rawgId' => $id]);
+        try {
+            $game = $em->getRepository(Game::class)->findOneBy(['rawgId' => $id]);
 
-        if (!$game) {
-            $gameData = $rawgService->getGame($id);
-            $game = new Game();
-            $game->setRawgId($gameData['id']);
-            // $game->setLabel($gameData['name'] ?? '');
-            $game->setSource('rawg');
-            $em->persist($game);
+            if (!$game) {
+                $gameData = $rawgService->getGame($id);
+
+                if (!$gameData || isset($gameData['error'])) {
+                    $this->errorMessage = 'Impossible de récupérer les infos du jeu.';
+                    return null;
+                }
+
+                $game = new Game();
+                $game->setRawgId($gameData['id']);
+                $game->setSource('rawg');
+                // Tu peux aussi stocker le nom et l’image :
+                // $game->setLabel($gameData['name'] ?? '');
+                // $game->setImageUrl($gameData['background_image'] ?? null);
+                $em->persist($game);
+            }
+
+            $gameSession = $this->initialFormData;
+            $gameSession->setGame($game);
+
+            $em->persist($gameSession);
+            $em->flush();
+
+            return $this->redirectToRoute('user_home');
+        } catch (\Throwable $e) {
+            $this->errorMessage = 'Erreur interne : ' . $e->getMessage();
+            return null;
         }
-
-        $gameSession = $this->initialFormData;
-        $gameSession->setGame($game);
-
-        $em->persist($gameSession);
-        $em->flush();
-
-        return $this->redirectToRoute('user_home');
     }
-
 
     #[LiveAction]
     public function clear(): void
     {
         $this->query = null;
         $this->rawgData = [];
+        $this->errorMessage = null;
     }
 }
