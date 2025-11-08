@@ -8,7 +8,7 @@ use App\Entity\Image;
 use App\Form\EventType;
 use App\Form\EventUserChoiceType;
 use App\Service\ChatService;
-use App\Service\MagicLinkGenerator;
+use App\Service\TokenGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,7 +39,7 @@ final class EventController extends AbstractController
     }
 
     #[Route('/create', name: 'event_create')]
-    public function create(#[CurrentUser] User $user, Request $request, EntityManagerInterface $em, MagicLinkGenerator $magicLinkGenerator): Response
+    public function create(#[CurrentUser] User $user, Request $request, EntityManagerInterface $em, TokenGenerator $TokenGenerator): Response
     {
         $event = new Event();
 
@@ -55,7 +55,7 @@ final class EventController extends AbstractController
             }
 
             $event->setOrganizer($user);
-            $event->setMagicToken($magicLinkGenerator->generate($event));
+            $event->setMagicToken($TokenGenerator->generateMagicLinkToken('lan'));
             $event->addUser($user);
 
             $em->persist($event);

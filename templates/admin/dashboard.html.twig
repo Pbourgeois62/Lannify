@@ -18,10 +18,18 @@
 			</div>
 
 			<div class="bg-gradient-to-br from-purple-500 to-indigo-600 text-white p-6 rounded-2xl shadow-lg">
-				<h3 class="text-sm font-medium uppercase">Events</h3>
+				<h3 class="text-sm font-medium uppercase">Lans physiques</h3>
 				<p class="text-3xl font-bold mt-2">{{ stats.events }}</p>
 				<div>
 					<a href="{{ path('admin_events_management') }}" class="text-sm text-white underline mt-2 inline-block">Voir tous les événements</a>
+				</div>
+			</div>
+
+			<div class="bg-gradient-to-br from-purple-500 to-indigo-600 text-white p-6 rounded-2xl shadow-lg">
+				<h3 class="text-sm font-medium uppercase">Sessions multi en ligne</h3>
+				<p class="text-3xl font-bold mt-2">{{ stats.gameSessions }}</p>
+				<div>
+					<a href="{{ path('admin_game_sessions_management') }}" class="text-sm text-white underline mt-2 inline-block">Voir tous les événements</a>
 				</div>
 			</div>
 

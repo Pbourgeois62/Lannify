@@ -4,7 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Event;
 use App\Repository\EventRepository;
-use App\Service\MagicLinkGenerator;
+use App\Service\TokenGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -36,9 +36,9 @@ final class EventManagementController extends AbstractController
     }
 
     #[Route('/edit-magicToken/{event}', name: 'admin_event_edit_magicToken', methods: ['POST', 'GET'])]
-    public function editMagicLink(Event $event, EntityManagerInterface $em, MagicLinkGenerator $magicLinkGenerator): Response
+    public function editMagicLink(Event $event, EntityManagerInterface $em, TokenGenerator $TokenGenerator): Response
     {        
-        $event->setMagicToken($magicLinkGenerator->generate($event));      
+        $event->setMagicToken($TokenGenerator->generateMagicLinkToken('lan'));      
         
         $em->flush();
 

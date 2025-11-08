@@ -2,19 +2,14 @@
 
 namespace App\Controller\User;
 
-use App\Entity\Game;
 use App\Entity\User;
-use App\Entity\Event;
-use App\Entity\Image;
-use App\Form\EventType;
 use App\Entity\GameSession;
 use App\Service\RawgClient;
 use App\Service\ChatService;
 use App\Form\GameSessionType;
-use App\Form\EventUserChoiceType;
-use App\Repository\EventRepository;
-use App\Service\MagicLinkGenerator;
+use App\Service\TokenGenerator;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\GameSessionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -61,38 +56,37 @@ final class GameSessionController extends AbstractController
     }
 
     #[Route('/create', name: 'game_session_create')]
-    public function create(#[CurrentUser] User $user, Request $request, EntityManagerInterface $em, MagicLinkGenerator $magicLinkGenerator): Response
+    public function create(#[CurrentUser] User $user, Request $request, EntityManagerInterface $em, TokenGenerator $tokenGenerator): Response
     {
         $gameSession = new GameSession();
-
-        // $gameSession->setCoverImage(new Image());
 
         $form = $this->createForm(GameSessionType::class, $gameSession);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // $coverImage = $gameSession->getCoverImage();
-            // if ($coverImage) {
-            //     $coverImage->setEvent($gameSession);
-            // }
 
             $gameSession->setOrganizer($user);
-            // $gameSession->setMagicToken($magicLinkGenerator->generate($gameSession));
+            $gameSession->setMagicToken($tokenGenerator->generateMagicLinkToken('game_session'));
+            if ($form->get('isPrivate')->getData()) {
+                $gameSession->setIsPrivate(true);
+                $gameSession->setPrivateCode($tokenGenerator->generateShareableCode('GMS', 'game_session_' . uniqid()));
+            } else {
+                $gameSession->setIsPrivate(false);
+            }
             $gameSession->addParticipant($user);
 
             $em->persist($gameSession);
             $em->flush();
 
-            $this->addFlash('success', 'Événement multi créé avec succès !');
+            $this->addFlash('success', 'Session multi créé avec succès !');
 
-            // return $this->redirectToRoute('game_session_home', ['id' => $gameSession->getId()]);
             return $this->redirectToRoute('game_session_choose_game', [
-            'id' => $gameSession->getId()
-        ]);
+                'id' => $gameSession->getId()
+            ]);
         }
 
         return $this->render('game_session/form.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'isEdit' => false,
         ]);
     }
@@ -111,21 +105,21 @@ final class GameSessionController extends AbstractController
         #[CurrentUser] ?User $user,
         string $token,
         EntityManagerInterface $em,
-        EventRepository $eventRepository
+        GameSessionRepository $gameSessionRepository
     ): Response {
-        $event = $eventRepository->findOneBy(['magicToken' => $token]);
-        if (!$event) {
+        $gameSession = $gameSessionRepository->findOneBy(['magicToken' => $token]);
+        if (!$gameSession) {
             $this->addFlash('error', 'Lien invalide.');
             return $this->redirectToRoute('user_home');
         }
 
-        if ($user && !$event->getUsers()->contains($user)) {
-            $event->addUser($user);
+        if ($user && !$gameSession->getParticipants()->contains($user)) {
+            $gameSession->addUser($user);
             $em->flush();
             $this->addFlash('success', 'Vous avez rejoint l’événement !');
         }
 
-        return $this->redirectToRoute('game_session_home', ['id' => $event->getId()]);
+        return $this->redirectToRoute('game_session_show', ['id' => $gameSession->getId()]);
     }
 
 
@@ -136,11 +130,6 @@ final class GameSessionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $coverImage = $gameSession->getCoverImage();
-            // if ($coverImage) {
-            //     $coverImage->setEvent($gameSession);
-            // }
-
             $em->persist($gameSession);
             $em->flush();
 
@@ -165,45 +154,54 @@ final class GameSessionController extends AbstractController
 
         return $this->redirectToRoute('user_home');
     }
+    // #[Route('/access', name: 'game_session_access_by_code')]
+    // public function accessByCode(Request $request, GameSessionRepository $gameSessionRepository): Response
+    // {
+    //     $privateCode = $request->query->get('quick_access_code')['privateCode'] ?? null;
 
-    #[Route('/{gameSession}/close', name: 'game_session_close')]
-    public function close(Event $event, EntityManagerInterface $em): Response
-    {
-        $event->setClosed(true);
-        $em->flush();
-        $this->addFlash('success', 'Événement cloturé avec succès !');
+    //     if (!$privateCode) {
+    //         $this->addFlash('error', 'Veuillez entrer un code.');
+    //         return $this->redirectToRoute('user_home');
+    //     }
 
-        return $this->redirectToRoute('user_home');
-    }
+    //     $gameSession = $gameSessionRepository->findOneBy(['privateCode' => $privateCode]);
+
+    //     if (!$gameSession) {
+    //         $this->addFlash('error', 'Code privé invalide.');
+    //         return $this->redirectToRoute('user_home');
+    //     }
+
+    //     return $this->redirectToRoute('game_session_show', ['id' => $gameSession->getId()]);
+    // }
 
 
-    #[Route('/{gameSession}/manage', name: 'game_session_manage')]
-    public function manage(Event $event, Request $request, EntityManagerInterface $em): Response
-    {
-        $chatData = $this->chatService->getChatData($event);
+    // #[Route('/{gameSession}/manage', name: 'game_session_manage')]
+    // public function manage(Event $event, Request $request, EntityManagerInterface $em): Response
+    // {
+    //     $chatData = $this->chatService->getChatData($event);
 
-        $form = $this->createForm(EventUserChoiceType::class, null, [
-            'users' => $event->getUsers()->toArray(),
-        ]);
+    //     $form = $this->createForm(EventUserChoiceType::class, null, [
+    //         'users' => $event->getUsers()->toArray(),
+    //     ]);
 
-        $form->handleRequest($request);
+    //     $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($event->getOrganizer() === $this->getUser()) {
-                $selectedUser = $form->get('userchoice')->getData();
-                $event->setOrganizer($selectedUser);
-                $em->flush();
-                $this->addFlash('success', 'Organisateur changé avec succès !');
-            } else {
-                $this->addFlash('error', 'Vous n’êtes pas autorisé à changer l’organisateur.');
-            }
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         if ($event->getOrganizer() === $this->getUser()) {
+    //             $selectedUser = $form->get('userchoice')->getData();
+    //             $event->setOrganizer($selectedUser);
+    //             $em->flush();
+    //             $this->addFlash('success', 'Organisateur changé avec succès !');
+    //         } else {
+    //             $this->addFlash('error', 'Vous n’êtes pas autorisé à changer l’organisateur.');
+    //         }
 
-            return $this->redirectToRoute('user_home_manage', ['id' => $event->getId()]);
-        }
+    //         return $this->redirectToRoute('user_home_manage', ['id' => $event->getId()]);
+    //     }
 
-        return $this->render('game_session/manage.html.twig', array_merge($chatData, [
-            'event' => $event,
-            'form' => $form
-        ]));
-    }
+    //     return $this->render('game_session/manage.html.twig', array_merge($chatData, [
+    //         'event' => $event,
+    //         'form' => $form
+    //     ]));
+    // }
 }

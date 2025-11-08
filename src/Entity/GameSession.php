@@ -18,8 +18,8 @@ class GameSession
     #[ORM\Column]
     private ?\DateTimeImmutable $startDate = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $endDate = null;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $estimatedDuration = null;
 
     /**
      * @var Collection<int, User>
@@ -36,6 +36,7 @@ class GameSession
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
+    
 
     /**
      * @var Collection<int, Message>
@@ -52,6 +53,9 @@ class GameSession
 
     #[ORM\Column(length: 64, unique: true, nullable: true)]
     private ?string $magicToken = null;
+
+     #[ORM\Column(length: 64, unique: true, nullable: true)]
+    private ?string $privateCode = null;
 
     #[ORM\Column(nullable: true)]
     private ?bool $isPrivate = null;
@@ -89,17 +93,17 @@ class GameSession
         return $this;
     }
 
-    public function getEndDate(): ?\DateTimeImmutable
+    public function getEstimatedDuration(): ?int
     {
-        return $this->endDate;
+        return $this->estimatedDuration;
     }
 
-    public function setEndDate(\DateTimeImmutable $endDate): static
+    public function setEstimatedDuration(?int $estimatedDuration): self
     {
-        $this->endDate = $endDate;
-
+        $this->estimatedDuration = $estimatedDuration;
         return $this;
     }
+
 
     /**
      * @return Collection<int, User>
@@ -264,7 +268,7 @@ class GameSession
 
     /**
      * Get the value of rawgId
-     */ 
+     */
     public function getRawgId()
     {
         return $this->rawgId;
@@ -274,10 +278,22 @@ class GameSession
      * Set the value of rawgId
      *
      * @return  self
-     */ 
+     */
     public function setRawgId($rawgId)
     {
         $this->rawgId = $rawgId;
+
+        return $this;
+    }
+
+    public function getPrivateCode(): ?string
+    {
+        return $this->privateCode;
+    }
+
+    public function setPrivateCode(string $privateCode): static
+    {
+        $this->privateCode = $privateCode;
 
         return $this;
     }

@@ -2,9 +2,13 @@
 
 namespace App\Controller\User;
 
+use Dom\Entity;
 use App\Entity\User;
-use App\Repository\EventRepository;
 use App\Service\ProfileManager;
+use App\Form\QuickAccessCodeType;
+use App\Repository\EventRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\GameSessionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,7 +25,23 @@ final class HomeController extends AbstractController
         #[CurrentUser] User $user,
         EventRepository $eventRepository,
         Request $request,
+        GameSessionRepository $gameSessionRepository,
+        EntityManagerInterface $em
     ): Response {
+        $form = $this->createForm(QuickAccessCodeType::class, null);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $privateCode = $data['privateCode'];
+            $gameSession = $gameSessionRepository->findOneBy(['privateCode' => $privateCode]);
+            $gameSession->addParticipant($user);
+            $em->flush();
+            if (!$gameSession) {
+                $this->addFlash('error', 'Code privé invalide.');
+                return $this->redirectToRoute('user_home');
+            }
+            return $this->redirectToRoute('game_session_show', ['id' => $gameSession->getId()]);
+        }
         $session = $request->getSession();
 
         $showFeedback = !$session->get('feedback_seen', false);
@@ -34,6 +54,7 @@ final class HomeController extends AbstractController
             'closedEvents' => $closedEvents,
             'showFeedback' => $showFeedback,
             'gameSessions' => $user->getGameSessions(),
+            'quickAccessForm' => $form->createView(), // passer à Twig
         ]);
     }
 }

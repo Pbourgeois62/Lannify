@@ -1,71 +1,139 @@
-    {% extends 'game_session/partials/_game_session_layout.html.twig' %}
+{% extends 'game_session/partials/_game_session_layout.html.twig' %}
 
-    {% block title %}Détails de la session de jeu{% endblock %}
+{% block title %}
+	Détails de la session de jeu
+{% endblock %}
 
 {% block gameSession_layout %}
-{# templates/game_session/show.html.twig #}
-<div class="container mx-auto p-4">
+	{# templates/game_session/show.html.twig #}
+	<div
+		class="container mx-auto p-4">
 
-    {# Header #}
-    <h1 class="text-3xl font-bold text-neonBlue mb-6">
-        {{ gameSession.title ?? 'Session de jeu' }}
-    </h1>
+		{# Header #}
+		{% if gameSession.description %}
+			<h1 class="text-3xl font-extrabold text-neonBlue mb-4">
+				{{ gameSession.description }}
+			</h1>
+		{% elseif gameSession.game.description_raw %}
+			<h1 class="text-lg text-gray-300 mb-4">
+				{{ gameSession.game.description_raw|raw }}
+			</h1>
+		{% endif %}
 
-    <div class="flex flex-col lg:flex-row gap-6">
+		<div
+			class="flex flex-col lg:flex-row gap-6">
 
-        {# Card principale du jeu #}
-            <div class="bg-gray-900 rounded-lg shadow-lg overflow-hidden w-full lg:w-2/3">
-                    <img src="{{ gameData.background_image }}" alt="{{ gameData.name }}" class="w-full h-64 object-cover">
-                <div class="p-4 flex flex-col gap-2">
-                    <p class="text-neonBlue font-semibold text-xl">{{ gameData.name }}</p>
-                    <p class="text-gray-400 text-sm">Date de sortie : {{ gameData.released }}</p>
-                    <p class="text-gray-400 text-sm">⭐ {{ gameData.rating }}</p>
+			{# Card principale du jeu #}
+			<div class="bg-gray-900 rounded-lg shadow-lg overflow-hidden w-full lg:w-2/3">
+				{% if gameData.background_image %}
+					<img src="{{ gameData.background_image }}" alt="{{ gameData.name }}" class="w-full h-64 object-cover">
+				{% endif %}
+				<div class="p-4 flex flex-col gap-2">
+					<p class="text-neonBlue font-semibold text-xl">{{ gameData.name }}</p>
+					<p class="text-gray-400 text-sm">Date de sortie :
+						{{ gameData.released }}</p>
+					<p class="text-gray-400 text-sm">⭐
+						{{ gameData.rating }}</p>
 
-                    {% if gameSession.game.genres is defined and gameSession.game.genres is not empty %}
-                        <div class="flex flex-wrap gap-2 mt-2">
-                            {% for genre in gameSession.game.genres %}
-                                <span class="text-sm bg-neonBlue/20 text-neonBlue px-2 py-1 rounded">{{ genre }}</span>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+					{% if gameSession.game.genres is defined and gameSession.game.genres is not empty %}
+						<div class="flex flex-wrap gap-2 mt-2">
+							{% for genre in gameSession.game.genres %}
+								<span class="text-sm bg-neonBlue/20 text-neonBlue px-2 py-1 rounded">{{ genre }}</span>
+							{% endfor %}
+						</div>
+					{% endif %}
 
-                    {% if gameSession.game.platforms is defined and gameSession.game.platforms is not empty %}
-                        <div class="flex flex-wrap gap-2 mt-2">
-                            {% for platform in gameSession.game.platforms %}
-                                <span class="text-xs bg-gray-800 text-gray-200 px-2 py-1 rounded">{{ platform }}</span>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+					{% if gameSession.game.platforms is defined and gameSession.game.platforms is not empty %}
+						<div class="flex flex-wrap gap-2 mt-2">
+							{% for platform in gameSession.game.platforms %}
+								<span class="text-xs bg-gray-800 text-gray-200 px-2 py-1 rounded">{{ platform }}</span>
+							{% endfor %}
+						</div>
+					{% endif %}
+				</div>
+			</div>
 
-                    {% if gameSession.description %}
-                        <p class="text-gray-300 text-sm mt-2">{{ gameSession.description }}</p>
-                    {% elseif gameSession.game.description_raw %}
-                        <p class="text-gray-300 text-sm mt-2">{{ gameSession.game.description_raw|raw }}</p>
-                    {% endif %}
-                </div>
-            </div>
+			{# Sidebar informations de session #}
+			<div class="bg-gray-800 rounded-lg shadow-lg p-4 w-full lg:w-1/3 flex flex-col gap-2 space-around">
+				<h1 class="text-neonBlue font-semibold text-lg mb-2">Infos générales</h1>
+				{# <p class="text-gray-300 text-sm">Créée le :
+													{{ gameSession.createdAt|date('d/m/Y H:i') }}</p> #}
+				<p class="text-gray-300 text-sm">Début :
+					{{ gameSession.startDate|date('d/m/Y H:i') }}</p>
+				<p class="text-gray-300 text-sm">
+					⏱ Durée estimée :
+					{% if gameSession.estimatedDuration %}
+						{{ (gameSession.estimatedDuration / 60)|number_format(1) }}
+						h
+					{% else %}
+						Non précisée
+					{% endif %}
+				</p>
 
-        {# Sidebar informations de session #}
-        <div class="bg-gray-800 rounded-lg shadow-lg p-4 w-full lg:w-1/3 flex flex-col gap-2">
-            <p class="text-neonBlue font-semibold text-lg mb-2">Infos session</p>
-            <p class="text-gray-300 text-sm">Créée le : {{ gameSession.createdAt|date('d/m/Y H:i') }}</p>
-            <p class="text-gray-300 text-sm">Début : {{ gameSession.startDate|date('d/m/Y H:i') }}</p>
-            <p class="text-gray-300 text-sm">Fin : {{ gameSession.endDate|date('d/m/Y H:i') }}</p>
-            <p class="text-gray-300 text-sm">Participants : {{ gameSession.participants|length }}</p>
-            {% if gameSession.isPrivate %}
-                <p class="text-sm text-red-400 font-semibold">Session privée</p>
-            {% endif %}
-            {% if gameSession.magicToken %}
-                <p class="text-gray-300 text-xs">Token : {{ gameSession.magicToken }}</p>
-            {% endif %}
+				{% if gameSession.isPrivate %}
+					<p class="text-sm text-red-400 font-semibold">Groupe privé</p>
+				{% endif %}
 
-            <a href="{{ path('user_home') }}" 
-               class="mt-4 inline-block px-4 py-2 bg-neonBlue text-black font-semibold rounded hover:bg-neonBlue/80">
-                Retour
-            </a>
-        </div>
-    </div>   
-</div>
+				<h1 class="text-neonBlue font-semibold text-lg mb-2">Participants:
+					{{ gameSession.participants|length }}
+					/ max</h1>
 
+				<div class="flex flex-col flex-start space-y-2 mt-2">
+					{% for participant in gameSession.participants %}
+						<div class="flex items-center gap-3">
+							<img src="{{ participant.profile.avatarPath }}" alt="Avatar de {{ participant.profile.nickName }}" class="rounded-full w-14 h-14 object-cover">
+							<p class="text-neonBlue text-sm truncate max-w-xs text-center">
+								{{ participant.profile.nickName }}
+							</p>
+						</div>
+					{% endfor %}
+				</div>
 
+				<div
+					class="flex flex-col space-y-2 mt-4 w-full gap-2 ">
+					{# Boutons de partage de lien magique et code privé #}
+					{% if gameSession.magicToken %}
+						<div x-data="{ copied: false }" class="text-center">
+							<button type="button" class="btn-secondary" :data-link="'{{ app.request.schemeAndHttpHost ~ path('event_join', { token: gameSession.magicToken }) }}'" @click="
+																																													navigator.clipboard.writeText($el.dataset.link);
+																																													copied = true;
+																																													setTimeout(() => copied = false, 2000);
+																																												">
+
+								<span x-show="!copied" class="inline-flex items-center gap-2">
+									<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewbox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 010 5.656l-2 2a4 4 0 01-5.656-5.656l1-1M10.172 13.828a4 4 0 010-5.656l2-2a4 4 0 015.656 5.656l-1 1"/>
+									</svg>
+									Partager le lien d’invitation
+								</span>
+
+								<span x-show="copied" x-transition class="inline-flex items-center gap-1 text-neonBlue font-semibold">
+									<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewbox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+									</svg>
+									Lien copié !
+								</span>
+							</button>
+						</div>
+					{% endif %}
+					{% if gameSession.isPrivate and gameSession.privateCode %}
+						<div x-data="{ copied: false }" class="text-center mt-2">
+							<button type="button" class="btn-secondary px-3 py-2" :data-code="'{{ gameSession.privateCode }}'" @click="
+																										                    navigator.clipboard.writeText($el.dataset.code);
+																										                    copied = true;
+																										                    setTimeout(() => copied = false, 2000);
+																										                ">
+								<span x-show="!copied" class="inline-flex items-center gap-2">
+									🔑 Copier le code d’accès
+								</span>
+								<span x-show="copied" x-transition class="inline-flex items-center gap-1 text-neonBlue font-semibold">
+									✅ Code copié !
+								</span>
+							</button>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}

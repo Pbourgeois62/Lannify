@@ -81,10 +81,7 @@ class GameSearchComponent extends AbstractController
 
                 $game = new Game();
                 $game->setRawgId($gameData['id']);
-                $game->setSource('rawg');
-                // tu peux aussi stocker le label et l’image si tu veux
-                // $game->setLabel($gameData['name'] ?? '');
-                // $game->setImageUrl($gameData['background_image'] ?? null);
+                $game->setSource('rawg');                
                 $em->persist($game);
             }
 
@@ -94,7 +91,7 @@ class GameSearchComponent extends AbstractController
             $em->persist($gameSession);
             $em->flush();
 
-            return $this->redirectToRoute('user_home');
+            return $this->redirectToRoute('game_session_show', ['id' => $gameSession->getId()]);
         } catch (\Throwable $e) {
             $this->errorMessage = 'Erreur interne : ' . $e->getMessage();
             return null;

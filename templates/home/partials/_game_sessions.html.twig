@@ -36,7 +36,7 @@
                 <h3 class="text-lg font-bold text-white">{{ gameSession.title }}</h3>
                 <p class="text-sm text-gray-300">
                     Débute le <span class="text-neonBlue">{{ gameSession.startDate|date('d/m/Y H:i') }}</span><br>
-                    Se termine le <span class="text-neonBlue">{{ gameSession.endDate|date('d/m/Y H:i') }}</span><br>
+                    Durée estimée <span class="text-neonBlue">{{ gameSession.estimatedDuration }} min</span><br>
                     Organisé par: <span class="text-neonBlue">{{ gameSession.organizer.profile.nickname }}</span>
                 </p>
 

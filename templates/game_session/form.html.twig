@@ -6,28 +6,10 @@
 <div class="max-w-3xl mx-auto mt-12 p-8 bg-darkGrey/90 backdrop-blur-md rounded-2xl shadow-[0_0_25px_rgba(0,255,255,0.25)] border border-neonBlue">
 
     <h1 class="text-3xl font-extrabold text-neonBlue mb-10 text-center tracking-wide">
-        {{ isEdit ? 'Modifier la session' : 'Créer une session' }}
+        {{ isEdit ? 'Modifier la session en ligne' : 'Créer une session de jeu en ligne' }}
     </h1>
 
-    {{ form_start(form, {'attr': {'class': 'space-y-8'}}) }}
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Titre -->
-        {# <div>
-            {{ form_row(form.title, {
-                'attr': {'class': 'input w-full bg-gray-800/80 text-white border border-gray-700 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue rounded-lg'},
-                'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-2'}
-            }) }}
-        </div> #}
-
-        {# <!-- Jeu -->
-        <div>
-            {{ form_row(form.game, {
-                'attr': {'class': 'input w-full bg-gray-800/80 text-white border border-gray-700 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue rounded-lg'},
-                'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-2'}
-            }) }}
-        </div> #}
-    </div>
+    {{ form_start(form, {'attr': {'class': 'space-y-8'}}) }}    
 
     <!-- Description -->
     <div>
@@ -40,20 +22,42 @@
         }) }}
     </div>
 
-    <!-- Dates -->
+    <!-- Dates et durée -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
             {{ form_row(form.startDate, {
-                'attr': {'class': 'input w-full bg-gray-800/80 text-white border border-gray-700 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue rounded-lg'},
+                'attr': {'class': 'input '},
                 'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-2'}
             }) }}
         </div>
 
         <div>
-            {{ form_row(form.endDate, {
-                'attr': {'class': 'input w-full bg-gray-800/80 text-white border border-gray-700 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue rounded-lg'},
-                'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-2'}
-            }) }}
+            <label for="{{ form.estimatedDuration.vars.id }}" class="block text-sm font-medium text-neonBlue mb-2">
+                Durée estimée
+            </label>         
+
+            <div class="relative">
+                {{ form_widget(form.estimatedDuration, {
+                    'attr': {
+                        'type': 'range',
+                        'min': 15,
+                        'max': 240,
+                        'step': 15,
+                        'value': form.estimatedDuration.vars.value ?? 60,
+                        'class': 'w-full accent-neonBlue cursor-pointer',
+                        'oninput': 'updateDurationOutput(this)'
+                    }
+                }) }}
+
+                <output id="durationOutput" class="absolute right-0 -top-6 text-sm text-neonBlue font-semibold">
+                    {% set value = form.estimatedDuration.vars.value|default(60) %}
+                    {% set hours = (value / 60)|round(0, 'floor') %}
+                    {% set minutes = value % 60 %}
+                    {{ hours > 0 ? hours ~ ' h' ~ (minutes > 0 ? ' ' ~ minutes ~ ' min' : '') : minutes ~ ' min' }}
+                </output>
+            </div>
+
+            {{ form_errors(form.estimatedDuration) }}
         </div>
     </div>
 
@@ -69,12 +73,23 @@
 
     <!-- Bouton -->
     <div class="pt-6">
-        <button type="submit"
-            class="btn-primary w-full py-3 text-lg">
+        <button type="submit" class="btn-primary w-full py-3 text-lg">
             {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
         </button>
     </div>
 
     {{ form_end(form) }}
 </div>
+
+<script>
+    function updateDurationOutput(input) {
+        const value = parseInt(input.value, 10);
+        const hours = Math.floor(value / 60);
+        const minutes = value % 60;
+        const formatted = hours > 0
+            ? `${hours} h${minutes > 0 ? ' ' + minutes + ' min' : ''}`
+            : `${minutes} min`;
+        document.getElementById('durationOutput').textContent = formatted;
+    }
+</script>
 {% endblock %}
