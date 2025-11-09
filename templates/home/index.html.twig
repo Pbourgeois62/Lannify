@@ -53,7 +53,7 @@
 					</div>
 					<p class="text-gray-400 text-sm text-center">
 						Créez un événement LAN, organisez vos besoins et votre planning facilement depuis notre interface.
-					</p>					
+					</p>
 				</div>
 
 				<div class="glass-modal-success flex flex-col items-center p-6 gap-4 ">
@@ -63,7 +63,7 @@
 					</div>
 					<p class="text-gray-400 text-sm text-center">
 						Programmez votre session multijoueur en ligne, invitez des participants et gardez le suivi des joueurs inscrits.
-					</p>					
+					</p>
 				</div>
 
 				<div class="glass-modal-success flex flex-col items-center p-6 gap-4 hover:scale-105 transition-transform duration-200">
@@ -79,80 +79,78 @@
 		</section>
 
 		<section class="flex flex-col space-y-8 py-12 min-h-[100vh] text-center bg-gray-900 rounded-xl shadow-lg p-6 mt-4">
-	<h1 class="text-neonBlue text-4xl font-bold mb-8">
-		Rejoindre ou organiser une partie
-	</h1>
+			<h1 class="text-neonBlue text-4xl font-bold mb-8">
+				Rejoindre ou organiser une partie
+			</h1>
 
-	<div class="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full max-w-6xl mx-auto">
-		{# --- Chercher une partie --- #}
-		<div class="bg-gray-800 p-8 rounded-2xl shadow-md flex flex-col justify-between items-center text-center hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
-			<div>
-				<div class="text-5xl mb-4">🔍</div>
-				<h2 class="text-neonBlue text-2xl font-semibold mb-2">Chercher une partie</h2>
-				<p class="text-gray-300 mb-6">Explore les sessions publiques et rejoins une partie en quelques clics.</p>
-			</div>
-			<a href="#" class="btn-primary py-3 px-6 w-full sm:w-auto">Rechercher</a>
-		</div>
+			<div
+				class="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full max-w-6xl mx-auto">
+				{# --- Chercher une partie --- #}
+				<div class="bg-gray-800 p-8 rounded-2xl shadow-md flex flex-col justify-between items-center text-center hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
+					<div>
+						<div class="text-5xl mb-4">🔍</div>
+						<h2 class="text-neonBlue text-2xl font-semibold mb-2">Chercher une partie</h2>
+						<p class="text-gray-300 mb-6">Explore les sessions publiques et rejoins une partie en quelques clics.</p>
+					</div>
+					<a href="#" class="btn-primary py-3 px-6 w-full sm:w-auto">Rechercher</a>
+				</div>
 
-		{# --- Rejoindre via code privé --- #}
-		<div class="bg-gray-800 p-8 rounded-2xl shadow-md flex flex-col justify-between items-center text-center hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
-			<div>
-				<div class="text-5xl mb-4">🔑</div>
-				<h2 class="text-neonBlue text-2xl font-semibold mb-2">Rejoindre via code</h2>
-				<p class="text-gray-300 mb-6">Entre un code privé pour accéder directement à une session.</p>
-			</div>
+				{# --- Rejoindre via code privé --- #}
+				<div class="bg-gray-800 p-8 rounded-2xl shadow-md flex flex-col justify-between items-center text-center hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
+					<div>
+						<div class="text-5xl mb-4">🔑</div>
+						<h2 class="text-neonBlue text-2xl font-semibold mb-2">Rejoindre via code</h2>
+						<p class="text-gray-300 mb-6">Entre un code privé pour accéder directement à une session.</p>
+					</div>
 
-			{{ form_start(quickAccessForm, {'attr': {'class': 'flex w-full sm:w-auto gap-2 justify-center'}}) }}
-			{{ form_widget(quickAccessForm.privateCode, {
+					{{ form_start(quickAccessForm, {'attr': {'class': 'flex w-full sm:w-auto gap-2 justify-center'}}) }}
+					{{ form_widget(quickAccessForm.privateCode, {
 				'attr': {
 					'placeholder': 'Code privé',
 					'class': 'input w-40 sm:w-56 text-center'
 				}
 			}) }}
-			<button type="submit" class="btn-primary py-3 px-6 hover:scale-105 transition-transform duration-200">
-				Accéder
-			</button>
-			{{ form_end(quickAccessForm) }}
-		</div>
+					<button type="submit" class="btn-primary py-3 px-6 hover:scale-105 transition-transform duration-200">
+						Accéder
+					</button>
+					{{ form_end(quickAccessForm) }}
+				</div>
 
-		{# --- Organiser une LAN --- #}
-		<div class="bg-gray-800 p-8 rounded-2xl shadow-md flex flex-col justify-between items-center text-center hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
-			<div>
-				<div class="text-5xl mb-4">🖥️</div>
-				<h2 class="text-neonBlue text-2xl font-semibold mb-2">Organiser une LAN</h2>
-				<p class="text-gray-300 mb-6">Crée un événement local et gère les participants facilement.</p>
+				{# --- Organiser une LAN --- #}
+				<div class="bg-gray-800 p-8 rounded-2xl shadow-md flex flex-col justify-between items-center text-center hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
+					<div>
+						<div class="text-5xl mb-4">🖥️</div>
+						<h2 class="text-neonBlue text-2xl font-semibold mb-2">Organiser une LAN</h2>
+						<p class="text-gray-300 mb-6">Crée un événement local et gère les participants facilement.</p>
+					</div>
+					<a href="{{ path('event_create') }}" class="btn-secondary py-3 px-6 w-full sm:w-auto">Créer une LAN</a>
+				</div>
+
+				{# --- Organiser une session en ligne --- #}
+				<div class="bg-gray-800 p-8 rounded-2xl shadow-md flex flex-col justify-between items-center text-center hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
+					<div>
+						<div class="text-5xl mb-4">🎮</div>
+						<h2 class="text-neonBlue text-2xl font-semibold mb-2">Session en ligne</h2>
+						<p class="text-gray-300 mb-6">Crée une partie multijoueur en ligne et invite tes amis instantanément.</p>
+					</div>
+					<a href="{{ path('game_session_create') }}" class="btn-primary py-3 px-6 w-full sm:w-auto">Créer une session</a>
+				</div>
 			</div>
-			<a href="{{ path('event_create') }}" class="btn-secondary py-3 px-6 w-full sm:w-auto">Créer une LAN</a>
-		</div>
-
-		{# --- Organiser une session en ligne --- #}
-		<div class="bg-gray-800 p-8 rounded-2xl shadow-md flex flex-col justify-between items-center text-center hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
-			<div>
-				<div class="text-5xl mb-4">🎮</div>
-				<h2 class="text-neonBlue text-2xl font-semibold mb-2">Session en ligne</h2>
-				<p class="text-gray-300 mb-6">Crée une partie multijoueur en ligne et invite tes amis instantanément.</p>
-			</div>
-			<a href="{{ path('game_session_create') }}" class="btn-primary py-3 px-6 w-full sm:w-auto">Créer une session</a>
-		</div>
-	</div>
-</section>
-
+		</section>
 
 
 		{# --- Événements à venir --- #}
 		<section class="container mx-auto space-y-8">
 			<div>
-				<h2 class="text-neonBlue text-xl font-semibold mb-4">LANs à venir</h2>
-				{% if openedEvents is empty %}
-					<p class="text-gray-300">Aucun événement à venir pour le moment.</p>
-				{% else %}
+				{% if openedEvents is not empty %}
+					<h2 class="text-neonBlue text-xl font-semibold mb-4">LANs à venir</h2>
 					{% include 'home/partials/_opened_lans_section.html.twig' %}
 				{% endif %}
 			</div>
 
 			<div>
-				<h2 class="text-neonBlue text-xl font-semibold mb-4">Sessions en ligne à venir</h2>
-				{% if openedEvents is not empty %}
+				{% if gameSessions is not empty %}
+					<h2 class="text-neonBlue text-xl font-semibold mb-4">Sessions en ligne à venir</h2>
 					{% include 'home/partials/_game_sessions.html.twig' %}
 				{% endif %}
 			</div>

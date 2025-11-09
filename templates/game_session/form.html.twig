@@ -61,15 +61,49 @@
         </div>
     </div>
 
-    <!-- Checkbox privée -->
-    <div class="flex items-center space-x-3 bg-gray-800/60 border border-gray-700 rounded-lg px-4 py-3">
-        {{ form_widget(form.isPrivate, {
-            'attr': {'class': 'h-5 w-5 text-neonBlue bg-gray-900 border-gray-600 rounded focus:ring-neonBlue'}
-        }) }}
-        <label class="text-sm text-gray-300 cursor-pointer" for="{{ form.isPrivate.vars.id }}">
-            Événement privé (invitation uniquement)
+  <!-- Section : Privé + Nombre de places -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+    
+    <!-- Checkbox Événement privé -->
+    <div class="flex flex-col bg-gray-800/60 border border-gray-700 rounded-lg px-5 py-4">
+        <label for="{{ form.isPrivate.vars.id }}" class="flex items-center space-x-3 cursor-pointer">
+            {{ form_widget(form.isPrivate, {
+                'attr': {
+                    'class': 'h-5 w-5 text-neonBlue bg-gray-900 border-gray-600 rounded focus:ring-neonBlue focus:ring-offset-0'
+                }
+            }) }}
+            <span class="text-gray-200 font-medium">Événement privé</span>
         </label>
+        <p class="text-xs text-gray-400 mt-2 ml-8">
+            Accessible uniquement via un code d’invitation.
+        </p>
     </div>
+
+    <!-- Champ Nombre de places -->
+    <div class="bg-gray-800/60 border border-gray-700 rounded-lg px-5 py-4">
+        <label for="{{ form.maxParticipants.vars.id }}" class="block text-sm font-medium text-neonBlue mb-2">
+            Nombre de places disponibles
+        </label>
+        {{ form_widget(form.maxParticipants, {
+            'attr': {
+                'class': 'input w-full bg-gray-900 text-white border border-gray-700 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue rounded-lg text-center text-lg py-2',
+                'min': form.maxParticipants.vars.attr.min|default(1),
+                'type': 'number'
+            }
+        }) }}
+        {{ form_errors(form.maxParticipants) }}
+
+        {% if isEdit %}
+            <div class="flex items-center mt-2 text-xs text-gray-400 bg-gray-900/60 rounded-md px-3 py-2 border border-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 mr-2 text-neonBlue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5V4H2v16h5m10 0v-4H7v4" />
+                </svg>
+                {{ gameSession.participants|length }} participant(s) déjà inscrit(s)
+            </div>
+        {% endif %}
+    </div>
+</div>
+
 
     <!-- Bouton -->
     <div class="pt-6">

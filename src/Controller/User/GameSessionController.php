@@ -29,14 +29,17 @@ final class GameSessionController extends AbstractController
     }
 
     #[Route('/{id}/home', name: 'game_session_home')]
-    public function home(GameSession $gameSession): Response
+    public function home(GameSession $gameSession, RawgClient $rawgService): Response
     {
         $chatData = $this->chatService->getChatData($gameSession);
-
+        if($gameSession->getGame()) {
+            $gameData = $rawgService->getGame($gameSession->getGame()->getRawgId());
+        } 
         return $this->render('game_session/home.html.twig', array_merge(
             $chatData,
             [
                 'gameSession' => $gameSession,
+                'gameData' => $gameData
             ]
         ));
     }
@@ -44,8 +47,11 @@ final class GameSessionController extends AbstractController
     #[Route('/{id}/show', name: 'game_session_show')]
     public function show(RawgClient $rawgService, GameSession $gameSession): Response
     {
+        $gameData = null;
         $chatData = $this->chatService->getChatData($gameSession);
-        $gameData = $rawgService->getGame($gameSession->getGame()->getRawgId());
+        if($gameSession->getGame()) {
+            $gameData = $rawgService->getGame($gameSession->getGame()->getRawgId());
+        }        
         return $this->render('game_session/show.html.twig', array_merge(
             $chatData,
             [
@@ -135,12 +141,13 @@ final class GameSessionController extends AbstractController
 
             $this->addFlash('success', 'session de jeu mis à jour avec succès !');
 
-            return $this->redirectToRoute('game_session_home', ['id' => $gameSession->getId()]);
+            return $this->redirectToRoute('game_session_show', ['id' => $gameSession->getId()]);
         }
 
         return $this->render('game_session/form.html.twig', [
             'form' => $form,
             'isEdit' => true,
+            'gameSession' => $gameSession
         ]);
     }
 

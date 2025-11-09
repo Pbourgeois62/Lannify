@@ -15,14 +15,21 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Form\Extension\Core\Type\RangeType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Validator\Constraints\LessThanOrEqual;
+use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class GameSessionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        /** @var GameSession|null $gameSession */
+        $gameSession = $options['data'] ?? null;
+        $currentCount = $gameSession ? count($gameSession->getParticipants()) : 1;
+
         $builder
             ->add('description', TextType::class, [
                 'label' => 'Description',
@@ -62,6 +69,25 @@ class GameSessionType extends AbstractType
                     'oninput' => "this.nextElementSibling.value = this.value + ' min'", // MAJ du texte affiché
                 ],
             ])
+            ->add('maxParticipants', IntegerType::class, [
+                'label' => 'Nombre de places',
+                'attr' => [
+                    'placeholder' => 'Ex : 8',
+                    'min' => $currentCount,
+                ],
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez indiquer le nombre de places maximum.']),
+                    new GreaterThanOrEqual([
+                        'value' => $currentCount,
+                        'message' => 'Le nombre de places doit être au moins égal au nombre de participants déjà inscrits ({{ compared_value }}).'
+                    ]),
+                    new LessThanOrEqual([
+                        'value' => 30,
+                        'message' => 'Le nombre de places ne peut pas dépasser {{ compared_value }}.'
+                    ]),
+                ],
+            ])
+
 
             // ->add('title', TextType::class, [
             //     'label' => 'Jeu',
