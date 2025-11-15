@@ -1,0 +1,32 @@
+{# Timeline GameSession minimaliste avec bulles et lignes #}
+{% set steps = ['Infos générales', 'Choix du jeu', 'Confirmation'] %}
+
+<ol class="flex justify-center items-center space-x-6">
+    {% for i, stepLabel in steps %}
+        {% set stepNumber = i + 1 %}
+        {% if stepNumber < gameSession.currentStep %}
+            {% set status = 'completed' %}
+        {% elseif stepNumber == gameSession.currentStep %}
+            {% set status = 'active' %}
+        {% else %}
+            {% set status = 'upcoming' %}
+        {% endif %}
+
+        <li class="flex items-center relative">
+            {# Cercle #}
+            <div class="z-10 flex items-center justify-center w-10 h-10 rounded-full
+                        {% if status == 'completed' %} bg-neonBlue text-black
+                        {% elseif status == 'active' %} border-2 border-neonBlue text-neonBlue
+                        {% else %} bg-gray-700 text-gray-400 {% endif %}">
+                {{ stepNumber }}
+            </div>
+
+            {# Ligne horizontale vers la prochaine bulle #}
+            {% if not loop.last %}
+                <div class="absolute top-1/2 left-full w-6 h-0.5 -translate-y-1/2
+                            {% if stepNumber < gameSession.currentStep %} bg-neonBlue
+                            {% else %} bg-gray-700 {% endif %}"></div>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ol>

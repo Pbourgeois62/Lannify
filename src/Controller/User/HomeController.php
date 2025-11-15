@@ -9,6 +9,7 @@ use App\Form\QuickAccessCodeType;
 use App\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\GameSessionRepository;
+use App\Service\RawgClient;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -30,22 +31,30 @@ final class HomeController extends AbstractController
     ): Response {
         $form = $this->createForm(QuickAccessCodeType::class, null);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $privateCode = $data['privateCode'];
             $gameSession = $gameSessionRepository->findOneBy(['privateCode' => $privateCode]);
-            $gameSession->addParticipant($user);
-            $em->flush();
+            if ($gameSession && $gameSession->countParticipants() >= $gameSession->getMaxParticipants()) {
+                $this->addFlash('error', 'L’evénement est plein !');
+                return $this->redirectToRoute('user_home');
+            }
             if (!$gameSession) {
                 $this->addFlash('error', 'Code privé invalide.');
                 return $this->redirectToRoute('user_home');
             }
+
+            $gameSession->addParticipant($user);
+            $em->flush();
+
             return $this->redirectToRoute('game_session_show', ['id' => $gameSession->getId()]);
         }
+
         $session = $request->getSession();
+        $gameSessions = $user->getGameSessions(); // collection d'entités GameSession
 
         $showFeedback = !$session->get('feedback_seen', false);
-
         $openedEvents = $eventRepository->getOpenedEventsForUser($user);
         $closedEvents = $eventRepository->getClosedEventsForUser($user);
 
@@ -53,8 +62,8 @@ final class HomeController extends AbstractController
             'openedEvents' => $openedEvents,
             'closedEvents' => $closedEvents,
             'showFeedback' => $showFeedback,
-            'gameSessions' => $user->getGameSessions(),
-            'quickAccessForm' => $form->createView(), // passer à Twig
+            'gameSessions' => $gameSessions,
+            'quickAccessForm' => $form->createView(),
         ]);
     }
 }

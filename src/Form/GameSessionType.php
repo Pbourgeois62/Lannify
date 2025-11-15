@@ -2,25 +2,21 @@
 
 namespace App\Form;
 
-use App\Entity\Game;
 use App\Entity\GameSession;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Form\Extension\Core\Type\RangeType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Validator\Constraints\LessThanOrEqual;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class GameSessionType extends AbstractType
 {
@@ -31,9 +27,9 @@ class GameSessionType extends AbstractType
         $currentCount = $gameSession ? count($gameSession->getParticipants()) : 1;
 
         $builder
-            ->add('description', TextType::class, [
-                'label' => 'Description',
-                'attr' => ['placeholder' => 'RDV des geekos'],
+            ->add('title', TextType::class, [
+                'label' => 'Titre',
+                'attr' => ['placeholder' => 'Ex: Quelques games de League of Legends'],
                 'constraints' => [
                     new NotBlank(['message' => 'La description de l’événement est obligatoire.']),
                     new Length([
@@ -62,11 +58,11 @@ class GameSessionType extends AbstractType
             ->add('estimatedDuration', RangeType::class, [
                 'label' => 'Durée estimée',
                 'attr' => [
-                    'min' => 15,           // durée minimale
-                    'max' => 240,          // durée maximale (4h ici)
-                    'step' => 15,          // pas de 15 minutes
+                    'min' => 15,
+                    'max' => 240,
+                    'step' => 15,
                     'class' => 'w-full accent-neonBlue cursor-pointer',
-                    'oninput' => "this.nextElementSibling.value = this.value + ' min'", // MAJ du texte affiché
+                    'oninput' => "this.nextElementSibling.value = this.value + ' min'",
                 ],
             ])
             ->add('maxParticipants', IntegerType::class, [
@@ -88,15 +84,14 @@ class GameSessionType extends AbstractType
                 ],
             ])
 
-
-            // ->add('title', TextType::class, [
-            //     'label' => 'Jeu',
-            //     'attr' => [
-            //         'class' => 'input',
-            //         'placeholder' => 'Rechercher un jeu...',
-            //         'data-game-autocomplete-target' => 'input'
-            //     ],
-            // ])
+            ->add('description', TextareaType::class, [
+                'label' => 'Description (facultative)',
+                'required' => false,
+                'attr' => [
+                    'placeholder' => 'Ex: Pour s\'amuser sans prise de tête',
+                    'rows' => 3,
+                ],
+            ])
         ;
     }
 

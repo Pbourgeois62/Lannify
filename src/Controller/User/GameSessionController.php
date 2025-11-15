@@ -32,9 +32,9 @@ final class GameSessionController extends AbstractController
     public function home(GameSession $gameSession, RawgClient $rawgService): Response
     {
         $chatData = $this->chatService->getChatData($gameSession);
-        if($gameSession->getGame()) {
+        if ($gameSession->getGame()) {
             $gameData = $rawgService->getGame($gameSession->getGame()->getRawgId());
-        } 
+        }
         return $this->render('game_session/home.html.twig', array_merge(
             $chatData,
             [
@@ -49,9 +49,9 @@ final class GameSessionController extends AbstractController
     {
         $gameData = null;
         $chatData = $this->chatService->getChatData($gameSession);
-        if($gameSession->getGame()) {
+        if ($gameSession->getGame()) {
             $gameData = $rawgService->getGame($gameSession->getGame()->getRawgId());
-        }        
+        }
         return $this->render('game_session/show.html.twig', array_merge(
             $chatData,
             [
@@ -65,6 +65,7 @@ final class GameSessionController extends AbstractController
     public function create(#[CurrentUser] User $user, Request $request, EntityManagerInterface $em, TokenGenerator $tokenGenerator): Response
     {
         $gameSession = new GameSession();
+        $gameSession->setCurrentStep(1);
 
         $form = $this->createForm(GameSessionType::class, $gameSession);
         $form->handleRequest($request);
@@ -79,8 +80,8 @@ final class GameSessionController extends AbstractController
             } else {
                 $gameSession->setIsPrivate(false);
             }
-            $gameSession->addParticipant($user);
-
+            $gameSession->addParticipant($user);    
+            $gameSession->setCurrentStep(2);        
             $em->persist($gameSession);
             $em->flush();
 
@@ -94,6 +95,7 @@ final class GameSessionController extends AbstractController
         return $this->render('game_session/form.html.twig', [
             'form' => $form,
             'isEdit' => false,
+            'gameSession' => $gameSession
         ]);
     }
     #[Route('/{id}/choose-game', name: 'game_session_choose_game')]
@@ -101,6 +103,16 @@ final class GameSessionController extends AbstractController
         GameSession $gameSession
     ): Response {
         return $this->render('game_session/choose_game.html.twig', [
+            'gameSession' => $gameSession
+        ]);
+    }
+
+    #[Route('/{id}/confirmation', name: 'game_session_confirmation')]
+    public function confirmSessionCreation(
+        GameSession $gameSession
+    ): Response {
+        $gameSession->setCurrentStep(4);
+        return $this->render('game_session/confirmation.html.twig', [
             'gameSession' => $gameSession
         ]);
     }
@@ -119,6 +131,11 @@ final class GameSessionController extends AbstractController
             return $this->redirectToRoute('user_home');
         }
 
+        if ($gameSession && $gameSession->countParticipants() >= $gameSession->getMaxParticipants()) {
+            $this->addFlash('error', 'Le lobby est complet !');
+            return $this->redirectToRoute('user_home');
+        }
+
         if ($user && !$gameSession->getParticipants()->contains($user)) {
             $gameSession->addUser($user);
             $em->flush();
@@ -128,9 +145,22 @@ final class GameSessionController extends AbstractController
         return $this->redirectToRoute('game_session_show', ['id' => $gameSession->getId()]);
     }
 
+    #[Route('/game-session/{gameSession}/resume/{step}', name: 'game_session_resume_step')]
+    public function resumeStep(GameSession $gameSession, int $step): Response
+    {
+        $gameSession->setCurrentStep($step);
 
-    #[Route('/{gameSession}/edit', name: 'game_session_edit')]
-    public function edit(GameSession $gameSession, Request $request, EntityManagerInterface $em): Response
+        return match ($step) {
+            1=> $this->redirectToRoute('game_session_edit_context', ['gameSession' => $gameSession->getId()]),
+            2 => $this->redirectToRoute('game_session_edit_game', ['gameSession' => $gameSession->getId()]),
+            default => $this->redirectToRoute('game_session_show', ['id' => $gameSession->getId()]),
+        };
+    }
+
+
+
+    #[Route('/game-session/{gameSession}/edit/context', name: 'game_session_edit_context')]
+    public function editContext(GameSession $gameSession, Request $request, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(GameSessionType::class, $gameSession);
         $form->handleRequest($request);
@@ -139,7 +169,7 @@ final class GameSessionController extends AbstractController
             $em->persist($gameSession);
             $em->flush();
 
-            $this->addFlash('success', 'session de jeu mis à jour avec succès !');
+            $this->addFlash('success', 'Session de jeu mise à jour avec succès !');
 
             return $this->redirectToRoute('game_session_show', ['id' => $gameSession->getId()]);
         }
@@ -150,6 +180,15 @@ final class GameSessionController extends AbstractController
             'gameSession' => $gameSession
         ]);
     }
+
+    #[Route('/game-session/{gameSession}/edit/game', name: 'game_session_edit_game')]
+    public function editGame(GameSession $gameSession): Response
+    {
+        return $this->render('game_session/choose_game.html.twig', [
+            'gameSession' => $gameSession
+        ]);
+    }
+
 
 
     #[Route('/{gameSession}/delete', name: 'game_session_delete')]
@@ -182,33 +221,33 @@ final class GameSessionController extends AbstractController
     // }
 
 
-    // #[Route('/{gameSession}/manage', name: 'game_session_manage')]
-    // public function manage(Event $event, Request $request, EntityManagerInterface $em): Response
-    // {
-    //     $chatData = $this->chatService->getChatData($event);
+    #[Route('/{gameSession}/manage', name: 'game_session_manage')]
+    public function manage(GameSession $gameSession, Request $request, EntityManagerInterface $em): Response
+    {
+        $chatData = $this->chatService->getChatData($gameSession);
 
-    //     $form = $this->createForm(EventUserChoiceType::class, null, [
-    //         'users' => $event->getUsers()->toArray(),
-    //     ]);
+        // $form = $this->createForm(EventUserChoiceType::class, null, [
+        //     'users' => $event->getUsers()->toArray(),
+        // ]);
 
-    //     $form->handleRequest($request);
+        // $form->handleRequest($request);
 
-    //     if ($form->isSubmitted() && $form->isValid()) {
-    //         if ($event->getOrganizer() === $this->getUser()) {
-    //             $selectedUser = $form->get('userchoice')->getData();
-    //             $event->setOrganizer($selectedUser);
-    //             $em->flush();
-    //             $this->addFlash('success', 'Organisateur changé avec succès !');
-    //         } else {
-    //             $this->addFlash('error', 'Vous n’êtes pas autorisé à changer l’organisateur.');
-    //         }
+        // if ($form->isSubmitted() && $form->isValid()) {
+        //     if ($event->getOrganizer() === $this->getUser()) {
+        //         $selectedUser = $form->get('userchoice')->getData();
+        //         $event->setOrganizer($selectedUser);
+        //         $em->flush();
+        //         $this->addFlash('success', 'Organisateur changé avec succès !');
+        //     } else {
+        //         $this->addFlash('error', 'Vous n’êtes pas autorisé à changer l’organisateur.');
+        //     }
 
-    //         return $this->redirectToRoute('user_home_manage', ['id' => $event->getId()]);
-    //     }
+        //     return $this->redirectToRoute('user_home_manage', ['id' => $event->getId()]);
+        // }
 
-    //     return $this->render('game_session/manage.html.twig', array_merge($chatData, [
-    //         'event' => $event,
-    //         'form' => $form
-    //     ]));
-    // }
+        return $this->render('game_session/manage.html.twig', array_merge($chatData, [
+            'gameSession' => $gameSession,
+            // 'form' => $form
+        ]));
+    }
 }

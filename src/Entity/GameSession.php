@@ -36,7 +36,6 @@ class GameSession
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
-    
 
     /**
      * @var Collection<int, Message>
@@ -61,19 +60,23 @@ class GameSession
     private ?bool $isPrivate = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $maxParticipants = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $coverImage = null;
+    private ?string $maxParticipants = null;    
 
     #[ORM\Column(nullable: true)]
     private ?int $rawgId = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $coverImageUrl = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $currentStep = null;
 
     public function __construct()
     {
         $this->participants = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
+        $this->currentStep = 0;
     }
 
     public function getId(): ?int
@@ -254,16 +257,9 @@ class GameSession
         return $this;
     }
 
-    public function getCoverImage(): ?string
+    public function countParticipants(): int
     {
-        return $this->coverImage;
-    }
-
-    public function setCoverImage(string $coverImage): static
-    {
-        $this->coverImage = $coverImage;
-
-        return $this;
+        return $this->participants->count();
     }
 
     /**
@@ -297,4 +293,43 @@ class GameSession
 
         return $this;
     }
+
+    public function getCoverImageUrl(): ?string
+    {
+        return $this->coverImageUrl;
+    }
+
+    public function setCoverImageUrl(?string $coverImageUrl): static
+    {
+        $this->coverImageUrl = $coverImageUrl;
+
+        return $this;
+    }
+
+    public function getCurrentStep(): ?int
+    {
+        return $this->currentStep;
+    }
+
+    public function setCurrentStep(int $currentStep): static
+    {
+        $this->currentStep = $currentStep;
+
+        return $this;
+    }
+
+    // src/Entity/GameSession.php
+
+public function getStepStatus(int $stepNumber): string
+{
+    // $stepNumber commence à 1 pour la première étape
+    if ($this->currentStep > $stepNumber) {
+        return 'completed'; // étape déjà validée
+    } elseif ($this->currentStep === $stepNumber) {
+        return 'active'; // étape en cours
+    } else {
+        return 'upcoming'; // étape à venir
+    }
+}
+
 }

@@ -21,33 +21,35 @@ class RawgClient
     }
 
     public function searchGames(string $query, int $page = 1, int $pageSize = 20): array
-{
-    if (trim($query) === '') {
-        return [];
-    }
+    {
+        if (trim($query) === '') {
+            return [];
+        }
 
-    try {
-        $response = $this->http->request('GET', 'https://api.rawg.io/api/games', [
-            'query' => [
-                'key' => $this->apiKey,
-                'search' => $query,
-                'page' => $page,
-                'page_size' => $pageSize,
-            ],
-        ]);
+        try {
+            $response = $this->http->request('GET', 'https://api.rawg.io/api/games', [
+                'query' => [
+                    'key' => $this->apiKey,
+                    'search' => $query,
+                    'platforms' => 4,
+                    'page' => $page,
+                    'page_size' => $pageSize,
+                    // 'tags' => 1,
+                ],
+            ]);
 
-        return $response->toArray();
-    } catch (HttpExceptionInterface|TransportExceptionInterface $e) {
-        $this->logger->error('RAWG API search error', [
-            'message' => $e->getMessage(),
-            'query' => $query,
-        ]);
-        return ['error' => 'Erreur de connexion à l’API RAWG.'];
-    } catch (\Throwable $e) {
-        $this->logger->error('Unexpected RAWG error', ['exception' => $e]);
-        return ['error' => 'Erreur inattendue.'];
+            return $response->toArray();
+        } catch (HttpExceptionInterface | TransportExceptionInterface $e) {
+            $this->logger->error('RAWG API search error', [
+                'message' => $e->getMessage(),
+                'query' => $query,
+            ]);
+            return ['error' => 'Erreur de connexion à l’API RAWG.'];
+        } catch (\Throwable $e) {
+            $this->logger->error('Unexpected RAWG error', ['exception' => $e]);
+            return ['error' => 'Erreur inattendue.'];
+        }
     }
-}
 
 
     public function getGame(int $id): ?array
@@ -60,7 +62,7 @@ class RawgClient
             ]);
 
             return $response->toArray();
-        } catch (HttpExceptionInterface|TransportExceptionInterface $e) {
+        } catch (HttpExceptionInterface | TransportExceptionInterface $e) {
             $this->logger->error('RAWG API getGame error', [
                 'message' => $e->getMessage(),
                 'game_id' => $id,
@@ -70,5 +72,10 @@ class RawgClient
             $this->logger->error('Unexpected RAWG getGame error', ['exception' => $e]);
             return null;
         }
+    }
+
+    public function getGameSessionRawgData(int $id): ?array
+    {
+        return $this->getGame($id);
     }
 }

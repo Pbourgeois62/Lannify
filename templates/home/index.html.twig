@@ -4,6 +4,7 @@
 {% endblock %}
 
 {% block body %}
+
 	{% if showFeedback %}
 		{% include 'home/partials/toasts.html.twig' %}
 	{% endif %}
@@ -78,97 +79,98 @@
 			</div>
 		</section>
 
-		<section class="flex flex-col space-y-8 py-12 min-h-[100vh] text-center bg-gray-900 rounded-xl shadow-lg p-6 mt-4">
-			<h1 class="text-neonBlue text-4xl font-bold mb-8">
-				Rejoindre ou organiser une partie
-			</h1>
+		<div class="relative">
 
-			<div
-				class="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full max-w-6xl mx-auto">
-				{# --- Chercher une partie --- #}
-				<div class="bg-gray-800 p-8 rounded-2xl shadow-md flex flex-col justify-between items-center text-center hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
-					<div>
-						<div class="text-5xl mb-4">🔍</div>
-						<h2 class="text-neonBlue text-2xl font-semibold mb-2">Chercher une partie</h2>
-						<p class="text-gray-300 mb-6">Explore les sessions publiques et rejoins une partie en quelques clics.</p>
-					</div>
-					<a href="#" class="btn-primary py-3 px-6 w-full sm:w-auto">Rechercher</a>
-				</div>
+			<section class="flex flex-col space-y-8 py-12 min-h-[100vh] text-center rounded-xl shadow-lg p-6 mt-4">
+				{# <h1 class="text-neonBlue text-4xl font-bold mb-8">
+					Rejoindre ou organiser une partie
+				</h1> #}
 
-				{# --- Rejoindre via code privé --- #}
-				<div class="bg-gray-800 p-8 rounded-2xl shadow-md flex flex-col justify-between items-center text-center hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
-					<div>
-						<div class="text-5xl mb-4">🔑</div>
-						<h2 class="text-neonBlue text-2xl font-semibold mb-2">Rejoindre via code</h2>
-						<p class="text-gray-300 mb-6">Entre un code privé pour accéder directement à une session.</p>
+				<div
+					class="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full max-w-6xl mx-auto">
+					{# --- Chercher une partie --- #}
+					<div class="bg-gray-800 p-8 rounded-2xl shadow-md flex flex-col justify-between items-center text-center hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
+						<div>
+							<div class="text-5xl mb-4">🔍</div>
+							<h2 class="text-neonBlue text-2xl font-semibold mb-2">Chercher une partie</h2>
+							<p class="text-gray-300 mb-6">Explore les sessions publiques et rejoins une partie en quelques clics.</p>
+						</div>
+						<a href="#" class="btn-primary py-3 px-6 w-full sm:w-auto">Rechercher</a>
 					</div>
 
-					{{ form_start(quickAccessForm, {'attr': {'class': 'flex w-full sm:w-auto gap-2 justify-center'}}) }}
-					{{ form_widget(quickAccessForm.privateCode, {
+					{# --- Rejoindre via code privé --- #}
+					<div class="bg-gray-800 p-8 rounded-2xl shadow-md flex flex-col justify-between items-center text-center hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
+						<div>
+							<div class="text-5xl mb-4">🔑</div>
+							<h2 class="text-neonBlue text-2xl font-semibold mb-2">Rejoindre via code</h2>
+							<p class="text-gray-300 mb-6">Entre un code privé pour accéder directement à une session.</p>
+						</div>
+
+						{{ form_start(quickAccessForm, {'attr': {'class': 'flex w-full sm:w-auto gap-2 justify-center'}}) }}
+						{{ form_widget(quickAccessForm.privateCode, {
 				'attr': {
 					'placeholder': 'Code privé',
 					'class': 'input w-40 sm:w-56 text-center'
 				}
 			}) }}
-					<button type="submit" class="btn-primary py-3 px-6 hover:scale-105 transition-transform duration-200">
-						Accéder
-					</button>
-					{{ form_end(quickAccessForm) }}
-				</div>
-
-				{# --- Organiser une LAN --- #}
-				<div class="bg-gray-800 p-8 rounded-2xl shadow-md flex flex-col justify-between items-center text-center hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
-					<div>
-						<div class="text-5xl mb-4">🖥️</div>
-						<h2 class="text-neonBlue text-2xl font-semibold mb-2">Organiser une LAN</h2>
-						<p class="text-gray-300 mb-6">Crée un événement local et gère les participants facilement.</p>
+						<button type="submit" class="btn-primary py-3 px-6 hover:scale-105 transition-transform duration-200">
+							Accéder
+						</button>
+						{{ form_end(quickAccessForm) }}
 					</div>
-					<a href="{{ path('event_create') }}" class="btn-secondary py-3 px-6 w-full sm:w-auto">Créer une LAN</a>
-				</div>
 
-				{# --- Organiser une session en ligne --- #}
-				<div class="bg-gray-800 p-8 rounded-2xl shadow-md flex flex-col justify-between items-center text-center hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
-					<div>
-						<div class="text-5xl mb-4">🎮</div>
-						<h2 class="text-neonBlue text-2xl font-semibold mb-2">Session en ligne</h2>
-						<p class="text-gray-300 mb-6">Crée une partie multijoueur en ligne et invite tes amis instantanément.</p>
+					{# --- Organiser une LAN --- #}
+					<div class="bg-gray-800 p-8 rounded-2xl shadow-md flex flex-col justify-between items-center text-center hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
+						<div>
+							<div class="text-5xl mb-4">🖥️</div>
+							<h2 class="text-neonBlue text-2xl font-semibold mb-2">Organiser une LAN</h2>
+							<p class="text-gray-300 mb-6">Crée un événement local et gère les participants facilement.</p>
+						</div>
+						<a href="{{ path('event_create') }}" class="btn-secondary py-3 px-6 w-full sm:w-auto">Créer une LAN</a>
 					</div>
-					<a href="{{ path('game_session_create') }}" class="btn-primary py-3 px-6 w-full sm:w-auto">Créer une session</a>
+
+					{# --- Organiser une session en ligne --- #}
+					<div class="bg-gray-800 p-8 rounded-2xl shadow-md flex flex-col justify-between items-center text-center hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
+						<div>
+							<div class="text-5xl mb-4">🎮</div>
+							<h2 class="text-neonBlue text-2xl font-semibold mb-2">Session en ligne</h2>
+							<p class="text-gray-300 mb-6">Crée une partie multijoueur en ligne et invite tes amis instantanément.</p>
+						</div>
+						<a href="{{ path('game_session_create') }}" class="btn-primary py-3 px-6 w-full sm:w-auto">Créer une session</a>
+					</div>
 				</div>
-			</div>
-		</section>
+			</section>
 
+			{# --- Événements à venir --- #}
+			<section class="container mx-auto space-y-8">
+				<div>
+					{% if openedEvents is not empty %}
+						<h2 class="text-neonBlue text-xl font-semibold mb-4">LANs à venir</h2>
+						{% include 'home/partials/_opened_lans_section.html.twig' %}
+					{% endif %}
+				</div>
 
-		{# --- Événements à venir --- #}
-		<section class="container mx-auto space-y-8">
-			<div>
-				{% if openedEvents is not empty %}
-					<h2 class="text-neonBlue text-xl font-semibold mb-4">LANs à venir</h2>
-					{% include 'home/partials/_opened_lans_section.html.twig' %}
-				{% endif %}
-			</div>
+				<div>
+					{% if gameSessions is not empty %}
+						<h2 class="text-neonBlue text-xl font-semibold mb-4">Sessions en ligne à venir</h2>
+						{% include 'home/partials/_game_sessions.html.twig' %}
+					{% endif %}
+				</div>
+			</section>
+		</div>
+	{% endblock %}
 
-			<div>
-				{% if gameSessions is not empty %}
-					<h2 class="text-neonBlue text-xl font-semibold mb-4">Sessions en ligne à venir</h2>
-					{% include 'home/partials/_game_sessions.html.twig' %}
-				{% endif %}
-			</div>
-		</section>
-	</div>
-{% endblock %}
+	{% block modals %}
+		{% for gameSession in gameSessions %}
+			{% if app.user and app.user == gameSession.organizer %}
+				{% include 'home/partials/_delete_game_session_modal.html.twig' with { gameSession: gameSession } %}
+			{% endif %}
+		{% endfor %}
 
-{% block modals %}
-	{% for gameSession in gameSessions %}
-		{% if app.user and app.user == gameSession.organizer %}
-			{% include 'home/partials/_delete_game_session_modal.html.twig' with { gameSession: gameSession } %}
-		{% endif %}
-	{% endfor %}
-
-	{% for event in openedEvents %}
-		{% if app.user and app.user == event.organizer %}
-			{% include 'home/partials/_delete_event_modal.html.twig' with { event: event } %}
-			{% include 'home/partials/_close_event_modal.html.twig' with { event: event } %}
-		{% endif %}
-	{% endfor %}
-{% endblock %}
+		{% for event in openedEvents %}
+			{% if app.user and app.user == event.organizer %}
+				{% include 'home/partials/_delete_event_modal.html.twig' with { event: event } %}
+				{% include 'home/partials/_close_event_modal.html.twig' with { event: event } %}
+			{% endif %}
+		{% endfor %}
+	{% endblock %}

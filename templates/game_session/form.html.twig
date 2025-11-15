@@ -1,43 +1,60 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ isEdit ? 'Modifier la session' : 'Créer une session' }}{% endblock %}
+{% block title %}
+	{{ isEdit ? 'Modifier la session' : 'Créer une session' }}
+{% endblock %}
 
 {% block body %}
-<div class="max-w-3xl mx-auto mt-12 p-8 bg-darkGrey/90 backdrop-blur-md rounded-2xl shadow-[0_0_25px_rgba(0,255,255,0.25)] border border-neonBlue">
+	{% include 'game_session/partials/_timeline.html.twig' %}
+	<div
+		class="max-w-3xl mx-auto mt-12 p-8 bg-darkGrey/90 backdrop-blur-md rounded-2xl shadow-[0_0_25px_rgba(0,255,255,0.25)] border border-neonBlue">
 
-    <h1 class="text-3xl font-extrabold text-neonBlue mb-10 text-center tracking-wide">
-        {{ isEdit ? 'Modifier la session en ligne' : 'Créer une session de jeu en ligne' }}
-    </h1>
+		<h1 class="text-3xl font-extrabold text-neonBlue mb-10 text-center tracking-wide">
+					{{ isEdit ? 'Modifier la session en ligne' : 'Créer une session de jeu en ligne' }}
+				</h1>
 
-    {{ form_start(form, {'attr': {'class': 'space-y-8'}}) }}    
 
-    <!-- Description -->
-    <div>
-        {{ form_row(form.description, {
+		{{ form_start(form, {'attr': {'class': 'space-y-8'}}) }}
+
+		<!-- Titre de la session -->
+		<div>
+			{{ form_row(form.title, {
+        'attr': {
+            'class': 'input w-full'
+        },
+        'label_attr': {
+            'class': 'block text-sm font-medium text-neonBlue mb-2'
+        }
+    }) }}
+		</div>
+
+		<!-- Description -->
+		<div>
+			{{ form_row(form.description, {
             'attr': {
                 'class': 'input w-full bg-gray-800/80 text-white border border-gray-700 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue rounded-lg',
                 'rows': 3
             },
             'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-2'}
         }) }}
-    </div>
+		</div>
 
-    <!-- Dates et durée -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-            {{ form_row(form.startDate, {
+		<!-- Dates et durée -->
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+			<div>
+				{{ form_row(form.startDate, {
                 'attr': {'class': 'input '},
                 'label_attr': {'class': 'block text-sm font-medium text-neonBlue mb-2'}
             }) }}
-        </div>
+			</div>
 
-        <div>
-            <label for="{{ form.estimatedDuration.vars.id }}" class="block text-sm font-medium text-neonBlue mb-2">
-                Durée estimée
-            </label>         
+			<div>
+				<label for="{{ form.estimatedDuration.vars.id }}" class="block text-sm font-medium text-neonBlue mb-2">
+					Durée estimée
+				</label>
 
-            <div class="relative">
-                {{ form_widget(form.estimatedDuration, {
+				<div class="relative">
+					{{ form_widget(form.estimatedDuration, {
                     'attr': {
                         'type': 'range',
                         'min': 15,
@@ -49,81 +66,83 @@
                     }
                 }) }}
 
-                <output id="durationOutput" class="absolute right-0 -top-6 text-sm text-neonBlue font-semibold">
-                    {% set value = form.estimatedDuration.vars.value|default(60) %}
-                    {% set hours = (value / 60)|round(0, 'floor') %}
-                    {% set minutes = value % 60 %}
-                    {{ hours > 0 ? hours ~ ' h' ~ (minutes > 0 ? ' ' ~ minutes ~ ' min' : '') : minutes ~ ' min' }}
-                </output>
-            </div>
+					<output id="durationOutput" class="absolute right-0 -top-6 text-sm text-neonBlue font-semibold">
+						{% set value = form.estimatedDuration.vars.value|default(60) %}
+						{% set hours = (value / 60)|round(0, 'floor') %}
+						{% set minutes = value % 60 %}
+						{{ hours > 0 ? hours ~ ' h' ~ (minutes > 0 ? ' ' ~ minutes ~ ' min' : '') : minutes ~ ' min' }}
+					</output>
+				</div>
 
-            {{ form_errors(form.estimatedDuration) }}
-        </div>
-    </div>
+				{{ form_errors(form.estimatedDuration) }}
+			</div>
+		</div>
 
-  <!-- Section : Privé + Nombre de places -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-    
-    <!-- Checkbox Événement privé -->
-    <div class="flex flex-col bg-gray-800/60 border border-gray-700 rounded-lg px-5 py-4">
-        <label for="{{ form.isPrivate.vars.id }}" class="flex items-center space-x-3 cursor-pointer">
-            {{ form_widget(form.isPrivate, {
+		<!-- Section : Privé + Nombre de places -->
+		<div
+			class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+
+			<!-- Checkbox Événement privé -->
+			<div class="flex flex-col bg-gray-800/60 border border-gray-700 rounded-lg px-5 py-4">
+				<label for="{{ form.isPrivate.vars.id }}" class="flex items-center space-x-3 cursor-pointer">
+					{{ form_widget(form.isPrivate, {
                 'attr': {
                     'class': 'h-5 w-5 text-neonBlue bg-gray-900 border-gray-600 rounded focus:ring-neonBlue focus:ring-offset-0'
                 }
             }) }}
-            <span class="text-gray-200 font-medium">Événement privé</span>
-        </label>
-        <p class="text-xs text-gray-400 mt-2 ml-8">
-            Accessible uniquement via un code d’invitation.
-        </p>
-    </div>
+					<span class="text-gray-200 font-medium">Événement privé</span>
+				</label>
+				<p class="text-xs text-gray-400 mt-2 ml-8">
+					Accessible uniquement via un code d’invitation.
+				</p>
+			</div>
 
-    <!-- Champ Nombre de places -->
-    <div class="bg-gray-800/60 border border-gray-700 rounded-lg px-5 py-4">
-        <label for="{{ form.maxParticipants.vars.id }}" class="block text-sm font-medium text-neonBlue mb-2">
-            Nombre de places disponibles
-        </label>
-        {{ form_widget(form.maxParticipants, {
+			<!-- Champ Nombre de places -->
+			<div class="bg-gray-800/60 border border-gray-700 rounded-lg px-5 py-4">
+				<label for="{{ form.maxParticipants.vars.id }}" class="block text-sm font-medium text-neonBlue mb-2">
+					Nombre de places disponibles
+				</label>
+				{{ form_widget(form.maxParticipants, {
             'attr': {
                 'class': 'input w-full bg-gray-900 text-white border border-gray-700 focus:ring-2 focus:ring-neonBlue focus:border-neonBlue rounded-lg text-center text-lg py-2',
                 'min': form.maxParticipants.vars.attr.min|default(1),
                 'type': 'number'
             }
         }) }}
-        {{ form_errors(form.maxParticipants) }}
+				{{ form_errors(form.maxParticipants) }}
 
-        {% if isEdit %}
-            <div class="flex items-center mt-2 text-xs text-gray-400 bg-gray-900/60 rounded-md px-3 py-2 border border-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 mr-2 text-neonBlue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5V4H2v16h5m10 0v-4H7v4" />
-                </svg>
-                {{ gameSession.participants|length }} participant(s) déjà inscrit(s)
-            </div>
-        {% endif %}
-    </div>
-</div>
+				{% if isEdit %}
+					<div class="flex items-center mt-2 text-xs text-gray-400 bg-gray-900/60 rounded-md px-3 py-2 border border-gray-700">
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 mr-2 text-neonBlue" fill="none" viewbox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5V4H2v16h5m10 0v-4H7v4"/>
+						</svg>
+						{{ gameSession.participants|length }}
+						participant(s) déjà inscrit(s)
+					</div>
+				{% endif %}
+			</div>
+		</div>
 
 
-    <!-- Bouton -->
-    <div class="pt-6">
-        <button type="submit" class="btn-primary w-full py-3 text-lg">
-            {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
-        </button>
-    </div>
+		<!-- Bouton -->
+		<div class="pt-6">
+			<button type="submit" class="btn-primary w-full py-3 text-lg">
+				{{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
+			</button>
+		</div>
 
-    {{ form_end(form) }}
-</div>
+		{{ form_end(form) }}
+	</div>
 
-<script>
-    function updateDurationOutput(input) {
-        const value = parseInt(input.value, 10);
-        const hours = Math.floor(value / 60);
-        const minutes = value % 60;
-        const formatted = hours > 0
-            ? `${hours} h${minutes > 0 ? ' ' + minutes + ' min' : ''}`
-            : `${minutes} min`;
-        document.getElementById('durationOutput').textContent = formatted;
-    }
-</script>
+	<script>
+		function updateDurationOutput(input) {
+const value = parseInt(input.value, 10);
+const hours = Math.floor(value / 60);
+const minutes = value % 60;
+const formatted = hours > 0 ? `${hours} h${
+minutes > 0 ? ' ' + minutes + ' min' : ''
+}` : `${minutes} min`;
+document.getElementById('durationOutput').textContent = formatted;
+}
+	</script>
 {% endblock %}

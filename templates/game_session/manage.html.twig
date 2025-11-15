@@ -1,0 +1,88 @@
+{% extends 'game_session/partials/_game_session_layout.html.twig' %}
+
+{% block title %}Gestion de la session{% endblock %}
+
+{% block gameSession_layout %}
+<div class="max-w-3xl mx-auto space-y-8">
+
+    {# En-tête #}
+    <div class="text-center space-y-2">
+        <h1 class="text-3xl font-bold text-neonBlue">Gérer votre session multijoueur</h1>
+        <p class="text-gray-400">Organisez, modifiez ou terminez la configuration de votre session <span class="text-gray-200 font-medium">{{ gameSession.title }}</span>.</p>
+    </div>
+
+    {# Carte principale des actions #}
+    <div class="bg-gray-800/60 border border-gray-700 rounded-2xl shadow-lg p-6 flex flex-col gap-6">
+
+        {# Bloc : Contexte #}
+        <div class="flex items-start justify-between border-b border-gray-700 pb-4">
+            <div>
+                <h2 class="text-lg font-semibold text-gray-200">Contexte de la session</h2>
+                <p class="text-gray-400 text-sm">Modifier le nom, la description ou les paramètres de base de la session.</p>
+            </div>
+            <a href="{{ path('game_session_edit_context', { gameSession: gameSession.id }) }}" class="btn-primary flex items-center gap-2">
+                <i class="bi bi-pencil"></i>
+                <span>Éditer</span>
+            </a>
+        </div>
+
+        {# Bloc : Jeu associé #}
+        <div class="flex items-start justify-between border-b border-gray-700 pb-4">
+            <div>
+                <h2 class="text-lg font-semibold text-gray-200">Jeu associé</h2>
+                <p class="text-gray-400 text-sm">Changer le jeu sélectionné ou mettre à jour ses informations.</p>
+            </div>
+            <a href="{{ path('game_session_edit_game', { gameSession: gameSession.id }) }}" class="btn-primary flex items-center gap-2">
+                <i class="bi bi-controller"></i>
+                <span>Modifier</span>
+            </a>
+        </div>
+
+        {# Bloc : Reprendre la création #}
+        {% if gameSession.currentStep < 3 %}
+            <div class="flex items-start justify-between border-b border-gray-700 pb-4">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-200">Reprendre la configuration</h2>
+                    <p class="text-gray-400 text-sm">
+                        Vous avez quitté la création à l’étape <span class="text-neonBlue font-medium">{{ gameSession.currentStep }}</span>.
+                        Reprenez là où vous vous étiez arrêté.
+                    </p>
+                </div>
+                <a href="{{ path('game_session_resume_step', { gameSession: gameSession.id, step: gameSession.currentStep }) }}" class="btn-primary flex items-center gap-2">
+                    <i class="bi bi-arrow-repeat"></i>
+                    <span>Reprendre</span>
+                </a>
+            </div>
+        {% endif %}
+
+        {# Bloc : Suppression #}
+        {% if gameSession.countParticipants <= 1 %}
+        <div class="flex items-start justify-between">
+            <div>
+                <h2 class="text-lg font-semibold text-gray-200">Supprimer la session</h2>
+                <p class="text-gray-400 text-sm">Cette action est définitive et supprimera toutes les données associées.</p>
+            </div>
+            <button type="button"
+                data-modal-target="delete-game-session-{{ gameSession.id }}"
+                data-modal-toggle="delete-game-session-{{ gameSession.id }}"
+                class="btn-delete-lg flex items-center gap-2">
+                <i class="bi bi-trash"></i>
+                <span>Supprimer</span>
+            </button>
+        </div>
+        {% else %}
+        <div class="flex items-start justify-between">
+            <div>
+                <h2 class="text-lg font-semibold text-gray-200">Transmettre le flambeau</h2>
+                <p class="text-gray-400 text-sm">En tant qu'organisateur, vous ne pouvez pas supprimer une session de jeu si celle ci comporte des participants.Mais vous pouvez transmettre la responsabilité de l'oganisation à un autr eparticipant!</p>
+            </div>
+            <a href="#" class="btn-secondary flex items-center gap-2">
+                <i class="bi bi-arrow-repeat"></i>
+                <span>Go!</span>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

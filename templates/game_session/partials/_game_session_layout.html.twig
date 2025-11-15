@@ -12,15 +12,15 @@
 
 				<!-- Nom de l'événement cliquable -->
 					<a href="{{ path('game_session_show', { id: gameSession.id }) }}" class="text-lg font-semibold tracking-wide text-cyanShadow truncate hover:underline flex items-center gap-2"> <i class="bi bi-house-door text-neonBlue text-2xl"></i>
-					{{ gameData.name }}
+					{{ gameSession.title }}
 				</a>
 			</div>
 
 			<!-- Liens desktop -->
 			<div class="hidden md:flex items-center gap-3">
-				{# {% if app.user == gameSession.organizer %}
+				{% if app.user == gameSession.organizer %}
 					<a href="{{ path('game_session_manage', { gameSession: gameSession.id }) }}" class="btn-secondary px-4 py-2">Gestion</a>
-				{% endif %} #}
+				{% endif %}
 
 				<!-- Bouton chat -->
 				<button id="chat-toggle" class="btn-primary px-4 py-2 ml-3">
@@ -41,9 +41,9 @@
 
 		<!-- Menu mobile -->
 		<div x-show="mobileOpen" x-transition.origin.top @click.away="mobileOpen = false" class="md:hidden flex flex-col items-center gap-3 px-6 pb-6 text-white bg-black/50 backdrop-blur-md border-t border-cyanShadow/20">
-			{# {% if app.user == gameSession.organizer %}
+			{% if app.user == gameSession.organizer %}
 				<a href="{{ path('game_session_manage', { gameSession: gameSession.id }) }}" class="w-full text-center btn-secondary py-2 rounded-lg">Gestion</a>
-			{% endif %} #}
+			{% endif %}
 			<button id="chat-toggle-mobile" class="w-full btn-primary py-2 rounded-lg">
 				Chat
 			</button>
